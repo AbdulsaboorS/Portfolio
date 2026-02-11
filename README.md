@@ -14,6 +14,19 @@ Open:
 http://localhost:4173/index.html
 ```
 
+## Compare two versions
+
+This repo now includes an alternate implementation under `/alt`.
+
+```text
+http://localhost:4173/compare.html
+```
+
+Direct URLs:
+
+- Current build: `http://localhost:4173/index.html`
+- Alternate build: `http://localhost:4173/alt/index.html`
+
 ## Controls
 
 - Drag to rotate camera

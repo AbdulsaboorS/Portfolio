@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abdulsaboor Shaikh | Product Portfolio</title>
+    <meta
+      name="description"
+      content="Interactive 3D portfolio for Abdulsaboor Shaikh — Product Manager, builder, and lifelong learner."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="top-bar glass">
+        <div>
+          <p class="eyebrow">Product Manager · Builder · Problem Solver</p>
+          <h1>Abdulsaboor Shaikh</h1>
+        </div>
+        <nav>
+          <a href="https://www.linkedin.com/in/shaikhabdulsaboor/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://github.com/AbdulsaboorS" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="mailto:shaikhabdulsaboor1@gmail.com">Email</a>
+          <a href="resume.md" target="_blank" rel="noreferrer">Resume</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="scene-wrap" aria-describedby="scene-description">
+          <canvas id="scene" aria-label="Interactive 3D portfolio"></canvas>
+          <p id="scene-description" class="sr-only">
+            The 3D scene contains five interactive hotspots for Experience, Projects, Education, Beyond Work, and
+            Contact. You can use the quick buttons to access each section without using the 3D controls.
+          </p>
+
+          <div class="quick-nav glass" role="group" aria-label="Portfolio section shortcuts">
+            <button type="button" data-section="experience" aria-controls="panel">Experience</button>
+            <button type="button" data-section="projects" aria-controls="panel">Projects</button>
+            <button type="button" data-section="education" aria-controls="panel">Education</button>
+            <button type="button" data-section="interests" aria-controls="panel">Beyond Work</button>
+            <button type="button" data-section="contact" aria-controls="panel">Contact</button>
+          </div>
+
+          <div id="scene-status" class="scene-status glass" role="status" aria-live="polite">Initializing command room…</div>
+
+          <div class="scene-help glass">
+            <p><strong>Explore:</strong> Drag to rotate · Scroll to zoom · Click glowing objects · Or use quick buttons.</p>
+          </div>
+        </section>
+
+        <aside id="panel" class="panel glass" aria-live="polite">
+          <h2 id="panel-title">Welcome</h2>
+          <p id="panel-subtitle">Hard working. Accomplished. Always improving.</p>
+          <div id="panel-content">
+            <p>
+              I build products that solve real user problems. This portfolio is designed as an interactive world that
+              reflects who I am: disciplined, consistent, analytical, and bold.
+            </p>
+            <p>
+              <strong>Click any highlighted object</strong> in the 3D scene (or quick buttons) to open my experience,
+              projects, school journey, interests, and contact links.
+            </p>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="bottom-bar glass">
+        <p>"Want it bad. Build it right. Improve daily."</p>
+        <div class="bottom-actions">
+          <button id="start-tour" type="button">Start guided tour</button>
+          <a href="resume.md" target="_blank" rel="noreferrer">View resume highlights</a>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
