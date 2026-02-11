@@ -156,6 +156,7 @@ const panelContent = document.querySelector("#panel-content");
 const sceneStatus = document.querySelector("#scene-status");
 const sceneCanvas = document.querySelector("#portfolio-scene");
 const sceneOverlay = document.querySelector("#scene-overlay");
+const sceneOverlayMessage = sceneOverlay.querySelector("p");
 const hoverLabel = document.querySelector("#hover-label");
 const quickButtons = Array.from(document.querySelectorAll(".quick-nav button"));
 const tourToggle = document.querySelector("#tour-toggle");
@@ -190,6 +191,14 @@ const state = {
 
 function setSceneStatus(message) {
   sceneStatus.textContent = message;
+}
+
+function showSceneFallback(overlayMessage, statusMessage) {
+  sceneOverlay.hidden = false;
+  if (overlayMessage && sceneOverlayMessage) {
+    sceneOverlayMessage.textContent = overlayMessage;
+  }
+  setSceneStatus(statusMessage || overlayMessage);
 }
 
 function isPanelCollapsed() {
@@ -348,10 +357,17 @@ function detectWebGLContext(canvas) {
 async function loadThreeModules() {
   const sources = [
     {
+      label: "jsdelivr",
+      core: "https://cdn.jsdelivr.net/npm/three@0.162.0/+esm",
+      controls: "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/controls/OrbitControls.js/+esm",
+    },
+    {
+      label: "esm.sh",
       core: "https://esm.sh/three@0.162.0",
       controls: "https://esm.sh/three@0.162.0/examples/jsm/controls/OrbitControls.js",
     },
     {
+      label: "unpkg",
       core: "https://unpkg.com/three@0.162.0/build/three.module.js?module",
       controls: "https://unpkg.com/three@0.162.0/examples/jsm/controls/OrbitControls.js?module",
     },
@@ -364,7 +380,8 @@ async function loadThreeModules() {
       const controlsModule = await import(source.controls);
       return { THREE: threeModule, OrbitControls: controlsModule.OrbitControls };
     } catch (error) {
-      lastError = error;
+      const reason = error instanceof Error ? error.message : String(error);
+      lastError = new Error(`Failed loading Three.js from ${source.label}: ${reason}`);
     }
   }
   throw lastError;
@@ -906,8 +923,10 @@ function animateScene(startTime) {
 async function init3DScene() {
   const detectedContext = detectWebGLContext(sceneCanvas);
   if (!detectedContext.context) {
-    sceneOverlay.hidden = false;
-    setSceneStatus("WebGL unavailable in this browser. Quick-access mode is active.");
+    showSceneFallback(
+      "WebGL unavailable. Use quick buttons to explore sections.",
+      "WebGL context unavailable in this browser session. Quick-access mode is active."
+    );
     return;
   }
 
@@ -918,8 +937,10 @@ async function init3DScene() {
     state.webglEnabled = true;
   } catch (error) {
     console.error("Could not load 3D modules:", error);
-    sceneOverlay.hidden = false;
-    setSceneStatus("3D modules failed to load. Quick-access mode is active.");
+    showSceneFallback(
+      "3D libraries could not load. Check network and extension blockers.",
+      "3D module load failed. Quick-access mode is active."
+    );
     return;
   }
 
@@ -939,10 +960,14 @@ async function init3DScene() {
     state.three.renderer.outputColorSpace = THREE.SRGBColorSpace;
   } catch (error) {
     console.error("WebGL renderer failed to initialize:", error);
-    sceneOverlay.hidden = false;
-    setSceneStatus("WebGL renderer failed to initialize. Quick-access mode is active.");
+    showSceneFallback(
+      "WebGL renderer failed. Browser graphics settings may be blocking 3D.",
+      "WebGL renderer failed to initialize. Quick-access mode is active."
+    );
     return;
   }
+
+  sceneOverlay.hidden = true;
 
   const homeCamera = new THREE.Vector3(3.25, 2.2, 5.3);
   const homeTarget = new THREE.Vector3(0.1, 0.66, -0.55);
