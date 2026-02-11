@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abdulsaboor Shaikh | Interactive Portfolio</title>
     <meta
       name="description"
       content="Interactive 3D desktop portfolio for Abdulsaboor Shaikh."
     />
-    <title>Abdulsaboor Shaikh | 3D Portfolio</title>
     <link rel="icon" href="data:," />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,12 +18,12 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#info-panel">Skip to section details</a>
+    <a href="#panel" class="sr-only-focusable">Skip 3D scene</a>
 
-    <div class="page-shell">
-      <header class="top-bar glass">
-        <div class="identity">
-          <p class="eyebrow">Interactive Product Portfolio</p>
+    <div id="app">
+      <header class="top-bar">
+        <div class="brand">
+          <p class="eyebrow">Product Manager | Builder</p>
           <h1>Abdulsaboor Shaikh</h1>
         </div>
         <nav class="top-links" aria-label="External links">
@@ -34,85 +34,58 @@
         </nav>
       </header>
 
-      <main class="experience-shell">
-        <section class="scene-stage glass" aria-labelledby="scene-title">
-          <div class="scene-head">
-            <h2 id="scene-title">Command Desk</h2>
-            <p id="scene-status" role="status" aria-live="polite">Loading 3D desktop...</p>
-          </div>
-
+      <main>
+        <section class="scene-wrap" aria-describedby="scene-description">
+          <canvas id="scene" aria-label="Interactive 3D desktop portfolio"></canvas>
           <p id="scene-description" class="sr-only">
-            Interactive desktop with clickable monitor, PC tower, mouse, keyboard, and dumbbell.
-            Each object opens a different portfolio section.
+            Interactive desktop scene with clickable monitor, PC tower, mouse, keyboard, and dumbbell.
           </p>
 
-          <div class="quick-nav" role="toolbar" aria-label="Jump to section">
-            <button type="button" data-section="experience">Experience</button>
-            <button type="button" data-section="projects">Projects</button>
-            <button type="button" data-section="activities">Activities</button>
-            <button type="button" data-section="skills">Skills</button>
-            <button type="button" data-section="interests">Interests</button>
+          <div class="quick-nav" role="toolbar" aria-label="Section shortcuts">
+            <button type="button" data-section="experience" aria-controls="panel">Experience</button>
+            <button type="button" data-section="projects" aria-controls="panel">Projects</button>
+            <button type="button" data-section="activities" aria-controls="panel">Activities</button>
+            <button type="button" data-section="skills" aria-controls="panel">Skills</button>
+            <button type="button" data-section="interests" aria-controls="panel">Interests</button>
           </div>
 
-          <div class="scene-canvas-wrap">
-            <canvas
-              id="portfolio-scene"
-              aria-label="3D desktop portfolio scene"
-              aria-describedby="scene-description"
-            ></canvas>
-            <div id="hover-label" class="hover-label" hidden></div>
-            <div id="scene-overlay" class="scene-overlay" hidden>
-              <p>WebGL unavailable. Use quick buttons to explore sections.</p>
-            </div>
-            <div class="scene-help glass">
-              <p><strong>Explore:</strong> Drag to rotate | Scroll to zoom | Hover objects | Click to open</p>
-            </div>
+          <div id="scene-status" class="scene-status" role="status" aria-live="polite">Loading desktop scene...</div>
+          <div id="hover-label" class="hover-label" hidden></div>
+
+          <div id="scene-overlay" class="scene-overlay" hidden>
+            <p>WebGL unavailable. Use quick buttons to browse sections.</p>
+          </div>
+
+          <div class="scene-help">
+            <p><strong>Explore:</strong> drag to rotate | scroll to zoom | hover objects | click to open</p>
           </div>
         </section>
 
-        <aside id="info-panel" class="info-panel glass is-collapsed" aria-live="polite" tabindex="-1">
-          <button
-            id="panel-handle"
-            class="panel-handle"
-            type="button"
-            aria-controls="panel-inner"
-            aria-expanded="false"
-          >
+        <aside id="panel" class="panel is-collapsed" aria-live="polite">
+          <button id="panel-toggle" class="panel-toggle" type="button" aria-expanded="false">
             Open details
           </button>
-          <div id="panel-inner" class="panel-inner">
-            <div class="panel-top">
-              <p class="panel-kicker">Section details</p>
-              <button id="panel-close" type="button" class="panel-close">Collapse</button>
-            </div>
-            <h2 id="panel-title">Interactive Desktop Portfolio</h2>
-            <p id="panel-subtitle">
-              Hover and click an object to open section details.
-            </p>
+          <div class="panel-body">
+            <h2 id="panel-title">Welcome</h2>
+            <p id="panel-subtitle">Click a desktop object to open section details.</p>
             <div id="panel-content">
               <p>
-                Start with the monitor for experience, then explore the PC tower, mouse, keyboard,
-                and dumbbell to see projects, activities, skills, and interests.
+                Use the monitor for experience, PC for projects, mouse for activities,
+                keyboard for skills, and dumbbell for interests.
               </p>
             </div>
           </div>
         </aside>
       </main>
 
-      <footer class="bottom-strip glass">
+      <footer class="bottom-bar">
         <p>"Want it bad. Build it right. Improve daily."</p>
         <div class="bottom-actions">
-          <button id="tour-toggle" type="button" aria-pressed="false">Start guided tour</button>
-          <p class="key-hint" aria-hidden="true">Tip: use left/right arrow keys</p>
+          <button id="start-tour" type="button">Start guided tour</button>
+          <span class="key-tip">Tip: use left/right arrow keys</span>
         </div>
       </footer>
     </div>
-
-    <noscript>
-      <div class="no-js-warning">
-        JavaScript is required for the 3D interaction. Top links remain usable.
-      </div>
-    </noscript>
 
     <script type="module" src="app.js"></script>
   </body>

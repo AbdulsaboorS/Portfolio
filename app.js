@@ -1,1042 +1,681 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.162.0/+esm";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/controls/OrbitControls.js/+esm";
 
-const sectionOrder = ["experience", "projects", "activities", "skills", "interests"];
+const panel = document.getElementById("panel");
+const panelToggle = document.getElementById("panel-toggle");
+const panelTitle = document.getElementById("panel-title");
+const panelSubtitle = document.getElementById("panel-subtitle");
+const panelContent = document.getElementById("panel-content");
+const canvas = document.getElementById("scene");
+const sectionButtons = Array.from(document.querySelectorAll("[data-section]"));
+const tourButton = document.getElementById("start-tour");
+const sceneStatus = document.getElementById("scene-status");
+const sceneOverlay = document.getElementById("scene-overlay");
+const hoverLabel = document.getElementById("hover-label");
 
-const sectionContent = {
-  experience: {
-    title: "Experience",
-    subtitle: "Internships where I shipped measurable outcomes.",
-    status: "Monitor selected: experience highlights loaded.",
-    panel: `
-      <section class="panel-block">
-        <h3>Expedia Group - Product Manager Intern</h3>
-        <div class="metric-grid">
-          <article class="metric-tile">
-            <p class="value">$210K+</p>
-            <p class="label">Annual fraud-loss prevention</p>
-          </article>
-          <article class="metric-tile">
-            <p class="value">12%</p>
-            <p class="label">User churn reduction</p>
-          </article>
-          <article class="metric-tile">
-            <p class="value">50K+</p>
-            <p class="label">Users impacted</p>
-          </article>
-          <article class="metric-tile">
-            <p class="value">4 teams</p>
-            <p class="label">Aligned one week faster</p>
-          </article>
-        </div>
-      </section>
-      <section class="panel-block">
-        <h3>HubSpot + Others</h3>
-        <div class="metric-grid">
-          <article class="metric-tile">
-            <p class="value">$770K+</p>
-            <p class="label">Projected annual savings</p>
-          </article>
-          <article class="metric-tile">
-            <p class="value">20%</p>
-            <p class="label">Ticket reduction</p>
-          </article>
-          <article class="metric-tile">
-            <p class="value">6,000+</p>
-            <p class="label">Weekly active users enabled</p>
-          </article>
-          <article class="metric-tile">
-            <p class="value">$250K</p>
-            <p class="label">Cost reduction at Oceaneering</p>
-          </article>
-        </div>
-      </section>
+const sectionData = [
+  {
+    id: "experience",
+    objectName: "monitor",
+    label: "Experience",
+    subtitle: "Internships and measurable product impact",
+    status: "Monitor selected - experience details loaded.",
+    html: `
+      <p><strong>Metric dashboard:</strong> product outcomes shipped across internships.</p>
+      <div class="metric-grid">
+        <div class="metric-tile"><strong>$210K+</strong><span>Expedia annual fraud loss prevention</span></div>
+        <div class="metric-tile"><strong>12%</strong><span>churn reduction through anomaly detection MVP</span></div>
+        <div class="metric-tile"><strong>$770K+</strong><span>HubSpot projected annual savings from AI RFP automation</span></div>
+        <div class="metric-tile"><strong>20%</strong><span>IT support ticket reduction via Helpdesk AI improvements</span></div>
+        <div class="metric-tile"><strong>$250K</strong><span>Oceaneering project cost reduction</span></div>
+        <div class="metric-tile"><strong>+6%</strong><span>Extern retention improvement via onboarding personalization</span></div>
+      </div>
+      <p><span class="badge">Disciplined</span><span class="badge">Dependable</span><span class="badge">Execution-first</span></p>
     `,
   },
-  projects: {
-    title: "Side Projects",
-    subtitle: "Building in public with a product + AI mindset.",
-    status: "PC tower selected: side project lab opened.",
-    panel: `
-      <article class="project-card">
-        <h3>Discord Feedback Bot</h3>
-        <p>Built with Azure AI + Python NLP to analyze sentiment and trends in real time.</p>
-        <p><strong>Result:</strong> 200+ MAU and 4.6/5 user satisfaction.</p>
-      </article>
-      <article class="project-card">
-        <h3>Fantasy Football Bot</h3>
-        <p>In progress: recommendations for waiver and lineup decisions with explainable logic.</p>
-      </article>
-      <article class="project-card">
-        <h3>Spoiler Shield</h3>
-        <p>In progress: spoiler filtering controls for sports/anime communities.</p>
-      </article>
+  {
+    id: "projects",
+    objectName: "pc tower",
+    label: "Projects",
+    subtitle: "Side builds and product experiments",
+    status: "PC tower selected - side projects loaded.",
+    html: `
+      <p><strong>Current focus:</strong> Fantasy Football Bot + Spoiler Shield (in progress).</p>
+      <ul>
+        <li><strong>Discord Sentiment Bot:</strong> 200+ MAU, Azure AI + Python + NLP pipeline, 4.6/5 user satisfaction.</li>
+        <li>Rapid prototype loops with PRDs, user interviews, and measurable outcomes.</li>
+        <li>Building with a PM lens: define user value, instrument data, iterate fast.</li>
+      </ul>
+      <p><span class="badge">AI x PM</span><span class="badge">Rapid MVPs</span><span class="badge">Data-informed</span></p>
     `,
   },
-  activities: {
-    title: "Activities",
-    subtitle: "Execution outside formal professional roles.",
-    status: "Mouse selected: activities section opened.",
-    panel: `
-      <section class="panel-block">
-        <h3>Leadership and service</h3>
-        <p>
-          Vice President at United Mission Relief. Coordinated service events supporting
-          1,000+ unhoused individuals.
-        </p>
-      </section>
-      <section class="panel-block">
-        <h3>Operational impact</h3>
-        <p>
-          Built a digital volunteer check-in and hour-tracking flow that reduced manual coordination by 40%.
-        </p>
-      </section>
+  {
+    id: "activities",
+    objectName: "mouse",
+    label: "Activities",
+    subtitle: "Leadership and impact outside formal roles",
+    status: "Mouse selected - activities loaded.",
+    html: `
+      <ul>
+        <li>Vice President at <strong>United Mission Relief</strong>.</li>
+        <li>Help coordinate service events reaching <strong>1,000+ unhoused individuals</strong>.</li>
+        <li>Built a digital volunteer check-in flow that reduced coordination work by <strong>40%</strong>.</li>
+      </ul>
+      <p><span class="badge">Community</span><span class="badge">Leadership</span><span class="badge">Operations</span></p>
     `,
   },
-  skills: {
-    title: "Skills",
-    subtitle: "Technical, product, and execution skill stack.",
-    status: "Keyboard selected: skill stack loaded.",
-    panel: `
-      <section class="panel-block">
-        <h3>PM toolkit</h3>
-        <div class="chip-row">
-          <span class="chip">PRDs</span>
-          <span class="chip">Roadmapping</span>
-          <span class="chip">Prioritization</span>
-          <span class="chip">User research</span>
-          <span class="chip">Cross-functional leadership</span>
-          <span class="chip">Agile delivery</span>
-        </div>
-      </section>
-      <section class="panel-block">
-        <h3>Technical stack</h3>
-        <div class="chip-row">
-          <span class="chip">JavaScript</span>
-          <span class="chip">Python</span>
-          <span class="chip">Java</span>
-          <span class="chip">SQL</span>
-          <span class="chip">R</span>
-          <span class="chip">HTML/CSS</span>
-          <span class="chip">Azure AI</span>
-          <span class="chip">Power BI</span>
-        </div>
-      </section>
+  {
+    id: "skills",
+    objectName: "keyboard",
+    label: "Skills",
+    subtitle: "PM systems, technical fluency, and execution",
+    status: "Keyboard selected - skills loaded.",
+    html: `
+      <p><strong>PM skills:</strong> Agile, PRDs, user research, roadmaps, prioritization, customer discovery, OKRs.</p>
+      <p><strong>Tools:</strong> Figma, Jira, Confluence, Asana, Miro, Slack, Looker, Amplitude, Tableau, Power BI.</p>
+      <p><strong>Technical:</strong> JavaScript, Python, Java, HTML/CSS, SQL, R.</p>
+      <p><span class="badge">Product Strategy</span><span class="badge">Cross-functional</span><span class="badge">Builder mindset</span></p>
     `,
   },
-  interests: {
-    title: "Interests",
-    subtitle: "The routines and passions that keep me sharp.",
-    status: "Dumbbell selected: interests and lifestyle opened.",
-    panel: `
-      <section class="panel-block">
-        <h3>Core interests</h3>
-        <div class="chip-row">
-          <span class="chip">Gym consistency</span>
-          <span class="chip">Sports</span>
-          <span class="chip">Anime</span>
-          <span class="chip">Gaming</span>
-          <span class="chip">Trading</span>
-          <span class="chip">Faith-driven growth</span>
-        </div>
-      </section>
-      <section class="panel-block">
-        <h3>How this shows up in work</h3>
-        <p>
-          Discipline, consistency, and composure under pressure are the same traits I bring to product execution.
-        </p>
-      </section>
+  {
+    id: "interests",
+    objectName: "dumbbell",
+    label: "Interests",
+    subtitle: "Lifestyle, discipline, and what keeps me sharp",
+    status: "Dumbbell selected - interests loaded.",
+    html: `
+      <ul>
+        <li><strong>Faith:</strong> values-driven consistency and self-improvement.</li>
+        <li><strong>Fitness:</strong> gym discipline and nutrition routine.</li>
+        <li><strong>Gaming & Anime:</strong> creativity, systems thinking, and fun.</li>
+        <li><strong>Trading:</strong> analytical decisions and emotional control.</li>
+      </ul>
+      <p><span class="badge">Consistency</span><span class="badge">Discipline</span><span class="badge">Curiosity</span></p>
     `,
   },
+];
+
+const sectionMap = new Map(sectionData.map((entry) => [entry.id, entry]));
+const sectionOrder = sectionData.map((entry) => entry.id);
+
+let activeSectionId = null;
+let tourTimer = null;
+let hoveredRecord = null;
+
+const state3d = {
+  controls: null,
+  camera: null,
+  renderer: null,
+  raycaster: null,
+  pointer: null,
+  interactiveRecords: [],
+  interactiveBySection: new Map(),
+  desiredTarget: null,
+  desiredCameraPosition: null,
+  intro: null,
+  tempVector: new THREE.Vector3(),
 };
 
-const panelRoot = document.querySelector("#info-panel");
-const panelHandle = document.querySelector("#panel-handle");
-const panelClose = document.querySelector("#panel-close");
-const panelTitle = document.querySelector("#panel-title");
-const panelSubtitle = document.querySelector("#panel-subtitle");
-const panelContent = document.querySelector("#panel-content");
-const sceneStatus = document.querySelector("#scene-status");
-const sceneCanvas = document.querySelector("#portfolio-scene");
-const sceneOverlay = document.querySelector("#scene-overlay");
-const sceneOverlayMessage = sceneOverlay.querySelector("p");
-const hoverLabel = document.querySelector("#hover-label");
-const quickButtons = Array.from(document.querySelectorAll(".quick-nav button"));
-const tourToggle = document.querySelector("#tour-toggle");
-
-const state = {
-  activeSection: null,
-  tourTimer: null,
-  tourRunning: false,
-  webglEnabled: false,
-  sceneStatusDefault: "Drag to rotate, hover an object to preview, click to open details.",
-  three: {
-    THREE: null,
-    OrbitControls: null,
-    scene: null,
-    camera: null,
-    renderer: null,
-    controls: null,
-    raycaster: null,
-    pointer: null,
-    hitMeshes: [],
-    meshToRecord: new Map(),
-    recordBySection: new Map(),
-    hoveredRecord: null,
-    focusTarget: null,
-    focusCamera: null,
-    focusAnimating: false,
-    intro: null,
-    raf: null,
-    tempWorld: null,
-  },
-};
-
-function setSceneStatus(message) {
-  sceneStatus.textContent = message;
-}
-
-function showSceneFallback(overlayMessage, statusMessage) {
-  sceneOverlay.hidden = false;
-  if (overlayMessage && sceneOverlayMessage) {
-    sceneOverlayMessage.textContent = overlayMessage;
-  }
-  setSceneStatus(statusMessage || overlayMessage);
-}
-
-function isPanelCollapsed() {
-  return panelRoot.classList.contains("is-collapsed");
+function updateStatus(message) {
+  if (sceneStatus) sceneStatus.textContent = message;
 }
 
 function setPanelCollapsed(collapsed) {
-  panelRoot.classList.toggle("is-collapsed", collapsed);
-  panelHandle.setAttribute("aria-expanded", String(!collapsed));
-  panelHandle.textContent = collapsed ? "Open details" : "Hide details";
+  panel.classList.toggle("is-collapsed", collapsed);
+  panelToggle.setAttribute("aria-expanded", String(!collapsed));
+  panelToggle.textContent = collapsed ? "Open details" : "Hide details";
 }
 
-function openPanel() {
-  if (isPanelCollapsed()) setPanelCollapsed(false);
-}
-
-function renderSection(sectionId, options = {}) {
-  const section = sectionContent[sectionId];
-  if (!section) return;
-
-  state.activeSection = sectionId;
-  panelTitle.textContent = section.title;
-  panelSubtitle.textContent = section.subtitle;
-  panelContent.innerHTML = section.panel;
-
-  if (!options.preserveStatus) {
-    setSceneStatus(section.status);
-  }
-
-  quickButtons.forEach((button) => {
-    const isActive = button.dataset.section === sectionId;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-current", isActive ? "true" : "false");
+function markActiveButton(id) {
+  sectionButtons.forEach((button) => {
+    const isActive = button.dataset.section === id;
+    button.setAttribute("aria-pressed", String(isActive));
   });
 }
 
-function focusSceneOnSection(sectionId, instant = false) {
-  if (!state.webglEnabled) return;
-  const record = state.three.recordBySection.get(sectionId);
+function focusSectionIn3D(id) {
+  const record = state3d.interactiveBySection.get(id);
   if (!record) return;
+  state3d.desiredTarget.copy(record.focusTarget);
+  state3d.desiredCameraPosition.copy(record.focusCameraPosition);
+}
 
-  state.three.focusTarget.copy(record.focusTarget);
-  state.three.focusCamera.copy(record.focusCamera);
-  state.three.focusAnimating = !instant;
+function openPanel(id, options = {}) {
+  const selected = sectionMap.get(id);
+  if (!selected) return;
 
-  if (instant) {
-    state.three.camera.position.copy(record.focusCamera);
-    state.three.controls.target.copy(record.focusTarget);
-    state.three.controls.update();
+  activeSectionId = id;
+  panelTitle.textContent = selected.label;
+  panelSubtitle.textContent = selected.subtitle;
+  panelContent.innerHTML = selected.html;
+  markActiveButton(id);
+  updateStatus(selected.status);
+
+  if (!options.keepCollapsed) {
+    setPanelCollapsed(false);
+  }
+
+  if (!options.skip3DFocus) {
+    focusSectionIn3D(id);
   }
 }
 
-function setActiveSection(sectionId, options = {}) {
-  renderSection(sectionId, options);
+function stopTour(resetLabel = true) {
+  if (tourTimer) {
+    clearInterval(tourTimer);
+    tourTimer = null;
+  }
 
-  if (options.expandPanel !== false) openPanel();
-  if (options.focusPanel) panelRoot.focus();
-  if (!options.skipFocus) focusSceneOnSection(sectionId, Boolean(options.instantFocus));
+  if (tourButton && resetLabel) {
+    tourButton.textContent = "Start guided tour";
+  }
 }
 
 function cycleSection(direction) {
-  const currentIndex = Math.max(sectionOrder.indexOf(state.activeSection), 0);
+  const currentIndex = Math.max(sectionOrder.indexOf(activeSectionId), 0);
   const nextIndex = (currentIndex + direction + sectionOrder.length) % sectionOrder.length;
-  setActiveSection(sectionOrder[nextIndex], { expandPanel: true, focusPanel: true });
+  openPanel(sectionOrder[nextIndex]);
 }
 
-function stopTour(resetStatus = true) {
-  if (state.tourTimer) {
-    window.clearInterval(state.tourTimer);
-    state.tourTimer = null;
-  }
+function createLabelTexture(title, subtitle, accent = "#64b0ff") {
+  const labelCanvas = document.createElement("canvas");
+  labelCanvas.width = 1024;
+  labelCanvas.height = 512;
+  const context = labelCanvas.getContext("2d");
 
-  state.tourRunning = false;
-  tourToggle.setAttribute("aria-pressed", "false");
-  tourToggle.textContent = "Start guided tour";
-
-  if (resetStatus) {
-    setSceneStatus(state.sceneStatusDefault);
-  }
-}
-
-function startTour() {
-  if (state.tourRunning) {
-    stopTour();
-    return;
-  }
-
-  state.tourRunning = true;
-  tourToggle.setAttribute("aria-pressed", "true");
-  tourToggle.textContent = "Stop guided tour";
-  setSceneStatus("Guided tour running: stepping through each desktop object.");
-
-  let pointer = Math.max(sectionOrder.indexOf(state.activeSection), 0);
-  setActiveSection(sectionOrder[pointer], { expandPanel: true, focusPanel: false });
-  state.tourTimer = window.setInterval(() => {
-    pointer = (pointer + 1) % sectionOrder.length;
-    setActiveSection(sectionOrder[pointer], { expandPanel: true, focusPanel: false });
-  }, 3300);
-}
-
-function onQuickButtonClick(event) {
-  const sectionId = event.currentTarget.dataset.section;
-  if (!sectionId) return;
-  if (state.tourRunning) stopTour(false);
-  setActiveSection(sectionId, { expandPanel: true, focusPanel: true });
-}
-
-function initLayoutEvents() {
-  setPanelCollapsed(true);
-
-  panelHandle.addEventListener("click", () => {
-    setPanelCollapsed(!isPanelCollapsed());
-  });
-
-  panelClose.addEventListener("click", () => setPanelCollapsed(true));
-  tourToggle.addEventListener("click", startTour);
-
-  quickButtons.forEach((button) => button.addEventListener("click", onQuickButtonClick));
-
-  document.addEventListener("keydown", (event) => {
-    if (!["ArrowRight", "ArrowLeft", "Escape"].includes(event.key)) return;
-
-    if (event.key === "Escape") {
-      setPanelCollapsed(true);
-      if (state.tourRunning) stopTour();
-      return;
-    }
-
-    if (state.tourRunning) stopTour(false);
-    cycleSection(event.key === "ArrowRight" ? 1 : -1);
-  });
-}
-
-function detectWebGLContext(canvas) {
-  const contextTypes = ["webgl2", "webgl", "experimental-webgl"];
-  const contextOptions = [
-    { antialias: true, alpha: true, powerPreference: "high-performance" },
-    { antialias: true, alpha: true },
-    {},
-  ];
-
-  for (const type of contextTypes) {
-    for (const options of contextOptions) {
-      try {
-        const context = canvas.getContext(type, options);
-        if (context) return { context, type };
-      } catch (_error) {
-        continue;
-      }
-    }
-  }
-
-  return { context: null, type: null };
-}
-
-async function loadThreeModules() {
-  const sources = [
-    {
-      label: "jsdelivr",
-      core: "https://cdn.jsdelivr.net/npm/three@0.162.0/+esm",
-      controls: "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/controls/OrbitControls.js/+esm",
-    },
-    {
-      label: "esm.sh",
-      core: "https://esm.sh/three@0.162.0",
-      controls: "https://esm.sh/three@0.162.0/examples/jsm/controls/OrbitControls.js",
-    },
-    {
-      label: "unpkg",
-      core: "https://unpkg.com/three@0.162.0/build/three.module.js?module",
-      controls: "https://unpkg.com/three@0.162.0/examples/jsm/controls/OrbitControls.js?module",
-    },
-  ];
-
-  let lastError = null;
-  for (const source of sources) {
-    try {
-      const threeModule = await import(source.core);
-      const controlsModule = await import(source.controls);
-      return { THREE: threeModule, OrbitControls: controlsModule.OrbitControls };
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error);
-      lastError = new Error(`Failed loading Three.js from ${source.label}: ${reason}`);
-    }
-  }
-  throw lastError;
-}
-
-function createTextTexture(THREE, text, options = {}) {
-  const width = options.width ?? 1024;
-  const height = options.height ?? 512;
-  const background = options.background ?? "#101733";
-  const foreground = options.foreground ?? "#eff4ff";
-  const accent = options.accent ?? "#55d7bd";
-  const subtitle = options.subtitle ?? "";
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const context = canvas.getContext("2d");
-
-  context.fillStyle = background;
-  context.fillRect(0, 0, width, height);
-  context.strokeStyle = "#253155";
-  context.lineWidth = 18;
-  context.strokeRect(9, 9, width - 18, height - 18);
+  context.fillStyle = "#101726";
+  context.fillRect(0, 0, labelCanvas.width, labelCanvas.height);
+  context.strokeStyle = "#2a3e6a";
+  context.lineWidth = 14;
+  context.strokeRect(10, 10, labelCanvas.width - 20, labelCanvas.height - 20);
 
   context.textAlign = "center";
   context.fillStyle = accent;
-  context.font = "700 46px Inter, sans-serif";
-  context.fillText("CLICK HERE", width / 2, height * 0.33);
+  context.font = "700 56px Inter, sans-serif";
+  context.fillText("CLICK HERE", labelCanvas.width / 2, labelCanvas.height * 0.3);
 
-  context.fillStyle = foreground;
-  context.font = "800 70px Inter, sans-serif";
-  context.fillText(text, width / 2, height * 0.62);
+  context.fillStyle = "#eef4ff";
+  context.font = "800 82px Inter, sans-serif";
+  context.fillText(title.toUpperCase(), labelCanvas.width / 2, labelCanvas.height * 0.58);
 
-  if (subtitle) {
-    context.fillStyle = "#9fb2df";
-    context.font = "500 32px Inter, sans-serif";
-    context.fillText(subtitle, width / 2, height * 0.82);
-  }
+  context.fillStyle = "#a7b8df";
+  context.font = "500 33px Inter, sans-serif";
+  context.fillText(subtitle, labelCanvas.width / 2, labelCanvas.height * 0.8);
 
-  const texture = new THREE.CanvasTexture(canvas);
+  const texture = new THREE.CanvasTexture(labelCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.needsUpdate = true;
   return texture;
 }
 
-function collectEmissiveMaterials(object) {
-  const materials = [];
-  object.traverse((child) => {
-    if (!child.isMesh) return;
-    const childMaterials = Array.isArray(child.material) ? child.material : [child.material];
-    childMaterials.forEach((material) => {
-      if (material && "emissiveIntensity" in material) materials.push(material);
-    });
-  });
-  return materials;
-}
+function buildScene(scene) {
+  scene.fog = new THREE.Fog(0x05070c, 8, 22);
 
-function registerInteractiveObject(section, label, hitMesh, focusTarget, focusOffset, anchorObject) {
-  const record = {
-    section,
-    label,
-    mesh: hitMesh,
-    anchor: anchorObject,
-    focusTarget,
-    focusCamera: focusTarget.clone().add(focusOffset),
-    materials: collectEmissiveMaterials(hitMesh),
-    baseScale: hitMesh.scale.clone(),
-  };
-
-  state.three.hitMeshes.push(hitMesh);
-  state.three.meshToRecord.set(hitMesh, record);
-  state.three.recordBySection.set(section, record);
-}
-
-function buildDesktopScene(THREE) {
-  const scene = state.three.scene;
-  scene.fog = new THREE.Fog(0x070b14, 6, 18);
-
-  const ambient = new THREE.AmbientLight(0x9ab2ff, 0.42);
+  const ambient = new THREE.HemisphereLight(0x99b8ff, 0x080e1a, 0.95);
   scene.add(ambient);
 
-  const key = new THREE.DirectionalLight(0xffffff, 0.98);
-  key.position.set(4.2, 5.8, 3.6);
+  const key = new THREE.DirectionalLight(0xffffff, 1.0);
+  key.position.set(5, 7, 5);
   scene.add(key);
 
-  const rim = new THREE.PointLight(0x4ea8ff, 1.05, 13, 2.2);
-  rim.position.set(-2.9, 2.7, -1.9);
+  const rim = new THREE.PointLight(0x6fa8ff, 20, 18, 2.2);
+  rim.position.set(-3, 2.5, -1);
   scene.add(rim);
 
-  const fill = new THREE.PointLight(0x49d4bc, 0.74, 9, 2.2);
-  fill.position.set(2.1, 1.9, 1.9);
+  const fill = new THREE.PointLight(0x42d9bc, 9, 9, 1.8);
+  fill.position.set(2.5, 2, 2);
   scene.add(fill);
 
   const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(14, 14),
-    new THREE.MeshStandardMaterial({ color: 0x0d1324, roughness: 0.95, metalness: 0.02 })
+    new THREE.CircleGeometry(8.2, 72),
+    new THREE.MeshStandardMaterial({ color: 0x0c111d, roughness: 0.96, metalness: 0.03 })
   );
   floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -0.9;
   scene.add(floor);
 
-  const backWall = new THREE.Mesh(
-    new THREE.BoxGeometry(13, 4.8, 0.22),
-    new THREE.MeshStandardMaterial({ color: 0x1a2544, roughness: 0.84 })
+  const deskTop = new THREE.Mesh(
+    new THREE.BoxGeometry(5.3, 0.25, 2.4),
+    new THREE.MeshStandardMaterial({ color: 0x1f2f52, roughness: 0.7, metalness: 0.15 })
   );
-  backWall.position.set(0, 1.35, -4.35);
-  scene.add(backWall);
-
-  const sideWall = new THREE.Mesh(
-    new THREE.BoxGeometry(0.22, 4.8, 9),
-    new THREE.MeshStandardMaterial({ color: 0x151d36, roughness: 0.88 })
-  );
-  sideWall.position.set(-5.05, 1.35, -0.1);
-  scene.add(sideWall);
-
-  const deskMaterial = new THREE.MeshStandardMaterial({
-    color: 0x28385d,
-    roughness: 0.7,
-    metalness: 0.16,
-  });
-
-  const deskTop = new THREE.Mesh(new THREE.BoxGeometry(5.15, 0.25, 2.5), deskMaterial);
-  deskTop.position.set(0, -0.07, -0.45);
+  deskTop.position.set(0, -0.15, -0.35);
   scene.add(deskTop);
 
-  const legMaterial = new THREE.MeshStandardMaterial({ color: 0x1d2846, roughness: 0.74 });
+  const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0x172542, roughness: 0.78 });
   [-2.35, 2.35].forEach((x) => {
-    [-1.55, 0.55].forEach((z) => {
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.95, 0.17), legMaterial);
-      leg.position.set(x, -0.57, z);
+    [-1.4, 0.65].forEach((z) => {
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.86, 0.16), deskLegMaterial);
+      leg.position.set(x, -0.68, z);
       scene.add(leg);
     });
   });
 
-  const monitorBody = new THREE.Mesh(
-    new THREE.BoxGeometry(1.95, 1.15, 0.08),
-    new THREE.MeshStandardMaterial({
-      color: 0x1f2e50,
-      roughness: 0.45,
-      metalness: 0.25,
-      emissive: 0x0b1222,
-      emissiveIntensity: 0.2,
-    })
+  const records = [];
+  const addInteractive = ({ id, objectName, mesh, focusTarget, focusCameraPosition, labelAnchor }) => {
+    mesh.userData.sectionId = id;
+    mesh.userData.objectName = objectName;
+    scene.add(mesh);
+    records.push({
+      id,
+      objectName,
+      mesh,
+      focusTarget,
+      focusCameraPosition,
+      labelAnchor,
+      baseY: mesh.position.y,
+      baseScale: mesh.scale.clone(),
+    });
+    state3d.interactiveBySection.set(id, records[records.length - 1]);
+  };
+
+  const monitorGroup = new THREE.Group();
+  const monitorFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(2.0, 1.2, 0.09),
+    new THREE.MeshStandardMaterial({ color: 0x23385f, roughness: 0.42, metalness: 0.25 })
   );
-  monitorBody.position.set(-0.1, 0.94, -1.18);
-  scene.add(monitorBody);
+  monitorGroup.add(monitorFrame);
 
   const monitorScreen = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.72, 0.93),
+    new THREE.PlaneGeometry(1.76, 0.95),
     new THREE.MeshStandardMaterial({
-      map: createTextTexture(THREE, "EXPERIENCE", {
-        subtitle: "PM internships and impact",
-        accent: "#62b1ff",
-      }),
-      emissive: 0x1a3c6f,
-      emissiveIntensity: 0.9,
+      map: createLabelTexture("Experience", "Internships and impact", "#75a9ff"),
+      emissive: 0x1f4a7d,
+      emissiveIntensity: 0.95,
+      roughness: 0.3,
+    })
+  );
+  monitorScreen.position.z = 0.052;
+  monitorGroup.add(monitorScreen);
+
+  const monitorStand = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06, 0.06, 0.44, 20),
+    new THREE.MeshStandardMaterial({ color: 0x223659, roughness: 0.6 })
+  );
+  monitorStand.position.set(0, -0.72, -0.02);
+  monitorGroup.add(monitorStand);
+
+  const monitorBase = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 0.04, 0.3),
+    new THREE.MeshStandardMaterial({ color: 0x1b2a4a, roughness: 0.65 })
+  );
+  monitorBase.position.set(0, -0.94, -0.02);
+  monitorGroup.add(monitorBase);
+
+  monitorGroup.position.set(-0.15, 0.88, -1.07);
+  addInteractive({
+    id: "experience",
+    objectName: "monitor",
+    mesh: monitorGroup,
+    focusTarget: new THREE.Vector3(-0.15, 0.8, -1.08),
+    focusCameraPosition: new THREE.Vector3(2.2, 1.8, 2.3),
+    labelAnchor: new THREE.Vector3(-0.15, 1.72, -1.05),
+  });
+
+  const pcTower = new THREE.Mesh(
+    new THREE.BoxGeometry(0.9, 1.7, 1.02),
+    new THREE.MeshStandardMaterial({
+      color: 0x1f3358,
+      roughness: 0.5,
+      metalness: 0.24,
+      emissive: 0x0a1424,
+      emissiveIntensity: 0.5,
+    })
+  );
+  pcTower.position.set(2.0, 0.58, -0.98);
+  addInteractive({
+    id: "projects",
+    objectName: "pc tower",
+    mesh: pcTower,
+    focusTarget: new THREE.Vector3(2.0, 0.58, -0.98),
+    focusCameraPosition: new THREE.Vector3(2.9, 1.75, 2.0),
+    labelAnchor: new THREE.Vector3(2.0, 1.65, -0.98),
+  });
+
+  const pcLabel = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.64, 1.22),
+    new THREE.MeshStandardMaterial({
+      map: createLabelTexture("Projects", "Side builds", "#51dfbf"),
+      emissive: 0x1a4d5a,
+      emissiveIntensity: 0.85,
       roughness: 0.25,
     })
   );
-  monitorScreen.position.set(-0.1, 0.94, -1.13);
-  scene.add(monitorScreen);
+  pcLabel.position.set(1.53, 0.58, -0.98);
+  pcLabel.rotation.y = Math.PI / 2;
+  scene.add(pcLabel);
 
-  const monitorStand = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.05, 0.06, 0.45, 20),
-    new THREE.MeshStandardMaterial({ color: 0x243659, roughness: 0.55 })
-  );
-  monitorStand.position.set(-0.1, 0.48, -1.2);
-  scene.add(monitorStand);
-
-  const monitorBase = new THREE.Mesh(
-    new THREE.BoxGeometry(0.55, 0.04, 0.34),
-    new THREE.MeshStandardMaterial({ color: 0x1c2946, roughness: 0.6 })
-  );
-  monitorBase.position.set(-0.1, 0.24, -1.2);
-  scene.add(monitorBase);
-
-  const monitorAnchor = new THREE.Object3D();
-  monitorAnchor.position.set(-0.1, 1.62, -1.2);
-  scene.add(monitorAnchor);
-
-  registerInteractiveObject(
-    "experience",
-    "Monitor: click for Experience",
-    monitorBody,
-    new THREE.Vector3(-0.1, 0.9, -1.2),
-    new THREE.Vector3(2.25, 1.35, 2.8),
-    monitorAnchor
-  );
-
-  const tower = new THREE.Mesh(
-    new THREE.BoxGeometry(0.85, 1.65, 1.05),
+  const keyboard = new THREE.Mesh(
+    new THREE.BoxGeometry(2.1, 0.09, 0.72),
     new THREE.MeshStandardMaterial({
-      color: 0x1b2f55,
-      roughness: 0.56,
-      metalness: 0.22,
-      emissive: 0x09111f,
-      emissiveIntensity: 0.2,
+      color: 0x1c2c4a,
+      roughness: 0.55,
+      metalness: 0.16,
+      emissive: 0x0f1e38,
+      emissiveIntensity: 0.48,
     })
   );
-  tower.position.set(2.02, 0.58, -1.05);
-  scene.add(tower);
+  keyboard.position.set(0.26, 0.06, -0.18);
+  addInteractive({
+    id: "skills",
+    objectName: "keyboard",
+    mesh: keyboard,
+    focusTarget: new THREE.Vector3(0.26, 0.08, -0.18),
+    focusCameraPosition: new THREE.Vector3(2.35, 1.2, 1.85),
+    labelAnchor: new THREE.Vector3(0.26, 0.5, -0.18),
+  });
 
-  const towerPanel = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.62, 1.2),
+  const keyboardLabel = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.5, 0.28),
     new THREE.MeshStandardMaterial({
-      map: createTextTexture(THREE, "PROJECTS", {
-        subtitle: "Side builds and experiments",
-        accent: "#55e1bf",
-        background: "#10213a",
-      }),
-      emissive: 0x1a4c56,
-      emissiveIntensity: 0.64,
+      map: createLabelTexture("Skills", "Tools and PM stack", "#89b6ff"),
+      emissive: 0x1e3a63,
+      emissiveIntensity: 0.76,
       roughness: 0.2,
     })
   );
-  towerPanel.position.set(1.59, 0.58, -1.05);
-  towerPanel.rotation.y = Math.PI / 2;
-  scene.add(towerPanel);
-
-  const towerAnchor = new THREE.Object3D();
-  towerAnchor.position.set(2.02, 1.58, -1.05);
-  scene.add(towerAnchor);
-
-  registerInteractiveObject(
-    "projects",
-    "PC Tower: click for Side Projects",
-    tower,
-    new THREE.Vector3(2.0, 0.6, -1.05),
-    new THREE.Vector3(2.35, 1.45, 2.2),
-    towerAnchor
-  );
-
-  const keyboard = new THREE.Mesh(
-    new THREE.BoxGeometry(2.0, 0.09, 0.66),
-    new THREE.MeshStandardMaterial({
-      color: 0x1b2a49,
-      roughness: 0.48,
-      metalness: 0.18,
-      emissive: 0x0b1631,
-      emissiveIntensity: 0.2,
-    })
-  );
-  keyboard.position.set(0.18, 0.08, -0.3);
-  scene.add(keyboard);
-
-  const keyboardLabel = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.52, 0.3),
-    new THREE.MeshStandardMaterial({
-      map: createTextTexture(THREE, "SKILLS", {
-        subtitle: "Tools and PM capabilities",
-        accent: "#8cb5ff",
-        background: "#111f3b",
-      }),
-      emissive: 0x1b325c,
-      emissiveIntensity: 0.7,
-      roughness: 0.25,
-    })
-  );
-  keyboardLabel.position.set(0.18, 0.145, -0.29);
+  keyboardLabel.position.set(0.26, 0.112, -0.18);
   keyboardLabel.rotation.x = -Math.PI / 2;
   scene.add(keyboardLabel);
 
-  const keyboardAnchor = new THREE.Object3D();
-  keyboardAnchor.position.set(0.18, 0.42, -0.3);
-  scene.add(keyboardAnchor);
-
-  registerInteractiveObject(
-    "skills",
-    "Keyboard: click for Skills",
-    keyboard,
-    new THREE.Vector3(0.2, 0.11, -0.3),
-    new THREE.Vector3(2.1, 1.18, 2.05),
-    keyboardAnchor
-  );
-
-  const mouseBase = new THREE.Mesh(
-    new THREE.BoxGeometry(0.92, 0.02, 0.66),
-    new THREE.MeshStandardMaterial({ color: 0x16223d, roughness: 0.92 })
-  );
-  mouseBase.position.set(1.3, 0.02, 0.07);
-  scene.add(mouseBase);
-
-  const mousePadLabel = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.78, 0.22),
-    new THREE.MeshStandardMaterial({
-      map: createTextTexture(THREE, "ACTIVITIES", {
-        subtitle: "Leadership and service",
-        accent: "#58dcc2",
-        background: "#0f2233",
-      }),
-      emissive: 0x1b4d5a,
-      emissiveIntensity: 0.6,
-      roughness: 0.25,
-    })
-  );
-  mousePadLabel.position.set(1.3, 0.032, 0.07);
-  mousePadLabel.rotation.x = -Math.PI / 2;
-  scene.add(mousePadLabel);
-
   const mouse = new THREE.Mesh(
-    new THREE.SphereGeometry(0.23, 28, 28),
+    new THREE.SphereGeometry(0.24, 26, 26),
     new THREE.MeshStandardMaterial({
-      color: 0x233659,
-      roughness: 0.38,
+      color: 0x23395f,
+      roughness: 0.4,
       metalness: 0.18,
-      emissive: 0x091526,
-      emissiveIntensity: 0.2,
+      emissive: 0x102240,
+      emissiveIntensity: 0.44,
     })
   );
-  mouse.scale.set(1, 0.57, 1.32);
-  mouse.position.set(1.29, 0.12, 0.08);
-  scene.add(mouse);
+  mouse.position.set(1.34, 0.12, 0.02);
+  mouse.scale.set(1, 0.58, 1.3);
+  addInteractive({
+    id: "activities",
+    objectName: "mouse",
+    mesh: mouse,
+    focusTarget: new THREE.Vector3(1.34, 0.12, 0.02),
+    focusCameraPosition: new THREE.Vector3(2.0, 1.15, 1.7),
+    labelAnchor: new THREE.Vector3(1.34, 0.58, 0.02),
+  });
 
-  const mouseAnchor = new THREE.Object3D();
-  mouseAnchor.position.set(1.3, 0.55, 0.08);
-  scene.add(mouseAnchor);
-
-  registerInteractiveObject(
-    "activities",
-    "Mouse: click for Activities",
-    mouse,
-    new THREE.Vector3(1.3, 0.15, 0.08),
-    new THREE.Vector3(1.85, 1.15, 1.95),
-    mouseAnchor
+  const mousePad = new THREE.Mesh(
+    new THREE.BoxGeometry(0.98, 0.02, 0.72),
+    new THREE.MeshStandardMaterial({ color: 0x13233f, roughness: 0.92 })
   );
+  mousePad.position.set(1.34, 0.01, 0.02);
+  scene.add(mousePad);
 
   const dumbbellBar = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.06, 0.06, 1.05, 16),
+    new THREE.CylinderGeometry(0.06, 0.06, 1.08, 18),
     new THREE.MeshStandardMaterial({
-      color: 0x25375c,
-      roughness: 0.38,
-      metalness: 0.68,
-      emissive: 0x0a1222,
-      emissiveIntensity: 0.2,
+      color: 0x22375f,
+      roughness: 0.46,
+      metalness: 0.56,
+      emissive: 0x13284a,
+      emissiveIntensity: 0.42,
     })
   );
   dumbbellBar.rotation.z = Math.PI / 2;
-  dumbbellBar.position.set(-1.72, 0.24, 0.22);
-  scene.add(dumbbellBar);
-
-  const dumbbellMaterial = new THREE.MeshStandardMaterial({
-    color: 0x1e2f55,
-    roughness: 0.42,
-    metalness: 0.45,
-    emissive: 0x0a1632,
-    emissiveIntensity: 0.2,
+  dumbbellBar.position.set(-1.72, 0.2, 0.26);
+  addInteractive({
+    id: "interests",
+    objectName: "dumbbell",
+    mesh: dumbbellBar,
+    focusTarget: new THREE.Vector3(-1.72, 0.2, 0.26),
+    focusCameraPosition: new THREE.Vector3(-2.2, 1.35, 2.2),
+    labelAnchor: new THREE.Vector3(-1.72, 0.82, 0.26),
   });
 
   [-0.43, 0.43].forEach((offset) => {
-    const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.18, 24), dumbbellMaterial);
+    const plate = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.2, 0.2, 0.18, 24),
+      new THREE.MeshStandardMaterial({ color: 0x1f3154, roughness: 0.46, metalness: 0.5 })
+    );
     plate.rotation.z = Math.PI / 2;
-    plate.position.set(-1.72 + offset, 0.24, 0.22);
+    plate.position.set(-1.72 + offset, 0.2, 0.26);
     scene.add(plate);
   });
 
-  const dumbbellTag = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.9, 0.28),
+  const dumbbellLabel = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.86, 0.25),
     new THREE.MeshStandardMaterial({
-      map: createTextTexture(THREE, "INTERESTS", {
-        subtitle: "Lifestyle and routines",
-        accent: "#64b5ff",
-        background: "#13233f",
-      }),
-      emissive: 0x1a3f62,
-      emissiveIntensity: 0.65,
+      map: createLabelTexture("Interests", "Lifestyle and routine", "#6fb4ff"),
+      emissive: 0x1b456d,
+      emissiveIntensity: 0.72,
       roughness: 0.2,
     })
   );
-  dumbbellTag.position.set(-1.72, 0.65, 0.2);
-  dumbbellTag.rotation.y = 0.2;
-  scene.add(dumbbellTag);
+  dumbbellLabel.position.set(-1.72, 0.64, 0.25);
+  dumbbellLabel.rotation.y = 0.22;
+  scene.add(dumbbellLabel);
 
-  const dumbbellAnchor = new THREE.Object3D();
-  dumbbellAnchor.position.set(-1.72, 0.92, 0.2);
-  scene.add(dumbbellAnchor);
-
-  registerInteractiveObject(
-    "interests",
-    "Dumbbell: click for Interests",
-    dumbbellBar,
-    new THREE.Vector3(-1.72, 0.25, 0.22),
-    new THREE.Vector3(-2.0, 1.25, 2.4),
-    dumbbellAnchor
+  const accentStrip = new THREE.Mesh(
+    new THREE.BoxGeometry(2.3, 0.03, 0.03),
+    new THREE.MeshStandardMaterial({ color: 0x56b7ff, emissive: 0x24639a, emissiveIntensity: 1.1 })
   );
+  accentStrip.position.set(-2.3, 0.07, -1.55);
+  scene.add(accentStrip);
 
-  const softAccentLine = new THREE.Mesh(
-    new THREE.BoxGeometry(2.4, 0.03, 0.03),
-    new THREE.MeshStandardMaterial({
-      color: 0x4ec7ff,
-      emissive: 0x1d5f92,
-      emissiveIntensity: 1.2,
-    })
-  );
-  softAccentLine.position.set(-2.3, 0.1, -1.64);
-  scene.add(softAccentLine);
+  state3d.interactiveRecords = records;
 }
 
-function updateHoverLabel() {
-  const hovered = state.three.hoveredRecord;
-  if (!hovered || !state.webglEnabled) {
+function updateHoverLabel(record) {
+  if (!record) {
     hoverLabel.hidden = true;
     return;
   }
 
-  const vector = hovered.anchor.getWorldPosition(state.three.tempWorld);
-  vector.project(state.three.camera);
-
-  if (vector.z > 1) {
-    hoverLabel.hidden = true;
-    return;
-  }
-
-  const x = (vector.x * 0.5 + 0.5) * sceneCanvas.clientWidth;
-  const y = (-vector.y * 0.5 + 0.5) * sceneCanvas.clientHeight;
+  state3d.tempVector.copy(record.labelAnchor).project(state3d.camera);
+  const x = (state3d.tempVector.x * 0.5 + 0.5) * canvas.clientWidth;
+  const y = (-state3d.tempVector.y * 0.5 + 0.5) * canvas.clientHeight;
 
   hoverLabel.hidden = false;
-  hoverLabel.textContent = hovered.label;
+  hoverLabel.textContent = `Click ${record.objectName} for ${sectionMap.get(record.id).label}`;
   hoverLabel.style.left = `${x}px`;
   hoverLabel.style.top = `${y}px`;
 }
 
-function updateObjectHighlighting(elapsedSeconds) {
-  state.three.recordBySection.forEach((record) => {
-    const isHovered = state.three.hoveredRecord === record;
-    const isActive = state.activeSection === record.section;
-    const pulse = 1 + Math.sin(elapsedSeconds * 2.2) * 0.04;
-    const targetIntensity = isHovered ? 1.35 : isActive ? 0.88 : 0.2;
+function setupBaseEvents() {
+  panelToggle.addEventListener("click", () => {
+    setPanelCollapsed(!panel.classList.contains("is-collapsed"));
+  });
 
-    record.materials.forEach((material) => {
-      material.emissiveIntensity += (targetIntensity - material.emissiveIntensity) * 0.12;
+  sectionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      stopTour();
+      openPanel(button.dataset.section);
     });
-
-    const baseScale = isHovered ? 1.04 : isActive ? 1.02 : 1;
-    record.mesh.scale.copy(record.baseScale).multiplyScalar(baseScale * pulse);
   });
-}
 
-function setHoveredRecord(record) {
-  if (record === state.three.hoveredRecord) return;
+  document.addEventListener("keydown", (event) => {
+    if (!["ArrowRight", "ArrowLeft"].includes(event.key)) return;
+    stopTour();
+    cycleSection(event.key === "ArrowRight" ? 1 : -1);
+  });
 
-  state.three.hoveredRecord = record;
-  if (record) {
-    sceneCanvas.style.cursor = "pointer";
-    setSceneStatus(`${record.label}`);
-  } else {
-    sceneCanvas.style.cursor = "grab";
-    setSceneStatus(state.tourRunning ? "Guided tour running." : state.sceneStatusDefault);
+  if (tourButton) {
+    tourButton.addEventListener("click", () => {
+      if (tourTimer) {
+        stopTour();
+        return;
+      }
+
+      const sequence = sectionOrder.slice();
+      let index = 0;
+      tourButton.textContent = "Stop guided tour";
+      openPanel(sequence[index]);
+
+      tourTimer = setInterval(() => {
+        index += 1;
+        if (index >= sequence.length) {
+          stopTour();
+          return;
+        }
+        openPanel(sequence[index]);
+      }, 2600);
+    });
   }
 }
 
-function pickInteractiveRecord(event) {
-  const rect = sceneCanvas.getBoundingClientRect();
-  state.three.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-  state.three.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-  state.three.raycaster.setFromCamera(state.three.pointer, state.three.camera);
+function boot3D() {
+  const hasWebGL = !!(
+    canvas.getContext("webgl2") ||
+    canvas.getContext("webgl") ||
+    canvas.getContext("experimental-webgl")
+  );
 
-  const hits = state.three.raycaster.intersectObjects(state.three.hitMeshes, false);
-  if (!hits.length) return null;
-  return state.three.meshToRecord.get(hits[0].object) ?? null;
-}
-
-function bindScenePointerEvents() {
-  sceneCanvas.addEventListener("pointermove", (event) => {
-    const record = pickInteractiveRecord(event);
-    setHoveredRecord(record);
-  });
-
-  sceneCanvas.addEventListener("pointerleave", () => {
-    setHoveredRecord(null);
-  });
-
-  sceneCanvas.addEventListener("click", (event) => {
-    const record = pickInteractiveRecord(event);
-    if (!record) return;
-    if (state.tourRunning) stopTour(false);
-    setActiveSection(record.section, { expandPanel: true, focusPanel: true });
-  });
-}
-
-function updateSceneSize() {
-  if (!state.webglEnabled) return;
-  const width = sceneCanvas.clientWidth;
-  const height = sceneCanvas.clientHeight;
-  if (!width || !height) return;
-
-  state.three.camera.aspect = width / height;
-  state.three.camera.updateProjectionMatrix();
-  state.three.renderer.setSize(width, height, false);
-}
-
-function runCinematicIntro(now) {
-  if (!state.three.intro?.active) return false;
-
-  const intro = state.three.intro;
-  const raw = Math.min((now - intro.start) / intro.duration, 1);
-  const eased = 1 - Math.pow(1 - raw, 3);
-
-  state.three.camera.position.lerpVectors(intro.startPos, intro.endPos, eased);
-  state.three.controls.target.lerpVectors(intro.startTarget, intro.endTarget, eased);
-  state.three.controls.update();
-
-  if (raw >= 1) {
-    intro.active = false;
-    state.three.controls.enabled = true;
-    setSceneStatus(state.sceneStatusDefault);
-  }
-
-  return true;
-}
-
-function animateScene(startTime) {
-  const { THREE } = state.three;
-  const clock = new THREE.Clock();
-
-  const tick = () => {
-    const elapsed = clock.getElapsedTime();
-    const now = startTime + elapsed * 1000;
-
-    const introRunning = runCinematicIntro(now);
-    if (!introRunning && state.three.focusAnimating) {
-      state.three.camera.position.lerp(state.three.focusCamera, 0.09);
-      state.three.controls.target.lerp(state.three.focusTarget, 0.11);
-      const distance =
-        state.three.camera.position.distanceTo(state.three.focusCamera) +
-        state.three.controls.target.distanceTo(state.three.focusTarget);
-      if (distance < 0.02) state.three.focusAnimating = false;
-    }
-
-    updateObjectHighlighting(elapsed);
-    state.three.controls.update();
-    updateHoverLabel();
-    state.three.renderer.render(state.three.scene, state.three.camera);
-    state.three.raf = window.requestAnimationFrame(tick);
-  };
-
-  state.three.raf = window.requestAnimationFrame(tick);
-}
-
-async function init3DScene() {
-  state.three.THREE = THREE;
-  state.three.OrbitControls = OrbitControls;
-
-  const detectedContext = detectWebGLContext(sceneCanvas);
-  if (!detectedContext.context) {
-    console.warn("WebGL probe did not return a context; attempting renderer creation anyway.");
-  }
-  const { OrbitControls } = state.three;
-
-  try {
-    state.three.scene = new THREE.Scene();
-    state.three.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-    const preferredRendererOptions = {
-      canvas: sceneCanvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance",
-    };
-
-    if (detectedContext.context) {
-      preferredRendererOptions.context = detectedContext.context;
-    }
-
-    try {
-      state.three.renderer = new THREE.WebGLRenderer(preferredRendererOptions);
-    } catch (primaryError) {
-      console.warn(
-        "Renderer init with preferred options failed; retrying with default canvas options.",
-        primaryError
-      );
-      state.three.renderer = new THREE.WebGLRenderer({
-        canvas: sceneCanvas,
-        antialias: true,
-        alpha: true,
-      });
-    }
-
-    state.three.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    state.three.renderer.outputColorSpace = THREE.SRGBColorSpace;
-  } catch (error) {
-    console.error("WebGL renderer failed to initialize:", error);
-    showSceneFallback(
-      "WebGL renderer failed. Browser graphics settings may be blocking 3D.",
-      "WebGL renderer failed to initialize. Quick-access mode is active."
-    );
+  if (!hasWebGL) {
+    updateStatus("WebGL unavailable: using quick-access mode.");
+    sceneOverlay.hidden = false;
+    openPanel("experience", { keepCollapsed: true, skip3DFocus: true });
     return;
   }
 
-  sceneOverlay.hidden = true;
-  state.webglEnabled = true;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(58, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+  camera.position.set(6.4, 3.8, 7.4);
 
-  const homeCamera = new THREE.Vector3(3.25, 2.2, 5.3);
-  const homeTarget = new THREE.Vector3(0.1, 0.66, -0.55);
-  const introCamera = new THREE.Vector3(6.3, 3.7, 7.1);
-  const introTarget = new THREE.Vector3(0.9, 1.3, -0.05);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-  state.three.camera.position.copy(homeCamera);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.enablePan = false;
+  controls.minDistance = 3.2;
+  controls.maxDistance = 11;
+  controls.maxPolarAngle = Math.PI / 2.08;
+  controls.minPolarAngle = 0.62;
+  controls.minAzimuthAngle = -1.35;
+  controls.maxAzimuthAngle = 1.35;
+  controls.target.set(0.1, 0.75, -0.4);
+  controls.update();
 
-  state.three.controls = new OrbitControls(state.three.camera, sceneCanvas);
-  state.three.controls.enableDamping = true;
-  state.three.controls.enablePan = false;
-  state.three.controls.minDistance = 3;
-  state.three.controls.maxDistance = 8;
-  state.three.controls.minPolarAngle = 0.72;
-  state.three.controls.maxPolarAngle = 1.42;
-  state.three.controls.minAzimuthAngle = -1.3;
-  state.three.controls.maxAzimuthAngle = 1.3;
-  state.three.controls.target.copy(homeTarget);
-  state.three.controls.update();
+  state3d.camera = camera;
+  state3d.controls = controls;
+  state3d.renderer = renderer;
+  state3d.raycaster = new THREE.Raycaster();
+  state3d.pointer = new THREE.Vector2();
+  state3d.desiredTarget = controls.target.clone();
+  state3d.desiredCameraPosition = camera.position.clone();
 
-  state.three.controls.addEventListener("start", () => {
-    state.three.focusAnimating = false;
-  });
+  buildScene(scene);
 
-  state.three.raycaster = new THREE.Raycaster();
-  state.three.pointer = new THREE.Vector2();
-  state.three.focusTarget = homeTarget.clone();
-  state.three.focusCamera = homeCamera.clone();
-  state.three.tempWorld = new THREE.Vector3();
+  const homeTarget = new THREE.Vector3(0.1, 0.75, -0.4);
+  const homeCamera = new THREE.Vector3(3.8, 2.35, 5.2);
+  state3d.desiredTarget.copy(homeTarget);
+  state3d.desiredCameraPosition.copy(homeCamera);
+  state3d.intro = {
+    active: true,
+    start: performance.now(),
+    duration: 2200,
+    fromPosition: new THREE.Vector3(6.4, 3.8, 7.4),
+    toPosition: homeCamera.clone(),
+    fromTarget: new THREE.Vector3(1.2, 1.5, 0.2),
+    toTarget: homeTarget.clone(),
+  };
+  controls.enabled = false;
 
-  buildDesktopScene(THREE);
-  updateSceneSize();
-  bindScenePointerEvents();
-  sceneCanvas.style.cursor = "grab";
-  window.addEventListener("resize", updateSceneSize);
-
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!reducedMotion) {
-    state.three.intro = {
-      active: true,
-      start: performance.now(),
-      duration: 2600,
-      startPos: introCamera,
-      endPos: homeCamera,
-      startTarget: introTarget,
-      endTarget: homeTarget,
-    };
-    state.three.controls.enabled = false;
-    state.three.camera.position.copy(introCamera);
-    state.three.controls.target.copy(introTarget);
-    setSceneStatus("Cinematic intro running...");
-  } else {
-    setSceneStatus(state.sceneStatusDefault);
+  function resize() {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
   }
 
-  animateScene(performance.now());
+  window.addEventListener("resize", resize);
+  resize();
+
+  function pickRecord() {
+    state3d.raycaster.setFromCamera(state3d.pointer, camera);
+    const hits = state3d.raycaster.intersectObjects(
+      state3d.interactiveRecords.map((record) => record.mesh),
+      false
+    );
+    if (!hits.length) return null;
+    return state3d.interactiveRecords.find((record) => record.mesh === hits[0].object) || null;
+  }
+
+  function onPointerMove(event) {
+    const rect = canvas.getBoundingClientRect();
+    state3d.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    state3d.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  }
+
+  function onClick() {
+    if (!hoveredRecord) return;
+    stopTour();
+    openPanel(hoveredRecord.id);
+  }
+
+  canvas.addEventListener("pointermove", onPointerMove);
+  canvas.addEventListener("click", onClick);
+  canvas.addEventListener("pointerleave", () => {
+    hoveredRecord = null;
+    updateHoverLabel(null);
+    document.body.style.cursor = "default";
+  });
+
+  updateStatus("Cinematic intro running...");
+  openPanel("experience", { keepCollapsed: true, skip3DFocus: true });
+
+  const clock = new THREE.Clock();
+  function animate() {
+    const elapsed = clock.getElapsedTime();
+    const now = performance.now();
+
+    if (state3d.intro?.active) {
+      const progress = Math.min((now - state3d.intro.start) / state3d.intro.duration, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      camera.position.lerpVectors(state3d.intro.fromPosition, state3d.intro.toPosition, eased);
+      controls.target.lerpVectors(state3d.intro.fromTarget, state3d.intro.toTarget, eased);
+      if (progress >= 1) {
+        state3d.intro.active = false;
+        controls.enabled = true;
+        updateStatus("Command desk online. Hover an object and click to explore.");
+      }
+    } else {
+      camera.position.lerp(state3d.desiredCameraPosition, 0.08);
+      controls.target.lerp(state3d.desiredTarget, 0.1);
+    }
+
+    hoveredRecord = pickRecord();
+    updateHoverLabel(hoveredRecord);
+
+    state3d.interactiveRecords.forEach((record, index) => {
+      const selected = record.id === activeSectionId;
+      const hovered = record === hoveredRecord;
+      record.mesh.position.y = record.baseY + Math.sin(elapsed * 1.25 + index * 0.7) * 0.01;
+      const targetScale = hovered ? 1.05 : selected ? 1.02 : 1;
+      record.mesh.scale.lerp(record.baseScale.clone().multiplyScalar(targetScale), 0.15);
+
+      record.mesh.traverse((child) => {
+        if (!child.isMesh) return;
+        const materialList = Array.isArray(child.material) ? child.material : [child.material];
+        materialList.forEach((material) => {
+          if (!("emissiveIntensity" in material)) return;
+          const targetIntensity = hovered ? 1.05 : selected ? 0.75 : 0.45;
+          material.emissiveIntensity += (targetIntensity - material.emissiveIntensity) * 0.14;
+        });
+      });
+    });
+
+    if (hoveredRecord) {
+      document.body.style.cursor = "pointer";
+      updateStatus(`Hovering ${hoveredRecord.objectName} - click to open ${sectionMap.get(hoveredRecord.id).label}.`);
+    } else if (!state3d.intro?.active) {
+      document.body.style.cursor = "default";
+      updateStatus(sectionMap.get(activeSectionId)?.status || "Command desk online.");
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+
+  animate();
 }
 
-function init() {
-  initLayoutEvents();
-  renderSection("experience", { preserveStatus: true });
-  setSceneStatus("Loading 3D desktop...");
-  init3DScene();
-}
-
-init();
+setupBaseEvents();
+setPanelCollapsed(true);
+boot3D();
