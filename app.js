@@ -323,13 +323,26 @@ function initLayoutEvents() {
   });
 }
 
-function webglSupported() {
-  try {
-    const test = document.createElement("canvas");
-    return Boolean(test.getContext("webgl2") || test.getContext("webgl"));
-  } catch (error) {
-    return false;
+function detectWebGLContext(canvas) {
+  const contextTypes = ["webgl2", "webgl", "experimental-webgl"];
+  const contextOptions = [
+    { antialias: true, alpha: true, powerPreference: "high-performance" },
+    { antialias: true, alpha: true },
+    {},
+  ];
+
+  for (const type of contextTypes) {
+    for (const options of contextOptions) {
+      try {
+        const context = canvas.getContext(type, options);
+        if (context) return { context, type };
+      } catch (_error) {
+        continue;
+      }
+    }
   }
+
+  return { context: null, type: null };
 }
 
 async function loadThreeModules() {
@@ -891,9 +904,10 @@ function animateScene(startTime) {
 }
 
 async function init3DScene() {
-  if (!webglSupported()) {
+  const detectedContext = detectWebGLContext(sceneCanvas);
+  if (!detectedContext.context) {
     sceneOverlay.hidden = false;
-    setSceneStatus("WebGL unavailable. Quick-access mode is active.");
+    setSceneStatus("WebGL unavailable in this browser. Quick-access mode is active.");
     return;
   }
 
@@ -911,15 +925,24 @@ async function init3DScene() {
 
   const { THREE, OrbitControls } = state.three;
 
-  state.three.scene = new THREE.Scene();
-  state.three.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-  state.three.renderer = new THREE.WebGLRenderer({
-    canvas: sceneCanvas,
-    antialias: true,
-    alpha: true,
-  });
-  state.three.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  state.three.renderer.outputColorSpace = THREE.SRGBColorSpace;
+  try {
+    state.three.scene = new THREE.Scene();
+    state.three.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    state.three.renderer = new THREE.WebGLRenderer({
+      canvas: sceneCanvas,
+      context: detectedContext.context,
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
+    state.three.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    state.three.renderer.outputColorSpace = THREE.SRGBColorSpace;
+  } catch (error) {
+    console.error("WebGL renderer failed to initialize:", error);
+    sceneOverlay.hidden = false;
+    setSceneStatus("WebGL renderer failed to initialize. Quick-access mode is active.");
+    return;
+  }
 
   const homeCamera = new THREE.Vector3(3.25, 2.2, 5.3);
   const homeTarget = new THREE.Vector3(0.1, 0.66, -0.55);
