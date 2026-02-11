@@ -6,7 +6,7 @@ const panelToggle = document.getElementById("panel-toggle");
 const panelTitle = document.getElementById("panel-title");
 const panelSubtitle = document.getElementById("panel-subtitle");
 const panelContent = document.getElementById("panel-content");
-const canvas = document.getElementById("scene");
+let canvas = document.getElementById("scene");
 const sectionButtons = Array.from(document.querySelectorAll("[data-section]"));
 const tourButton = document.getElementById("start-tour");
 const sceneStatus = document.getElementById("scene-status");
@@ -515,25 +515,74 @@ function setupBaseEvents() {
   }
 }
 
-function boot3D() {
-  const hasWebGL = !!(
-    canvas.getContext("webgl2") ||
-    canvas.getContext("webgl") ||
-    canvas.getContext("experimental-webgl")
-  );
+function replaceSceneCanvas() {
+  const newCanvas = document.createElement("canvas");
+  const sceneDescriptionId = canvas.getAttribute("aria-describedby");
 
-  if (!hasWebGL) {
-    updateStatus("WebGL unavailable: using quick-access mode.");
-    sceneOverlay.hidden = false;
-    openPanel("experience", { keepCollapsed: true, skip3DFocus: true });
-    return;
+  newCanvas.id = "scene";
+  newCanvas.setAttribute("aria-label", canvas.getAttribute("aria-label") || "Interactive 3D desktop portfolio");
+  if (sceneDescriptionId) {
+    newCanvas.setAttribute("aria-describedby", sceneDescriptionId);
+  }
+  canvas.replaceWith(newCanvas);
+  canvas = newCanvas;
+}
+
+function initRendererWithRetry() {
+  const attempts = [
+    () => new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }),
+    () =>
+      new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+      }),
+  ];
+
+  let lastError = null;
+  for (const makeRenderer of attempts) {
+    try {
+      return makeRenderer();
+    } catch (error) {
+      lastError = error;
+    }
   }
 
+  // Recovery path: if some script grabbed a 2D context on the original canvas,
+  // creating a fresh canvas can restore WebGL initialization.
+  replaceSceneCanvas();
+
+  for (const makeRenderer of attempts) {
+    try {
+      return makeRenderer();
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError;
+}
+
+function boot3D() {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(58, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
   camera.position.set(6.4, 3.8, 7.4);
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  let renderer = null;
+  try {
+    renderer = initRendererWithRetry();
+  } catch (error) {
+    const freshCanvasWebGL2 = Boolean(document.createElement("canvas").getContext("webgl2"));
+    console.error("WebGL renderer initialization failed:", error);
+    updateStatus("WebGL initialization failed. Quick-access mode active.");
+    sceneOverlay.hidden = false;
+    sceneOverlay.querySelector("p").textContent =
+      `WebGL renderer failed. Browser WebGL2 support: ${freshCanvasWebGL2 ? "yes" : "no"}.`;
+    openPanel("experience", { keepCollapsed: true, skip3DFocus: true });
+    return;
+  }
+
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
