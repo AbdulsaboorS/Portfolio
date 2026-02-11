@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Interactive product portfolio for Abdulsaboor Shaikh."
+    />
+    <title>Abdulsaboor Shaikh | Interactive Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#content-panel">Skip 3D scene and open content</a>
+
+    <header class="top-bar">
+      <div class="brand-block">
+        <p class="eyebrow">Interactive portfolio</p>
+        <h1>Abdulsaboor Shaikh</h1>
+        <p class="subtitle">Product Manager with a builder's mindset</p>
+      </div>
+
+      <nav class="social-nav" aria-label="External links">
+        <a href="https://www.linkedin.com/in/shaikhabdulsaboor/" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="https://github.com/AbdulsaboorS" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="mailto:shaikhabdulsaboor1@gmail.com">Email</a>
+        <a href="resume-highlights.html">Resume highlights</a>
+      </nav>
+    </header>
+
+    <main class="app-shell">
+      <section class="scene-panel" aria-labelledby="scene-heading">
+        <div class="scene-header-row">
+          <h2 id="scene-heading">Night Ops Command Room</h2>
+          <p id="scene-status" role="status" aria-live="polite">
+            Drag to look around. Click glowing objects to explore each section.
+          </p>
+        </div>
+
+        <p id="scene-description" class="sr-only">
+          A virtual command room with six interactive objects. Laptop opens experience metrics,
+          tablet opens projects, notebook opens education, shelf opens beyond work, phone opens contact,
+          and wall frame opens mindset.
+        </p>
+
+        <div class="quick-nav" role="toolbar" aria-label="Jump to section">
+          <button type="button" data-section="about">Mindset</button>
+          <button type="button" data-section="experience">Experience</button>
+          <button type="button" data-section="projects">Projects</button>
+          <button type="button" data-section="education">Education</button>
+          <button type="button" data-section="beyond">Beyond Work</button>
+          <button type="button" data-section="contact">Contact</button>
+        </div>
+
+        <div class="scene-wrapper">
+          <canvas
+            id="portfolio-scene"
+            aria-label="Interactive 3D portfolio scene"
+            aria-describedby="scene-description"
+          ></canvas>
+          <div id="scene-overlay" class="scene-overlay" hidden>
+            <p>3D preview unavailable. Quick-access mode is active.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside id="content-panel" class="content-panel" aria-live="polite" tabindex="-1">
+        <p class="panel-kicker">Explore my world</p>
+        <h2 id="panel-title">Mindset</h2>
+        <p id="panel-subtitle" class="panel-subtitle">
+          Hard working. Accomplished. Always improving.
+        </p>
+        <div id="panel-content"></div>
+      </aside>
+    </main>
+
+    <footer class="utility-strip">
+      <p class="motto">Want it bad. Build it right. Improve daily.</p>
+      <div class="utility-actions">
+        <button id="tour-toggle" type="button" aria-pressed="false">Start guided tour</button>
+        <p class="key-hint" aria-hidden="true">Tip: use ← and → keys</p>
+      </div>
+    </footer>
+
+    <noscript>
+      <div class="no-js-warning">
+        This portfolio needs JavaScript for interaction. You can still use LinkedIn, GitHub, email,
+        and resume links from the top navigation.
+      </div>
+    </noscript>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
