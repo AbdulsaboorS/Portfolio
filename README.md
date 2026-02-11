@@ -27,6 +27,12 @@ Direct URLs:
 - Current build: `http://localhost:4173/index.html`
 - Alternate build: `http://localhost:4173/alt/index.html`
 
+## WebGL diagnostics
+
+Use this route to isolate renderer setup issues without portfolio UI complexity:
+
+- Debug harness: `http://localhost:4173/debug-webgl.html`
+
 ## Controls
 
 - Drag to rotate camera
