@@ -1,3 +1,6 @@
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.162.0/+esm";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/controls/OrbitControls.js/+esm";
+
 const sectionOrder = ["experience", "projects", "activities", "skills", "interests"];
 
 const sectionContent = {
@@ -921,25 +924,14 @@ function animateScene(startTime) {
 }
 
 async function init3DScene() {
+  state.three.THREE = THREE;
+  state.three.OrbitControls = OrbitControls;
+
   const detectedContext = detectWebGLContext(sceneCanvas);
   if (!detectedContext.context) {
     console.warn("WebGL probe did not return a context; attempting renderer creation anyway.");
   }
-
-  try {
-    const loaded = await loadThreeModules();
-    state.three.THREE = loaded.THREE;
-    state.three.OrbitControls = loaded.OrbitControls;
-  } catch (error) {
-    console.error("Could not load 3D modules:", error);
-    showSceneFallback(
-      "3D libraries could not load. Check network and extension blockers.",
-      "3D module load failed. Quick-access mode is active."
-    );
-    return;
-  }
-
-  const { THREE, OrbitControls } = state.three;
+  const { OrbitControls } = state.three;
 
   try {
     state.three.scene = new THREE.Scene();
