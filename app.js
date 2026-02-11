@@ -1,339 +1,346 @@
-const sectionOrder = ["about", "experience", "projects", "education", "beyond", "contact"];
+const sectionOrder = ["experience", "projects", "activities", "skills", "interests"];
 
-const sectionMeta = {
-  about: {
-    title: "Mindset",
-    subtitle: "Hard working. Accomplished. Always improving.",
-    scenePrompt: "Wall frame selected: mindset and personal philosophy.",
-    render: () => `
-      <section class="panel-block">
-        <h3>Builder energy, PM execution</h3>
-        <p>
-          I am an MIS student at UH with a builder's mindset. I solve real problems, align people fast,
-          and ship outcomes with discipline.
-        </p>
-      </section>
-      <section class="panel-block">
-        <h3>What people should feel here</h3>
-        <p>
-          Authenticity and polish. This space is designed to show confident execution, not just claims.
-        </p>
-        <div class="chip-row">
-          <span class="chip">Discipline</span>
-          <span class="chip">Consistency</span>
-          <span class="chip">Curiosity</span>
-          <span class="chip">Leadership</span>
-          <span class="chip">Humor</span>
-        </div>
-      </section>
-    `,
-  },
+const sectionContent = {
   experience: {
-    title: "Experience Metrics",
-    subtitle: "High-impact internships and cross-functional wins.",
-    scenePrompt: "Main monitor selected: impact metrics across roles.",
-    render: () => `
+    title: "Experience",
+    subtitle: "Internships where I shipped measurable outcomes.",
+    status: "Monitor selected: experience highlights loaded.",
+    panel: `
       <section class="panel-block">
-        <h3>Expedia Group · Product Manager Intern</h3>
+        <h3>Expedia Group - Product Manager Intern</h3>
         <div class="metric-grid">
           <article class="metric-tile">
-            <span class="label">Fraud prevention impact</span>
-            <p class="value">$210K+ / year</p>
+            <p class="value">$210K+</p>
+            <p class="label">Annual fraud-loss prevention</p>
           </article>
           <article class="metric-tile">
-            <span class="label">User churn reduced</span>
             <p class="value">12%</p>
+            <p class="label">User churn reduction</p>
           </article>
           <article class="metric-tile">
-            <span class="label">Users affected</span>
             <p class="value">50K+</p>
+            <p class="label">Users impacted</p>
           </article>
           <article class="metric-tile">
-            <span class="label">Team alignment speed</span>
-            <p class="value">1 week faster</p>
+            <p class="value">4 teams</p>
+            <p class="label">Aligned one week faster</p>
           </article>
         </div>
       </section>
       <section class="panel-block">
-        <h3>HubSpot · Product Manager Intern</h3>
+        <h3>HubSpot + Others</h3>
         <div class="metric-grid">
           <article class="metric-tile">
-            <span class="label">Projected savings</span>
-            <p class="value">$770K+ / year</p>
+            <p class="value">$770K+</p>
+            <p class="label">Projected annual savings</p>
           </article>
           <article class="metric-tile">
-            <span class="label">Support tickets reduced</span>
             <p class="value">20%</p>
+            <p class="label">Ticket reduction</p>
           </article>
           <article class="metric-tile">
-            <span class="label">Platform users enabled</span>
-            <p class="value">6,000+ WAU</p>
+            <p class="value">6,000+</p>
+            <p class="label">Weekly active users enabled</p>
           </article>
           <article class="metric-tile">
-            <span class="label">Adoption growth</span>
-            <p class="value">+32%</p>
-          </article>
-        </div>
-      </section>
-      <section class="panel-block">
-        <h3>Oceaneering + Extern</h3>
-        <div class="metric-grid">
-          <article class="metric-tile">
-            <span class="label">Workflow time saved</span>
-            <p class="value">20+ hrs / month</p>
-          </article>
-          <article class="metric-tile">
-            <span class="label">Project cost reduction</span>
             <p class="value">$250K</p>
-          </article>
-          <article class="metric-tile">
-            <span class="label">Retention lift</span>
-            <p class="value">+6%</p>
-          </article>
-          <article class="metric-tile">
-            <span class="label">Roadmap quality gain</span>
-            <p class="value">+9%</p>
+            <p class="label">Cost reduction at Oceaneering</p>
           </article>
         </div>
       </section>
     `,
   },
   projects: {
-    title: "Projects Lab",
-    subtitle: "Shipped projects and active builds in progress.",
-    scenePrompt: "Secondary monitor selected: current and upcoming projects.",
-    render: () => `
+    title: "Side Projects",
+    subtitle: "Building in public with a product + AI mindset.",
+    status: "PC tower selected: side project lab opened.",
+    panel: `
       <article class="project-card">
-        <h3>AI-Powered Discord Chatbot for Feature Insights</h3>
-        <p>
-          Built and deployed a Discord bot that analyzed user feedback in real time
-          using Azure AI sentiment analysis and Python NLP.
-        </p>
-        <p class="status">Status: shipped</p>
-        <p class="meta">Result: 200+ MAU, 4.6/5 satisfaction score</p>
+        <h3>Discord Feedback Bot</h3>
+        <p>Built with Azure AI + Python NLP to analyze sentiment and trends in real time.</p>
+        <p><strong>Result:</strong> 200+ MAU and 4.6/5 user satisfaction.</p>
       </article>
       <article class="project-card">
         <h3>Fantasy Football Bot</h3>
-        <p>
-          In-progress build focused on helping users make better lineup and waiver decisions.
-          Goal is to blend analytics with practical weekly recommendations.
-        </p>
-        <p class="status">Status: building now</p>
-        <p class="meta">Theme: sports + product experimentation</p>
+        <p>In progress: recommendations for waiver and lineup decisions with explainable logic.</p>
       </article>
       <article class="project-card">
         <h3>Spoiler Shield</h3>
-        <p>
-          In-progress concept to reduce accidental spoilers for anime and sports communities
-          through smarter filtering and timing controls.
-        </p>
-        <p class="status">Status: concept + iteration</p>
-        <p class="meta">Theme: user pain-point first, then feature execution</p>
+        <p>In progress: spoiler filtering controls for sports/anime communities.</p>
       </article>
     `,
   },
-  education: {
-    title: "Education & Growth",
-    subtitle: "University, coursework, and continuous learning.",
-    scenePrompt: "Notebook selected: school foundation and learning path.",
-    render: () => `
+  activities: {
+    title: "Activities",
+    subtitle: "Execution outside formal professional roles.",
+    status: "Mouse selected: activities section opened.",
+    panel: `
       <section class="panel-block">
-        <h3>University of Houston · C.T. Bauer College of Business</h3>
-        <p>BBA in Management Information Systems · GPA 3.81 · May 2026</p>
+        <h3>Leadership and service</h3>
+        <p>
+          Vice President at United Mission Relief. Coordinated service events supporting
+          1,000+ unhoused individuals.
+        </p>
       </section>
       <section class="panel-block">
-        <h3>Relevant coursework</h3>
+        <h3>Operational impact</h3>
+        <p>
+          Built a digital volunteer check-in and hour-tracking flow that reduced manual coordination by 40%.
+        </p>
+      </section>
+    `,
+  },
+  skills: {
+    title: "Skills",
+    subtitle: "Technical, product, and execution skill stack.",
+    status: "Keyboard selected: skill stack loaded.",
+    panel: `
+      <section class="panel-block">
+        <h3>PM toolkit</h3>
         <div class="chip-row">
-          <span class="chip">Product Management</span>
-          <span class="chip">Systems Analysis & Design</span>
-          <span class="chip">Database Systems</span>
-          <span class="chip">Entrepreneurship</span>
-          <span class="chip">Statistics</span>
-          <span class="chip">Marketing</span>
+          <span class="chip">PRDs</span>
+          <span class="chip">Roadmapping</span>
+          <span class="chip">Prioritization</span>
+          <span class="chip">User research</span>
+          <span class="chip">Cross-functional leadership</span>
+          <span class="chip">Agile delivery</span>
         </div>
       </section>
       <section class="panel-block">
-        <h3>Certifications and learning</h3>
+        <h3>Technical stack</h3>
         <div class="chip-row">
-          <span class="chip">Azure AI Fundamentals</span>
-          <span class="chip">Product Discovery Certificate</span>
-          <span class="chip">Introduction to R</span>
+          <span class="chip">JavaScript</span>
+          <span class="chip">Python</span>
+          <span class="chip">Java</span>
+          <span class="chip">SQL</span>
+          <span class="chip">R</span>
+          <span class="chip">HTML/CSS</span>
+          <span class="chip">Azure AI</span>
+          <span class="chip">Power BI</span>
         </div>
       </section>
     `,
   },
-  beyond: {
-    title: "Beyond Work",
-    subtitle: "Personality, consistency, and values outside the job.",
-    scenePrompt: "Shelf selected: hobbies, discipline, and character.",
-    render: () => `
+  interests: {
+    title: "Interests",
+    subtitle: "The routines and passions that keep me sharp.",
+    status: "Dumbbell selected: interests and lifestyle opened.",
+    panel: `
       <section class="panel-block">
-        <h3>How I stay sharp</h3>
+        <h3>Core interests</h3>
         <div class="chip-row">
           <span class="chip">Gym consistency</span>
-          <span class="chip">Gaming</span>
-          <span class="chip">Anime</span>
           <span class="chip">Sports</span>
+          <span class="chip">Anime</span>
+          <span class="chip">Gaming</span>
           <span class="chip">Trading</span>
-          <span class="chip">Faith-driven routine</span>
+          <span class="chip">Faith-driven growth</span>
         </div>
       </section>
       <section class="panel-block">
-        <h3>Community impact</h3>
+        <h3>How this shows up in work</h3>
         <p>
-          As Vice President at United Mission Relief, I help coordinate service events reaching
-          1,000+ unhoused individuals and led a digital check-in platform that reduced manual work by 40%.
+          Discipline, consistency, and composure under pressure are the same traits I bring to product execution.
         </p>
-      </section>
-      <section class="panel-block">
-        <h3>Personal philosophy</h3>
-        <p>
-          Dependable over flashy. Show up daily, execute with discipline, and keep improving.
-        </p>
-      </section>
-    `,
-  },
-  contact: {
-    title: "Contact / Hire Me",
-    subtitle: "Open to PM internships and full-time product roles.",
-    scenePrompt: "Phone selected: ways to connect quickly.",
-    render: () => `
-      <section class="panel-block">
-        <h3>Let's connect</h3>
-        <ul class="contact-list">
-          <li><a href="mailto:shaikhabdulsaboor1@gmail.com">Email · shaikhabdulsaboor1@gmail.com</a></li>
-          <li><a href="https://www.linkedin.com/in/shaikhabdulsaboor/" target="_blank" rel="noreferrer">LinkedIn · /in/shaikhabdulsaboor</a></li>
-          <li><a href="https://github.com/AbdulsaboorS" target="_blank" rel="noreferrer">GitHub · @AbdulsaboorS</a></li>
-          <li><a href="resume-highlights.html">Resume highlights</a></li>
-        </ul>
-      </section>
-      <section class="panel-block">
-        <h3>What I am targeting</h3>
-        <div class="chip-row">
-          <span class="chip">Product Manager Internship</span>
-          <span class="chip">Full-time PM roles</span>
-          <span class="chip">AI + platform products</span>
-        </div>
       </section>
     `,
   },
 };
 
+const panelRoot = document.querySelector("#info-panel");
+const panelHandle = document.querySelector("#panel-handle");
+const panelClose = document.querySelector("#panel-close");
 const panelTitle = document.querySelector("#panel-title");
 const panelSubtitle = document.querySelector("#panel-subtitle");
 const panelContent = document.querySelector("#panel-content");
-const panelRoot = document.querySelector("#content-panel");
 const sceneStatus = document.querySelector("#scene-status");
-const quickButtons = Array.from(document.querySelectorAll(".quick-nav button"));
-const tourToggleButton = document.querySelector("#tour-toggle");
-const sceneOverlay = document.querySelector("#scene-overlay");
 const sceneCanvas = document.querySelector("#portfolio-scene");
+const sceneOverlay = document.querySelector("#scene-overlay");
+const hoverLabel = document.querySelector("#hover-label");
+const quickButtons = Array.from(document.querySelectorAll(".quick-nav button"));
+const tourToggle = document.querySelector("#tour-toggle");
 
 const state = {
-  activeSection: "about",
+  activeSection: null,
   tourTimer: null,
   tourRunning: false,
-  hotspots: [],
-  renderer: null,
-  camera: null,
-  scene: null,
-  controls: null,
-  rafId: null,
-  raycaster: null,
-  pointer: null,
-  hoveredHotspot: null,
+  webglEnabled: false,
+  sceneStatusDefault: "Drag to rotate, hover an object to preview, click to open details.",
+  three: {
+    THREE: null,
+    OrbitControls: null,
+    scene: null,
+    camera: null,
+    renderer: null,
+    controls: null,
+    raycaster: null,
+    pointer: null,
+    hitMeshes: [],
+    meshToRecord: new Map(),
+    recordBySection: new Map(),
+    hoveredRecord: null,
+    focusTarget: null,
+    focusCamera: null,
+    focusAnimating: false,
+    intro: null,
+    raf: null,
+    tempWorld: null,
+  },
 };
 
 function setSceneStatus(message) {
   sceneStatus.textContent = message;
 }
 
-function setActiveSection(sectionId, options = {}) {
-  const section = sectionMeta[sectionId];
+function isPanelCollapsed() {
+  return panelRoot.classList.contains("is-collapsed");
+}
+
+function setPanelCollapsed(collapsed) {
+  panelRoot.classList.toggle("is-collapsed", collapsed);
+  panelHandle.setAttribute("aria-expanded", String(!collapsed));
+  panelHandle.textContent = collapsed ? "Open details" : "Hide details";
+}
+
+function openPanel() {
+  if (isPanelCollapsed()) setPanelCollapsed(false);
+}
+
+function renderSection(sectionId, options = {}) {
+  const section = sectionContent[sectionId];
   if (!section) return;
 
   state.activeSection = sectionId;
   panelTitle.textContent = section.title;
   panelSubtitle.textContent = section.subtitle;
-  panelContent.innerHTML = section.render();
-  setSceneStatus(section.scenePrompt);
+  panelContent.innerHTML = section.panel;
+
+  if (!options.preserveStatus) {
+    setSceneStatus(section.status);
+  }
 
   quickButtons.forEach((button) => {
     const isActive = button.dataset.section === sectionId;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-current", isActive ? "true" : "false");
   });
+}
 
-  syncHotspotVisualState();
+function focusSceneOnSection(sectionId, instant = false) {
+  if (!state.webglEnabled) return;
+  const record = state.three.recordBySection.get(sectionId);
+  if (!record) return;
 
-  if (options.focusPanel) {
-    panelRoot.focus();
+  state.three.focusTarget.copy(record.focusTarget);
+  state.three.focusCamera.copy(record.focusCamera);
+  state.three.focusAnimating = !instant;
+
+  if (instant) {
+    state.three.camera.position.copy(record.focusCamera);
+    state.three.controls.target.copy(record.focusTarget);
+    state.three.controls.update();
   }
 }
 
-function cycleSection(step) {
-  const currentIndex = sectionOrder.indexOf(state.activeSection);
-  const nextIndex = (currentIndex + step + sectionOrder.length) % sectionOrder.length;
-  setActiveSection(sectionOrder[nextIndex], { focusPanel: true });
+function setActiveSection(sectionId, options = {}) {
+  renderSection(sectionId, options);
+
+  if (options.expandPanel !== false) openPanel();
+  if (options.focusPanel) panelRoot.focus();
+  if (!options.skipFocus) focusSceneOnSection(sectionId, Boolean(options.instantFocus));
 }
 
-function stopGuidedTour() {
+function cycleSection(direction) {
+  const currentIndex = Math.max(sectionOrder.indexOf(state.activeSection), 0);
+  const nextIndex = (currentIndex + direction + sectionOrder.length) % sectionOrder.length;
+  setActiveSection(sectionOrder[nextIndex], { expandPanel: true, focusPanel: true });
+}
+
+function stopTour(resetStatus = true) {
   if (state.tourTimer) {
     window.clearInterval(state.tourTimer);
     state.tourTimer = null;
   }
 
   state.tourRunning = false;
-  tourToggleButton.setAttribute("aria-pressed", "false");
-  tourToggleButton.textContent = "Start guided tour";
-  setSceneStatus(sectionMeta[state.activeSection].scenePrompt);
+  tourToggle.setAttribute("aria-pressed", "false");
+  tourToggle.textContent = "Start guided tour";
+
+  if (resetStatus) {
+    setSceneStatus(state.sceneStatusDefault);
+  }
 }
 
-function startGuidedTour() {
+function startTour() {
   if (state.tourRunning) {
-    stopGuidedTour();
+    stopTour();
     return;
   }
 
   state.tourRunning = true;
-  tourToggleButton.setAttribute("aria-pressed", "true");
-  tourToggleButton.textContent = "Stop guided tour";
-  setSceneStatus("Guided tour running. Sit back or click any section to jump.");
+  tourToggle.setAttribute("aria-pressed", "true");
+  tourToggle.textContent = "Stop guided tour";
+  setSceneStatus("Guided tour running: stepping through each desktop object.");
 
-  let cursor = sectionOrder.indexOf(state.activeSection);
+  let pointer = Math.max(sectionOrder.indexOf(state.activeSection), 0);
+  setActiveSection(sectionOrder[pointer], { expandPanel: true, focusPanel: false });
   state.tourTimer = window.setInterval(() => {
-    cursor = (cursor + 1) % sectionOrder.length;
-    setActiveSection(sectionOrder[cursor], { focusPanel: false });
-  }, 4200);
+    pointer = (pointer + 1) % sectionOrder.length;
+    setActiveSection(sectionOrder[pointer], { expandPanel: true, focusPanel: false });
+  }, 3300);
 }
 
-function enableFallbackMode(message) {
-  setSceneStatus(message);
-  sceneOverlay.hidden = false;
-  sceneCanvas.setAttribute("aria-hidden", "true");
+function onQuickButtonClick(event) {
+  const sectionId = event.currentTarget.dataset.section;
+  if (!sectionId) return;
+  if (state.tourRunning) stopTour(false);
+  setActiveSection(sectionId, { expandPanel: true, focusPanel: true });
 }
 
-function isWebGLSupported() {
+function initLayoutEvents() {
+  setPanelCollapsed(true);
+
+  panelHandle.addEventListener("click", () => {
+    setPanelCollapsed(!isPanelCollapsed());
+  });
+
+  panelClose.addEventListener("click", () => setPanelCollapsed(true));
+  tourToggle.addEventListener("click", startTour);
+
+  quickButtons.forEach((button) => button.addEventListener("click", onQuickButtonClick));
+
+  document.addEventListener("keydown", (event) => {
+    if (!["ArrowRight", "ArrowLeft", "Escape"].includes(event.key)) return;
+
+    if (event.key === "Escape") {
+      setPanelCollapsed(true);
+      if (state.tourRunning) stopTour();
+      return;
+    }
+
+    if (state.tourRunning) stopTour(false);
+    cycleSection(event.key === "ArrowRight" ? 1 : -1);
+  });
+}
+
+function webglSupported() {
   try {
-    const testCanvas = document.createElement("canvas");
-    return Boolean(
-      window.WebGLRenderingContext &&
-        (testCanvas.getContext("webgl") || testCanvas.getContext("experimental-webgl"))
-    );
+    const test = document.createElement("canvas");
+    return Boolean(test.getContext("webgl2") || test.getContext("webgl"));
   } catch (error) {
     return false;
   }
 }
 
-async function importThreeModules() {
+async function loadThreeModules() {
   const sources = [
     {
-      core: "https://esm.sh/three@0.160.0",
-      controls: "https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js",
+      core: "https://esm.sh/three@0.162.0",
+      controls: "https://esm.sh/three@0.162.0/examples/jsm/controls/OrbitControls.js",
     },
     {
-      core: "https://unpkg.com/three@0.160.0/build/three.module.js?module",
-      controls: "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js?module",
+      core: "https://unpkg.com/three@0.162.0/build/three.module.js?module",
+      controls: "https://unpkg.com/three@0.162.0/examples/jsm/controls/OrbitControls.js?module",
     },
   ];
 
@@ -347,400 +354,635 @@ async function importThreeModules() {
       lastError = error;
     }
   }
-
   throw lastError;
 }
 
-function createRoomScene(THREE) {
-  const { scene } = state;
+function createTextTexture(THREE, text, options = {}) {
+  const width = options.width ?? 1024;
+  const height = options.height ?? 512;
+  const background = options.background ?? "#101733";
+  const foreground = options.foreground ?? "#eff4ff";
+  const accent = options.accent ?? "#55d7bd";
+  const subtitle = options.subtitle ?? "";
 
-  scene.background = new THREE.Color(0x070a12);
-  scene.fog = new THREE.Fog(0x070a12, 6, 17);
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
 
-  const ambient = new THREE.AmbientLight(0x97a8ff, 0.42);
+  context.fillStyle = background;
+  context.fillRect(0, 0, width, height);
+  context.strokeStyle = "#253155";
+  context.lineWidth = 18;
+  context.strokeRect(9, 9, width - 18, height - 18);
+
+  context.textAlign = "center";
+  context.fillStyle = accent;
+  context.font = "700 46px Inter, sans-serif";
+  context.fillText("CLICK HERE", width / 2, height * 0.33);
+
+  context.fillStyle = foreground;
+  context.font = "800 70px Inter, sans-serif";
+  context.fillText(text, width / 2, height * 0.62);
+
+  if (subtitle) {
+    context.fillStyle = "#9fb2df";
+    context.font = "500 32px Inter, sans-serif";
+    context.fillText(subtitle, width / 2, height * 0.82);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function collectEmissiveMaterials(object) {
+  const materials = [];
+  object.traverse((child) => {
+    if (!child.isMesh) return;
+    const childMaterials = Array.isArray(child.material) ? child.material : [child.material];
+    childMaterials.forEach((material) => {
+      if (material && "emissiveIntensity" in material) materials.push(material);
+    });
+  });
+  return materials;
+}
+
+function registerInteractiveObject(section, label, hitMesh, focusTarget, focusOffset, anchorObject) {
+  const record = {
+    section,
+    label,
+    mesh: hitMesh,
+    anchor: anchorObject,
+    focusTarget,
+    focusCamera: focusTarget.clone().add(focusOffset),
+    materials: collectEmissiveMaterials(hitMesh),
+    baseScale: hitMesh.scale.clone(),
+  };
+
+  state.three.hitMeshes.push(hitMesh);
+  state.three.meshToRecord.set(hitMesh, record);
+  state.three.recordBySection.set(section, record);
+}
+
+function buildDesktopScene(THREE) {
+  const scene = state.three.scene;
+  scene.fog = new THREE.Fog(0x070b14, 6, 18);
+
+  const ambient = new THREE.AmbientLight(0x9ab2ff, 0.42);
   scene.add(ambient);
 
-  const keyLight = new THREE.DirectionalLight(0x8fb6ff, 0.95);
-  keyLight.position.set(4, 5.5, 3);
-  scene.add(keyLight);
+  const key = new THREE.DirectionalLight(0xffffff, 0.98);
+  key.position.set(4.2, 5.8, 3.6);
+  scene.add(key);
 
-  const rimLight = new THREE.PointLight(0x57d0ff, 0.65, 12, 2);
-  rimLight.position.set(-2.7, 2.7, -2.4);
-  scene.add(rimLight);
+  const rim = new THREE.PointLight(0x4ea8ff, 1.05, 13, 2.2);
+  rim.position.set(-2.9, 2.7, -1.9);
+  scene.add(rim);
+
+  const fill = new THREE.PointLight(0x49d4bc, 0.74, 9, 2.2);
+  fill.position.set(2.1, 1.9, 1.9);
+  scene.add(fill);
 
   const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(12, 12),
-    new THREE.MeshStandardMaterial({ color: 0x11172a, roughness: 0.88, metalness: 0.1 })
+    new THREE.PlaneGeometry(14, 14),
+    new THREE.MeshStandardMaterial({ color: 0x0d1324, roughness: 0.95, metalness: 0.02 })
   );
   floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -0.88;
+  floor.position.y = -0.9;
   scene.add(floor);
 
-  const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x171f36, roughness: 0.9 });
-  const backWall = new THREE.Mesh(new THREE.BoxGeometry(12, 4.2, 0.2), wallMaterial);
-  backWall.position.set(0, 1.2, -4.3);
+  const backWall = new THREE.Mesh(
+    new THREE.BoxGeometry(13, 4.8, 0.22),
+    new THREE.MeshStandardMaterial({ color: 0x1a2544, roughness: 0.84 })
+  );
+  backWall.position.set(0, 1.35, -4.35);
   scene.add(backWall);
 
-  const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, 4.2, 8.8), wallMaterial);
-  sideWall.position.set(-5.3, 1.2, -0.1);
+  const sideWall = new THREE.Mesh(
+    new THREE.BoxGeometry(0.22, 4.8, 9),
+    new THREE.MeshStandardMaterial({ color: 0x151d36, roughness: 0.88 })
+  );
+  sideWall.position.set(-5.05, 1.35, -0.1);
   scene.add(sideWall);
 
-  const desk = new THREE.Mesh(
-    new THREE.BoxGeometry(4.25, 0.34, 1.95),
-    new THREE.MeshStandardMaterial({ color: 0x222e46, roughness: 0.62, metalness: 0.2 })
-  );
-  desk.position.set(0, -0.16, -0.72);
-  scene.add(desk);
+  const deskMaterial = new THREE.MeshStandardMaterial({
+    color: 0x28385d,
+    roughness: 0.7,
+    metalness: 0.16,
+  });
 
-  const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0x1a2236, roughness: 0.65 });
-  [-1.95, 1.95].forEach((x) => {
-    [-1.45, -0.08].forEach((z) => {
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.72, 0.15), deskLegMaterial);
-      leg.position.set(x, -0.61, z);
+  const deskTop = new THREE.Mesh(new THREE.BoxGeometry(5.15, 0.25, 2.5), deskMaterial);
+  deskTop.position.set(0, -0.07, -0.45);
+  scene.add(deskTop);
+
+  const legMaterial = new THREE.MeshStandardMaterial({ color: 0x1d2846, roughness: 0.74 });
+  [-2.35, 2.35].forEach((x) => {
+    [-1.55, 0.55].forEach((z) => {
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.95, 0.17), legMaterial);
+      leg.position.set(x, -0.57, z);
       scene.add(leg);
     });
   });
 
-  const keyboard = new THREE.Mesh(
-    new THREE.BoxGeometry(1.2, 0.03, 0.34),
-    new THREE.MeshStandardMaterial({ color: 0x101726, roughness: 0.75 })
+  const monitorBody = new THREE.Mesh(
+    new THREE.BoxGeometry(1.95, 1.15, 0.08),
+    new THREE.MeshStandardMaterial({
+      color: 0x1f2e50,
+      roughness: 0.45,
+      metalness: 0.25,
+      emissive: 0x0b1222,
+      emissiveIntensity: 0.2,
+    })
   );
-  keyboard.position.set(0.1, 0.03, -0.12);
+  monitorBody.position.set(-0.1, 0.94, -1.18);
+  scene.add(monitorBody);
+
+  const monitorScreen = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.72, 0.93),
+    new THREE.MeshStandardMaterial({
+      map: createTextTexture(THREE, "EXPERIENCE", {
+        subtitle: "PM internships and impact",
+        accent: "#62b1ff",
+      }),
+      emissive: 0x1a3c6f,
+      emissiveIntensity: 0.9,
+      roughness: 0.25,
+    })
+  );
+  monitorScreen.position.set(-0.1, 0.94, -1.13);
+  scene.add(monitorScreen);
+
+  const monitorStand = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.05, 0.06, 0.45, 20),
+    new THREE.MeshStandardMaterial({ color: 0x243659, roughness: 0.55 })
+  );
+  monitorStand.position.set(-0.1, 0.48, -1.2);
+  scene.add(monitorStand);
+
+  const monitorBase = new THREE.Mesh(
+    new THREE.BoxGeometry(0.55, 0.04, 0.34),
+    new THREE.MeshStandardMaterial({ color: 0x1c2946, roughness: 0.6 })
+  );
+  monitorBase.position.set(-0.1, 0.24, -1.2);
+  scene.add(monitorBase);
+
+  const monitorAnchor = new THREE.Object3D();
+  monitorAnchor.position.set(-0.1, 1.62, -1.2);
+  scene.add(monitorAnchor);
+
+  registerInteractiveObject(
+    "experience",
+    "Monitor: click for Experience",
+    monitorBody,
+    new THREE.Vector3(-0.1, 0.9, -1.2),
+    new THREE.Vector3(2.25, 1.35, 2.8),
+    monitorAnchor
+  );
+
+  const tower = new THREE.Mesh(
+    new THREE.BoxGeometry(0.85, 1.65, 1.05),
+    new THREE.MeshStandardMaterial({
+      color: 0x1b2f55,
+      roughness: 0.56,
+      metalness: 0.22,
+      emissive: 0x09111f,
+      emissiveIntensity: 0.2,
+    })
+  );
+  tower.position.set(2.02, 0.58, -1.05);
+  scene.add(tower);
+
+  const towerPanel = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.62, 1.2),
+    new THREE.MeshStandardMaterial({
+      map: createTextTexture(THREE, "PROJECTS", {
+        subtitle: "Side builds and experiments",
+        accent: "#55e1bf",
+        background: "#10213a",
+      }),
+      emissive: 0x1a4c56,
+      emissiveIntensity: 0.64,
+      roughness: 0.2,
+    })
+  );
+  towerPanel.position.set(1.59, 0.58, -1.05);
+  towerPanel.rotation.y = Math.PI / 2;
+  scene.add(towerPanel);
+
+  const towerAnchor = new THREE.Object3D();
+  towerAnchor.position.set(2.02, 1.58, -1.05);
+  scene.add(towerAnchor);
+
+  registerInteractiveObject(
+    "projects",
+    "PC Tower: click for Side Projects",
+    tower,
+    new THREE.Vector3(2.0, 0.6, -1.05),
+    new THREE.Vector3(2.35, 1.45, 2.2),
+    towerAnchor
+  );
+
+  const keyboard = new THREE.Mesh(
+    new THREE.BoxGeometry(2.0, 0.09, 0.66),
+    new THREE.MeshStandardMaterial({
+      color: 0x1b2a49,
+      roughness: 0.48,
+      metalness: 0.18,
+      emissive: 0x0b1631,
+      emissiveIntensity: 0.2,
+    })
+  );
+  keyboard.position.set(0.18, 0.08, -0.3);
   scene.add(keyboard);
 
-  const animeLightStrip = new THREE.Mesh(
-    new THREE.BoxGeometry(1.25, 0.03, 0.03),
+  const keyboardLabel = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.52, 0.3),
     new THREE.MeshStandardMaterial({
-      color: 0x66c0ff,
-      emissive: 0x154f88,
-      emissiveIntensity: 1.25,
+      map: createTextTexture(THREE, "SKILLS", {
+        subtitle: "Tools and PM capabilities",
+        accent: "#8cb5ff",
+        background: "#111f3b",
+      }),
+      emissive: 0x1b325c,
+      emissiveIntensity: 0.7,
+      roughness: 0.25,
     })
   );
-  animeLightStrip.position.set(-1.56, 0.09, -1.66);
-  scene.add(animeLightStrip);
-}
+  keyboardLabel.position.set(0.18, 0.145, -0.29);
+  keyboardLabel.rotation.x = -Math.PI / 2;
+  scene.add(keyboardLabel);
 
-function addHotspot({ THREE, section, label, position, color }) {
-  const marker = new THREE.Mesh(
-    new THREE.SphereGeometry(0.08, 24, 24),
+  const keyboardAnchor = new THREE.Object3D();
+  keyboardAnchor.position.set(0.18, 0.42, -0.3);
+  scene.add(keyboardAnchor);
+
+  registerInteractiveObject(
+    "skills",
+    "Keyboard: click for Skills",
+    keyboard,
+    new THREE.Vector3(0.2, 0.11, -0.3),
+    new THREE.Vector3(2.1, 1.18, 2.05),
+    keyboardAnchor
+  );
+
+  const mouseBase = new THREE.Mesh(
+    new THREE.BoxGeometry(0.92, 0.02, 0.66),
+    new THREE.MeshStandardMaterial({ color: 0x16223d, roughness: 0.92 })
+  );
+  mouseBase.position.set(1.3, 0.02, 0.07);
+  scene.add(mouseBase);
+
+  const mousePadLabel = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.78, 0.22),
     new THREE.MeshStandardMaterial({
-      color,
-      emissive: color,
-      emissiveIntensity: 1.2,
+      map: createTextTexture(THREE, "ACTIVITIES", {
+        subtitle: "Leadership and service",
+        accent: "#58dcc2",
+        background: "#0f2233",
+      }),
+      emissive: 0x1b4d5a,
+      emissiveIntensity: 0.6,
+      roughness: 0.25,
+    })
+  );
+  mousePadLabel.position.set(1.3, 0.032, 0.07);
+  mousePadLabel.rotation.x = -Math.PI / 2;
+  scene.add(mousePadLabel);
+
+  const mouse = new THREE.Mesh(
+    new THREE.SphereGeometry(0.23, 28, 28),
+    new THREE.MeshStandardMaterial({
+      color: 0x233659,
+      roughness: 0.38,
+      metalness: 0.18,
+      emissive: 0x091526,
+      emissiveIntensity: 0.2,
+    })
+  );
+  mouse.scale.set(1, 0.57, 1.32);
+  mouse.position.set(1.29, 0.12, 0.08);
+  scene.add(mouse);
+
+  const mouseAnchor = new THREE.Object3D();
+  mouseAnchor.position.set(1.3, 0.55, 0.08);
+  scene.add(mouseAnchor);
+
+  registerInteractiveObject(
+    "activities",
+    "Mouse: click for Activities",
+    mouse,
+    new THREE.Vector3(1.3, 0.15, 0.08),
+    new THREE.Vector3(1.85, 1.15, 1.95),
+    mouseAnchor
+  );
+
+  const dumbbellBar = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06, 0.06, 1.05, 16),
+    new THREE.MeshStandardMaterial({
+      color: 0x25375c,
+      roughness: 0.38,
+      metalness: 0.68,
+      emissive: 0x0a1222,
+      emissiveIntensity: 0.2,
+    })
+  );
+  dumbbellBar.rotation.z = Math.PI / 2;
+  dumbbellBar.position.set(-1.72, 0.24, 0.22);
+  scene.add(dumbbellBar);
+
+  const dumbbellMaterial = new THREE.MeshStandardMaterial({
+    color: 0x1e2f55,
+    roughness: 0.42,
+    metalness: 0.45,
+    emissive: 0x0a1632,
+    emissiveIntensity: 0.2,
+  });
+
+  [-0.43, 0.43].forEach((offset) => {
+    const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.18, 24), dumbbellMaterial);
+    plate.rotation.z = Math.PI / 2;
+    plate.position.set(-1.72 + offset, 0.24, 0.22);
+    scene.add(plate);
+  });
+
+  const dumbbellTag = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.9, 0.28),
+    new THREE.MeshStandardMaterial({
+      map: createTextTexture(THREE, "INTERESTS", {
+        subtitle: "Lifestyle and routines",
+        accent: "#64b5ff",
+        background: "#13233f",
+      }),
+      emissive: 0x1a3f62,
+      emissiveIntensity: 0.65,
       roughness: 0.2,
-      metalness: 0.1,
     })
   );
-  marker.position.copy(position);
-  marker.userData = { section, label, baseScale: 1 };
-  state.scene.add(marker);
+  dumbbellTag.position.set(-1.72, 0.65, 0.2);
+  dumbbellTag.rotation.y = 0.2;
+  scene.add(dumbbellTag);
 
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(0.13, 0.012, 10, 36),
-    new THREE.MeshBasicMaterial({
-      color,
-      transparent: true,
-      opacity: 0.65,
+  const dumbbellAnchor = new THREE.Object3D();
+  dumbbellAnchor.position.set(-1.72, 0.92, 0.2);
+  scene.add(dumbbellAnchor);
+
+  registerInteractiveObject(
+    "interests",
+    "Dumbbell: click for Interests",
+    dumbbellBar,
+    new THREE.Vector3(-1.72, 0.25, 0.22),
+    new THREE.Vector3(-2.0, 1.25, 2.4),
+    dumbbellAnchor
+  );
+
+  const softAccentLine = new THREE.Mesh(
+    new THREE.BoxGeometry(2.4, 0.03, 0.03),
+    new THREE.MeshStandardMaterial({
+      color: 0x4ec7ff,
+      emissive: 0x1d5f92,
+      emissiveIntensity: 1.2,
     })
   );
-  ring.rotation.x = Math.PI / 2;
-  ring.position.copy(position);
-  ring.position.y -= 0.03;
-  state.scene.add(ring);
-
-  state.hotspots.push({ section, label, marker, ring, color });
+  softAccentLine.position.set(-2.3, 0.1, -1.64);
+  scene.add(softAccentLine);
 }
 
-function createSceneProps(THREE) {
-  const monitor = new THREE.Mesh(
-    new THREE.BoxGeometry(1.45, 0.84, 0.06),
-    new THREE.MeshStandardMaterial({ color: 0x22314f, roughness: 0.45, metalness: 0.15 })
-  );
-  monitor.position.set(0, 0.63, -1.32);
-  state.scene.add(monitor);
+function updateHoverLabel() {
+  const hovered = state.three.hoveredRecord;
+  if (!hovered || !state.webglEnabled) {
+    hoverLabel.hidden = true;
+    return;
+  }
 
-  const monitorGlow = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.26, 0.69),
-    new THREE.MeshStandardMaterial({
-      color: 0x183b66,
-      emissive: 0x255a9a,
-      emissiveIntensity: 0.98,
-      roughness: 0.4,
-    })
-  );
-  monitorGlow.position.set(0, 0.63, -1.28);
-  state.scene.add(monitorGlow);
+  const vector = hovered.anchor.getWorldPosition(state.three.tempWorld);
+  vector.project(state.three.camera);
 
-  const tablet = new THREE.Mesh(
-    new THREE.BoxGeometry(0.82, 0.52, 0.04),
-    new THREE.MeshStandardMaterial({ color: 0x1b2840, roughness: 0.42, metalness: 0.2 })
-  );
-  tablet.rotation.x = -0.55;
-  tablet.position.set(1.25, 0.2, -0.95);
-  state.scene.add(tablet);
+  if (vector.z > 1) {
+    hoverLabel.hidden = true;
+    return;
+  }
 
-  const notebook = new THREE.Mesh(
-    new THREE.BoxGeometry(0.74, 0.06, 0.56),
-    new THREE.MeshStandardMaterial({ color: 0x2d3a59, roughness: 0.9 })
-  );
-  notebook.position.set(-1.2, 0.05, -0.55);
-  notebook.rotation.y = 0.22;
-  state.scene.add(notebook);
+  const x = (vector.x * 0.5 + 0.5) * sceneCanvas.clientWidth;
+  const y = (-vector.y * 0.5 + 0.5) * sceneCanvas.clientHeight;
 
-  const shelf = new THREE.Mesh(
-    new THREE.BoxGeometry(1.2, 0.14, 0.48),
-    new THREE.MeshStandardMaterial({ color: 0x1f2a45, roughness: 0.76 })
-  );
-  shelf.position.set(2.75, 0.88, -2.28);
-  state.scene.add(shelf);
+  hoverLabel.hidden = false;
+  hoverLabel.textContent = hovered.label;
+  hoverLabel.style.left = `${x}px`;
+  hoverLabel.style.top = `${y}px`;
+}
 
-  const dumbbell = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.055, 0.055, 0.42, 16),
-    new THREE.MeshStandardMaterial({ color: 0x1e2640, roughness: 0.45 })
-  );
-  dumbbell.rotation.z = Math.PI / 2;
-  dumbbell.position.set(2.62, 1.03, -2.22);
-  state.scene.add(dumbbell);
+function updateObjectHighlighting(elapsedSeconds) {
+  state.three.recordBySection.forEach((record) => {
+    const isHovered = state.three.hoveredRecord === record;
+    const isActive = state.activeSection === record.section;
+    const pulse = 1 + Math.sin(elapsedSeconds * 2.2) * 0.04;
+    const targetIntensity = isHovered ? 1.35 : isActive ? 0.88 : 0.2;
 
-  const phone = new THREE.Mesh(
-    new THREE.BoxGeometry(0.22, 0.42, 0.03),
-    new THREE.MeshStandardMaterial({
-      color: 0x10192b,
-      emissive: 0x13445f,
-      emissiveIntensity: 0.9,
-    })
-  );
-  phone.position.set(1.55, 0.09, -0.38);
-  phone.rotation.x = -0.42;
-  phone.rotation.z = -0.28;
-  state.scene.add(phone);
+    record.materials.forEach((material) => {
+      material.emissiveIntensity += (targetIntensity - material.emissiveIntensity) * 0.12;
+    });
 
-  const frame = new THREE.Mesh(
-    new THREE.BoxGeometry(1.56, 0.78, 0.06),
-    new THREE.MeshStandardMaterial({ color: 0x2a3758, roughness: 0.6, metalness: 0.1 })
-  );
-  frame.position.set(-2.25, 1.58, -4.16);
-  state.scene.add(frame);
-
-  const frameFill = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.33, 0.58),
-    new THREE.MeshStandardMaterial({
-      color: 0x0f1631,
-      emissive: 0x1f3c66,
-      emissiveIntensity: 0.95,
-    })
-  );
-  frameFill.position.set(-2.25, 1.58, -4.12);
-  state.scene.add(frameFill);
-
-  addHotspot({
-    THREE,
-    section: "experience",
-    label: "main monitor",
-    position: new THREE.Vector3(0, 0.68, -1.08),
-    color: 0x58a8ff,
-  });
-
-  addHotspot({
-    THREE,
-    section: "projects",
-    label: "secondary monitor",
-    position: new THREE.Vector3(1.18, 0.28, -0.8),
-    color: 0x52f0cf,
-  });
-
-  addHotspot({
-    THREE,
-    section: "education",
-    label: "desk notebook",
-    position: new THREE.Vector3(-1.15, 0.17, -0.47),
-    color: 0x9ea7ff,
-  });
-
-  addHotspot({
-    THREE,
-    section: "beyond",
-    label: "hobby shelf",
-    position: new THREE.Vector3(2.72, 1.13, -2.16),
-    color: 0xff9f7f,
-  });
-
-  addHotspot({
-    THREE,
-    section: "contact",
-    label: "phone glow",
-    position: new THREE.Vector3(1.53, 0.22, -0.35),
-    color: 0x90ffcf,
-  });
-
-  addHotspot({
-    THREE,
-    section: "about",
-    label: "mindset frame",
-    position: new THREE.Vector3(-2.25, 1.65, -3.96),
-    color: 0xffb6d9,
+    const baseScale = isHovered ? 1.04 : isActive ? 1.02 : 1;
+    record.mesh.scale.copy(record.baseScale).multiplyScalar(baseScale * pulse);
   });
 }
 
-function syncHotspotVisualState() {
-  state.hotspots.forEach((hotspot) => {
-    const isActive = hotspot.section === state.activeSection;
-    hotspot.ring.material.opacity = isActive ? 1 : 0.55;
-  });
-}
+function setHoveredRecord(record) {
+  if (record === state.three.hoveredRecord) return;
 
-function attachPointerHandlers() {
-  state.raycaster = new state.THREE.Raycaster();
-  state.pointer = new state.THREE.Vector2();
-
-  const getIntersectedHotspot = (event) => {
-    const rect = sceneCanvas.getBoundingClientRect();
-    state.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    state.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    state.raycaster.setFromCamera(state.pointer, state.camera);
-    const intersections = state.raycaster.intersectObjects(
-      state.hotspots.map((hotspot) => hotspot.marker),
-      false
-    );
-    if (!intersections.length) return null;
-    return state.hotspots.find((hotspot) => hotspot.marker === intersections[0].object) || null;
-  };
-
-  sceneCanvas.addEventListener("pointermove", (event) => {
-    const hotspot = getIntersectedHotspot(event);
-    state.hoveredHotspot = hotspot;
-    if (hotspot) {
-      sceneCanvas.style.cursor = "pointer";
-      setSceneStatus(`Click ${hotspot.label} to open ${sectionMeta[hotspot.section].title}.`);
-      return;
-    }
+  state.three.hoveredRecord = record;
+  if (record) {
+    sceneCanvas.style.cursor = "pointer";
+    setSceneStatus(`${record.label}`);
+  } else {
     sceneCanvas.style.cursor = "grab";
-    setSceneStatus(sectionMeta[state.activeSection].scenePrompt);
+    setSceneStatus(state.tourRunning ? "Guided tour running." : state.sceneStatusDefault);
+  }
+}
+
+function pickInteractiveRecord(event) {
+  const rect = sceneCanvas.getBoundingClientRect();
+  state.three.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  state.three.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  state.three.raycaster.setFromCamera(state.three.pointer, state.three.camera);
+
+  const hits = state.three.raycaster.intersectObjects(state.three.hitMeshes, false);
+  if (!hits.length) return null;
+  return state.three.meshToRecord.get(hits[0].object) ?? null;
+}
+
+function bindScenePointerEvents() {
+  sceneCanvas.addEventListener("pointermove", (event) => {
+    const record = pickInteractiveRecord(event);
+    setHoveredRecord(record);
   });
 
   sceneCanvas.addEventListener("pointerleave", () => {
-    state.hoveredHotspot = null;
-    sceneCanvas.style.cursor = "grab";
-    setSceneStatus(sectionMeta[state.activeSection].scenePrompt);
+    setHoveredRecord(null);
   });
 
   sceneCanvas.addEventListener("click", (event) => {
-    const hotspot = getIntersectedHotspot(event);
-    if (!hotspot) return;
-    setActiveSection(hotspot.section, { focusPanel: true });
-    if (state.tourRunning) stopGuidedTour();
+    const record = pickInteractiveRecord(event);
+    if (!record) return;
+    if (state.tourRunning) stopTour(false);
+    setActiveSection(record.section, { expandPanel: true, focusPanel: true });
   });
 }
 
-function initLayoutEvents() {
-  quickButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      setActiveSection(button.dataset.section, { focusPanel: true });
-      if (state.tourRunning) stopGuidedTour();
-    });
-  });
-
-  tourToggleButton.addEventListener("click", startGuidedTour);
-
-  window.addEventListener("keydown", (event) => {
-    const tagName = document.activeElement?.tagName?.toLowerCase();
-    if (tagName === "input" || tagName === "textarea") return;
-
-    if (event.key === "ArrowRight") {
-      cycleSection(1);
-      if (state.tourRunning) stopGuidedTour();
-    }
-    if (event.key === "ArrowLeft") {
-      cycleSection(-1);
-      if (state.tourRunning) stopGuidedTour();
-    }
-  });
-}
-
-function handleResize() {
-  if (!state.renderer || !state.camera) return;
+function updateSceneSize() {
+  if (!state.webglEnabled) return;
   const width = sceneCanvas.clientWidth;
   const height = sceneCanvas.clientHeight;
   if (!width || !height) return;
-  state.camera.aspect = width / height;
-  state.camera.updateProjectionMatrix();
-  state.renderer.setSize(width, height, false);
+
+  state.three.camera.aspect = width / height;
+  state.three.camera.updateProjectionMatrix();
+  state.three.renderer.setSize(width, height, false);
 }
 
-function animateScene() {
-  const { THREE } = state;
+function runCinematicIntro(now) {
+  if (!state.three.intro?.active) return false;
+
+  const intro = state.three.intro;
+  const raw = Math.min((now - intro.start) / intro.duration, 1);
+  const eased = 1 - Math.pow(1 - raw, 3);
+
+  state.three.camera.position.lerpVectors(intro.startPos, intro.endPos, eased);
+  state.three.controls.target.lerpVectors(intro.startTarget, intro.endTarget, eased);
+  state.three.controls.update();
+
+  if (raw >= 1) {
+    intro.active = false;
+    state.three.controls.enabled = true;
+    setSceneStatus(state.sceneStatusDefault);
+  }
+
+  return true;
+}
+
+function animateScene(startTime) {
+  const { THREE } = state.three;
   const clock = new THREE.Clock();
 
-  const frame = () => {
+  const tick = () => {
     const elapsed = clock.getElapsedTime();
-    state.hotspots.forEach((hotspot, index) => {
-      const pulse = 1 + Math.sin(elapsed * 2.5 + index * 0.8) * 0.11;
-      const emphasis = hotspot.section === state.activeSection ? 1.25 : 1;
-      hotspot.marker.scale.setScalar(pulse * emphasis);
-      hotspot.ring.rotation.z += 0.008;
-      hotspot.marker.material.emissiveIntensity =
-        hotspot.section === state.activeSection ? 1.9 : 1.1;
-    });
+    const now = startTime + elapsed * 1000;
 
-    state.controls.update();
-    state.renderer.render(state.scene, state.camera);
-    state.rafId = window.requestAnimationFrame(frame);
+    const introRunning = runCinematicIntro(now);
+    if (!introRunning && state.three.focusAnimating) {
+      state.three.camera.position.lerp(state.three.focusCamera, 0.09);
+      state.three.controls.target.lerp(state.three.focusTarget, 0.11);
+      const distance =
+        state.three.camera.position.distanceTo(state.three.focusCamera) +
+        state.three.controls.target.distanceTo(state.three.focusTarget);
+      if (distance < 0.02) state.three.focusAnimating = false;
+    }
+
+    updateObjectHighlighting(elapsed);
+    state.three.controls.update();
+    updateHoverLabel();
+    state.three.renderer.render(state.three.scene, state.three.camera);
+    state.three.raf = window.requestAnimationFrame(tick);
   };
 
-  state.rafId = window.requestAnimationFrame(frame);
+  state.three.raf = window.requestAnimationFrame(tick);
 }
 
-async function init3D() {
-  if (!isWebGLSupported()) {
-    enableFallbackMode("WebGL unavailable on this device. Quick-access mode is active.");
+async function init3DScene() {
+  if (!webglSupported()) {
+    sceneOverlay.hidden = false;
+    setSceneStatus("WebGL unavailable. Quick-access mode is active.");
     return;
   }
 
   try {
-    const loaded = await importThreeModules();
-    state.THREE = loaded.THREE;
-
-    const { THREE, OrbitControls } = loaded;
-    state.scene = new THREE.Scene();
-    state.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-    state.camera.position.set(2.5, 1.8, 4.9);
-
-    state.renderer = new THREE.WebGLRenderer({
-      canvas: sceneCanvas,
-      antialias: true,
-      alpha: true,
-    });
-    state.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    state.renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-    state.controls = new OrbitControls(state.camera, sceneCanvas);
-    state.controls.enableDamping = true;
-    state.controls.enablePan = false;
-    state.controls.minDistance = 2.6;
-    state.controls.maxDistance = 7.4;
-    state.controls.minPolarAngle = 0.65;
-    state.controls.maxPolarAngle = 1.45;
-    state.controls.target.set(0.05, 0.45, -1.1);
-    state.controls.update();
-
-    createRoomScene(THREE);
-    createSceneProps(THREE);
-    syncHotspotVisualState();
-    attachPointerHandlers();
-    handleResize();
-    animateScene();
-
-    window.addEventListener("resize", handleResize);
+    const loaded = await loadThreeModules();
+    state.three.THREE = loaded.THREE;
+    state.three.OrbitControls = loaded.OrbitControls;
+    state.webglEnabled = true;
   } catch (error) {
-    console.error("3D scene failed to initialize:", error);
-    enableFallbackMode("Could not load 3D modules. Quick-access mode is active.");
+    console.error("Could not load 3D modules:", error);
+    sceneOverlay.hidden = false;
+    setSceneStatus("3D modules failed to load. Quick-access mode is active.");
+    return;
   }
+
+  const { THREE, OrbitControls } = state.three;
+
+  state.three.scene = new THREE.Scene();
+  state.three.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  state.three.renderer = new THREE.WebGLRenderer({
+    canvas: sceneCanvas,
+    antialias: true,
+    alpha: true,
+  });
+  state.three.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  state.three.renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  const homeCamera = new THREE.Vector3(3.25, 2.2, 5.3);
+  const homeTarget = new THREE.Vector3(0.1, 0.66, -0.55);
+  const introCamera = new THREE.Vector3(6.3, 3.7, 7.1);
+  const introTarget = new THREE.Vector3(0.9, 1.3, -0.05);
+
+  state.three.camera.position.copy(homeCamera);
+
+  state.three.controls = new OrbitControls(state.three.camera, sceneCanvas);
+  state.three.controls.enableDamping = true;
+  state.three.controls.enablePan = false;
+  state.three.controls.minDistance = 3;
+  state.three.controls.maxDistance = 8;
+  state.three.controls.minPolarAngle = 0.72;
+  state.three.controls.maxPolarAngle = 1.42;
+  state.three.controls.minAzimuthAngle = -1.3;
+  state.three.controls.maxAzimuthAngle = 1.3;
+  state.three.controls.target.copy(homeTarget);
+  state.three.controls.update();
+
+  state.three.controls.addEventListener("start", () => {
+    state.three.focusAnimating = false;
+  });
+
+  state.three.raycaster = new THREE.Raycaster();
+  state.three.pointer = new THREE.Vector2();
+  state.three.focusTarget = homeTarget.clone();
+  state.three.focusCamera = homeCamera.clone();
+  state.three.tempWorld = new THREE.Vector3();
+
+  buildDesktopScene(THREE);
+  updateSceneSize();
+  bindScenePointerEvents();
+  sceneCanvas.style.cursor = "grab";
+  window.addEventListener("resize", updateSceneSize);
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reducedMotion) {
+    state.three.intro = {
+      active: true,
+      start: performance.now(),
+      duration: 2600,
+      startPos: introCamera,
+      endPos: homeCamera,
+      startTarget: introTarget,
+      endTarget: homeTarget,
+    };
+    state.three.controls.enabled = false;
+    state.three.camera.position.copy(introCamera);
+    state.three.controls.target.copy(introTarget);
+    setSceneStatus("Cinematic intro running...");
+  } else {
+    setSceneStatus(state.sceneStatusDefault);
+  }
+
+  animateScene(performance.now());
 }
 
 function init() {
   initLayoutEvents();
-  setActiveSection("about");
-  init3D();
+  renderSection("experience", { preserveStatus: true });
+  setSceneStatus("Loading 3D desktop...");
+  init3DScene();
 }
 
 init();
