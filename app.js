@@ -923,18 +923,13 @@ function animateScene(startTime) {
 async function init3DScene() {
   const detectedContext = detectWebGLContext(sceneCanvas);
   if (!detectedContext.context) {
-    showSceneFallback(
-      "WebGL unavailable. Use quick buttons to explore sections.",
-      "WebGL context unavailable in this browser session. Quick-access mode is active."
-    );
-    return;
+    console.warn("WebGL probe did not return a context; attempting renderer creation anyway.");
   }
 
   try {
     const loaded = await loadThreeModules();
     state.three.THREE = loaded.THREE;
     state.three.OrbitControls = loaded.OrbitControls;
-    state.webglEnabled = true;
   } catch (error) {
     console.error("Could not load 3D modules:", error);
     showSceneFallback(
@@ -949,13 +944,31 @@ async function init3DScene() {
   try {
     state.three.scene = new THREE.Scene();
     state.three.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-    state.three.renderer = new THREE.WebGLRenderer({
+    const preferredRendererOptions = {
       canvas: sceneCanvas,
-      context: detectedContext.context,
       antialias: true,
       alpha: true,
       powerPreference: "high-performance",
-    });
+    };
+
+    if (detectedContext.context) {
+      preferredRendererOptions.context = detectedContext.context;
+    }
+
+    try {
+      state.three.renderer = new THREE.WebGLRenderer(preferredRendererOptions);
+    } catch (primaryError) {
+      console.warn(
+        "Renderer init with preferred options failed; retrying with default canvas options.",
+        primaryError
+      );
+      state.three.renderer = new THREE.WebGLRenderer({
+        canvas: sceneCanvas,
+        antialias: true,
+        alpha: true,
+      });
+    }
+
     state.three.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     state.three.renderer.outputColorSpace = THREE.SRGBColorSpace;
   } catch (error) {
@@ -968,6 +981,7 @@ async function init3DScene() {
   }
 
   sceneOverlay.hidden = true;
+  state.webglEnabled = true;
 
   const homeCamera = new THREE.Vector3(3.25, 2.2, 5.3);
   const homeTarget = new THREE.Vector3(0.1, 0.66, -0.55);
