@@ -90,11 +90,12 @@
 
     <script>
       window.__portfolioBoot = {
-        build: "2026-02-12-ecb18e0",
+        build: "2026-02-12-7663dbe-fix1",
         moduleLoaded: false,
         moduleError: null,
         events: [],
       };
+      window.__portfolioBoot.events.push("boot script initialized");
 
       window.addEventListener("error", function (event) {
         const source = event && event.filename ? event.filename : "unknown";
@@ -108,7 +109,7 @@
       });
     </script>
     <script type="module">
-      import "./app.js?v=2026-02-12-1"
+      import("./app.js?v=2026-02-12-2")
         .then(function () {
           window.__portfolioBoot.moduleLoaded = true;
           window.__portfolioBoot.events.push("app module loaded");
