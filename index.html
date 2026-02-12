@@ -88,6 +88,37 @@
       </footer>
     </div>
 
-    <script type="module" src="app.js"></script>
+    <script>
+      window.__portfolioBoot = {
+        build: "2026-02-12-ecb18e0",
+        moduleLoaded: false,
+        moduleError: null,
+        events: [],
+      };
+
+      window.addEventListener("error", function (event) {
+        const source = event && event.filename ? event.filename : "unknown";
+        const message = event && event.message ? event.message : "unknown error";
+        window.__portfolioBoot.events.push(`error | ${source} | ${message}`);
+      });
+
+      window.addEventListener("unhandledrejection", function (event) {
+        const reason = event && event.reason ? String(event.reason) : "unknown rejection";
+        window.__portfolioBoot.events.push(`unhandledrejection | ${reason}`);
+      });
+    </script>
+    <script type="module">
+      import "./app.js?v=2026-02-12-1"
+        .then(function () {
+          window.__portfolioBoot.moduleLoaded = true;
+          window.__portfolioBoot.events.push("app module loaded");
+        })
+        .catch(function (error) {
+          const message = error && error.message ? error.message : String(error);
+          window.__portfolioBoot.moduleError = message;
+          window.__portfolioBoot.events.push(`app module failed | ${message}`);
+          console.error("Portfolio app module failed to load:", error);
+        });
+    </script>
   </body>
 </html>
