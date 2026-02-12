@@ -37,10 +37,10 @@ const sectionData = [
   },
   {
     id: "projects",
-    objectName: "pc tower",
+    objectName: "side monitor",
     label: "Projects",
     subtitle: "Builds in progress",
-    status: "PC tower selected: projects loaded.",
+    status: "Side monitor selected: projects loaded.",
     html: `
       <ul>
         <li><strong>Discord feedback bot:</strong> 200+ MAU, 4.6/5 satisfaction.</li>
@@ -284,6 +284,84 @@ function createScreenTexture(title, subtitle, color = "#78b5ff") {
   return texture;
 }
 
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function createExperienceTexture() {
+  const textureCanvas = document.createElement("canvas");
+  textureCanvas.width = 1024;
+  textureCanvas.height = 512;
+  const ctx = textureCanvas.getContext("2d");
+
+  const bg = ctx.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height);
+  bg.addColorStop(0, "#12315c");
+  bg.addColorStop(1, "#0a1326");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+
+  ctx.fillStyle = "rgba(202, 224, 255, 0.15)";
+  ctx.fillRect(18, 18, textureCanvas.width - 36, textureCanvas.height - 36);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#eaf4ff";
+  ctx.font = "800 74px Inter, sans-serif";
+  ctx.fillText("EXPERIENCE", textureCanvas.width / 2, 116);
+
+  ctx.fillStyle = "#b8cef5";
+  ctx.font = "500 30px Inter, sans-serif";
+  ctx.fillText("Internships and product impact", textureCanvas.width / 2, 160);
+
+  const companies = [
+    { name: "Expedia Group", bg: "#124a96", border: "#ffd059" },
+    { name: "HCSS", bg: "#f27831", border: "#ffffff" },
+    { name: "HubSpot", bg: "#ff7a59", border: "#ffd2c3" },
+    { name: "Oceaneering", bg: "#2a7e9d", border: "#b6ebff" },
+  ];
+
+  const badgeWidth = 430;
+  const badgeHeight = 64;
+  const leftX = 82;
+  const rightX = 512;
+  const rowsY = [220, 308];
+
+  companies.forEach((company, index) => {
+    const x = index % 2 === 0 ? leftX : rightX;
+    const y = rowsY[Math.floor(index / 2)];
+
+    drawRoundedRect(ctx, x, y, badgeWidth, badgeHeight, 14);
+    ctx.fillStyle = company.bg;
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = company.border;
+    ctx.stroke();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "700 31px Inter, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(company.name, x + 20, y + 42);
+  });
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#8fb2e5";
+  ctx.font = "500 25px Inter, sans-serif";
+  ctx.fillText("Click monitor for details", textureCanvas.width / 2, 430);
+
+  const texture = new THREE.CanvasTexture(textureCanvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
 function applyShadows(object, options = {}) {
   const cast = options.cast !== false;
   const receive = options.receive !== false;
@@ -392,7 +470,7 @@ function buildScene(scene) {
   const monitorScreen = new THREE.Mesh(
     new THREE.PlaneGeometry(2.3, 1.05),
     new THREE.MeshStandardMaterial({
-      map: createScreenTexture("EXPERIENCE", "impact and internships", "#7cb9ff"),
+      map: createExperienceTexture(),
       emissive: 0x3d7ec5,
       emissiveIntensity: 1.35,
       roughness: 0.25,
@@ -456,29 +534,44 @@ function buildScene(scene) {
 
   const sideMonitor = new THREE.Group();
   const sideMonitorFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(0.72, 1.36, 0.07),
+    new THREE.BoxGeometry(1.46, 0.9, 0.08),
     new THREE.MeshStandardMaterial({
-      color: 0x1c2a47,
-      roughness: 0.42,
-      metalness: 0.2,
-      emissive: 0x11284a,
-      emissiveIntensity: 0.95,
+      color: 0x1e2e4f,
+      roughness: 0.36,
+      metalness: 0.24,
+      emissive: 0x17345f,
+      emissiveIntensity: 1.05,
     })
   );
   sideMonitor.add(sideMonitorFrame);
   const sideMonitorScreen = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.62, 1.24),
+    new THREE.PlaneGeometry(1.32, 0.75),
     new THREE.MeshStandardMaterial({
-      map: createScreenTexture("PROJECTS", "build lab", "#5ed4ff"),
-      emissive: 0x2f78b8,
-      emissiveIntensity: 1.12,
+      map: createScreenTexture("PROJECTS", "build lab", "#74ddff"),
+      emissive: 0x46a2e0,
+      emissiveIntensity: 1.3,
       roughness: 0.25,
     })
   );
   sideMonitorScreen.position.z = 0.04;
   sideMonitor.add(sideMonitorScreen);
-  sideMonitor.position.set(-1.45, 0.87, -0.95);
-  sideMonitor.rotation.y = 0.36;
+
+  const sideMonitorStand = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.04, 0.05, 0.38, 20),
+    new THREE.MeshStandardMaterial({ color: 0x1c2c48, roughness: 0.55, metalness: 0.22 })
+  );
+  sideMonitorStand.position.set(0, -0.63, 0);
+  sideMonitor.add(sideMonitorStand);
+
+  const sideMonitorBase = new THREE.Mesh(
+    new THREE.BoxGeometry(0.46, 0.04, 0.26),
+    new THREE.MeshStandardMaterial({ color: 0x16233c, roughness: 0.6 })
+  );
+  sideMonitorBase.position.set(0, -0.84, 0);
+  sideMonitor.add(sideMonitorBase);
+
+  sideMonitor.position.set(-1.76, 0.92, -1.02);
+  sideMonitor.rotation.y = 0.24;
   applyShadows(sideMonitor);
   scene.add(sideMonitor);
 
@@ -495,26 +588,78 @@ function buildScene(scene) {
 
   const pcTower = new THREE.Group();
   const towerBody = new THREE.Mesh(
-    new THREE.BoxGeometry(0.84, 1.58, 1.0),
+    new THREE.BoxGeometry(0.94, 1.76, 1.12),
     new THREE.MeshStandardMaterial({
-      color: 0x17243d,
-      roughness: 0.48,
-      metalness: 0.26,
-      emissive: 0x0d1c35,
-      emissiveIntensity: 0.82,
+      color: 0x1d2d4b,
+      roughness: 0.34,
+      metalness: 0.34,
+      emissive: 0x16345f,
+      emissiveIntensity: 1.02,
     })
   );
   pcTower.add(towerBody);
-  const fanRingTop = new THREE.Mesh(
-    new THREE.TorusGeometry(0.17, 0.025, 16, 44),
-    new THREE.MeshStandardMaterial({ color: 0x9dd0ff, emissive: 0x3a8ce1, emissiveIntensity: 1.5 })
+
+  const frontPanel = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.82, 1.6),
+    new THREE.MeshStandardMaterial({
+      color: 0x0f1a30,
+      emissive: 0x183963,
+      emissiveIntensity: 0.72,
+      roughness: 0.24,
+      metalness: 0.2,
+    })
   );
-  fanRingTop.rotation.y = Math.PI / 2;
-  fanRingTop.position.set(-0.41, 0.34, 0.02);
-  pcTower.add(fanRingTop);
-  const fanRingBottom = fanRingTop.clone();
-  fanRingBottom.position.y = -0.34;
-  pcTower.add(fanRingBottom);
+  frontPanel.position.set(0, 0, 0.57);
+  pcTower.add(frontPanel);
+
+  const sideGlass = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.05, 1.48),
+    new THREE.MeshStandardMaterial({
+      color: 0x9cd4ff,
+      transparent: true,
+      opacity: 0.16,
+      emissive: 0x2f73bf,
+      emissiveIntensity: 0.64,
+      roughness: 0.1,
+      metalness: 0.05,
+    })
+  );
+  sideGlass.position.set(-0.47, 0, 0);
+  sideGlass.rotation.y = Math.PI / 2;
+  pcTower.add(sideGlass);
+
+  const fanOffsets = [0.52, 0, -0.52];
+  fanOffsets.forEach((y) => {
+    const fanRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.15, 0.022, 16, 42),
+      new THREE.MeshStandardMaterial({
+        color: 0xa6d4ff,
+        emissive: 0x4fa6ff,
+        emissiveIntensity: 1.35,
+        roughness: 0.25,
+      })
+    );
+    fanRing.position.set(0, y, 0.58);
+    pcTower.add(fanRing);
+
+    const fanCore = new THREE.Mesh(
+      new THREE.CircleGeometry(0.07, 22),
+      new THREE.MeshStandardMaterial({ color: 0x1b2f50, emissive: 0x2f6db4, emissiveIntensity: 0.8 })
+    );
+    fanCore.position.set(0, y, 0.585);
+    pcTower.add(fanCore);
+  });
+
+  const towerFeetX = [-0.28, 0.28];
+  towerFeetX.forEach((x) => {
+    const foot = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.05, 0.2),
+      new THREE.MeshStandardMaterial({ color: 0x121e34, roughness: 0.6 })
+    );
+    foot.position.set(x, -0.9, 0.2);
+    pcTower.add(foot);
+  });
+
   pcTower.position.set(2.2, 0.58, -0.95);
   applyShadows(pcTower);
   scene.add(pcTower);
@@ -704,7 +849,7 @@ function buildScene(scene) {
   scene.add(headphones);
 
   const expHit = createHitMesh(2.55, 1.4, 0.6, new THREE.Vector3(0, 0.92, -1.2));
-  const projHit = createHitMesh(0.9, 1.6, 1.05, new THREE.Vector3(2.2, 0.58, -0.95));
+  const projHit = createHitMesh(1.55, 1.0, 0.6, new THREE.Vector3(-1.76, 0.92, -1.02));
   const skillsHit = createHitMesh(1.95, 0.32, 0.62, new THREE.Vector3(0.1, 0.11, -0.18));
   const activitiesHit = createHitMesh(0.48, 0.34, 0.45, new THREE.Vector3(1.2, 0.12, 0.02));
   const interestsHit = createHitMesh(1.15, 0.42, 0.45, new THREE.Vector3(-1.72, 0.2, 0.22));
@@ -724,13 +869,13 @@ function buildScene(scene) {
 
   addInteractiveRecord({
     id: "projects",
-    objectName: "pc tower",
+    objectName: "side monitor",
     hitMesh: projHit,
-    floatObject: pcTower,
-    labelAnchor: new THREE.Vector3(2.2, 1.55, -0.95),
-    focusTarget: new THREE.Vector3(2.2, 0.6, -0.95),
-    focusCameraPosition: new THREE.Vector3(2.95, 1.55, 2.35),
-    highlightMaterials: collectEmissiveMaterials([pcTower]),
+    floatObject: sideMonitor,
+    labelAnchor: new THREE.Vector3(-1.76, 1.58, -1.02),
+    focusTarget: new THREE.Vector3(-1.76, 0.9, -1.02),
+    focusCameraPosition: new THREE.Vector3(-2.1, 1.72, 2.7),
+    highlightMaterials: collectEmissiveMaterials([sideMonitor]),
   });
 
   addInteractiveRecord({
