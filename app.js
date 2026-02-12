@@ -7,6 +7,7 @@ const panelTitle = document.getElementById("panel-title");
 const panelSubtitle = document.getElementById("panel-subtitle");
 const panelContent = document.getElementById("panel-content");
 let canvas = document.getElementById("scene");
+const sceneWrap = document.querySelector(".scene-wrap");
 const sectionButtons = Array.from(document.querySelectorAll("[data-section]"));
 const tourButton = document.getElementById("start-tour");
 const sceneStatus = document.getElementById("scene-status");
@@ -97,6 +98,9 @@ const sectionData = [
 
 const sectionMap = new Map(sectionData.map((entry) => [entry.id, entry]));
 const sectionOrder = sectionData.map((entry) => entry.id);
+const webglDebug = { events: [], lastError: null };
+
+window.__portfolioWebGLDebug = webglDebug;
 
 let activeSectionId = null;
 let tourTimer = null;
@@ -118,6 +122,12 @@ const state3d = {
 
 function updateStatus(message) {
   if (sceneStatus) sceneStatus.textContent = message;
+}
+
+function debugEvent(message) {
+  const line = `${new Date().toISOString()} | ${message}`;
+  webglDebug.events.push(line);
+  console.log(`[portfolio-webgl] ${message}`);
 }
 
 function setPanelCollapsed(collapsed) {
@@ -515,56 +525,99 @@ function setupBaseEvents() {
   }
 }
 
-function replaceSceneCanvas() {
-  const newCanvas = document.createElement("canvas");
+function replaceSceneCanvas(newCanvas = null) {
+  const replacement = newCanvas || document.createElement("canvas");
   const sceneDescriptionId = canvas.getAttribute("aria-describedby");
+  const sceneLabel = canvas.getAttribute("aria-label");
 
-  newCanvas.id = "scene";
-  newCanvas.setAttribute("aria-label", canvas.getAttribute("aria-label") || "Interactive 3D desktop portfolio");
+  replacement.id = "scene";
+  replacement.style.width = "100%";
+  replacement.style.height = "100%";
+  replacement.style.display = "block";
+  replacement.setAttribute("aria-label", sceneLabel || "Interactive 3D desktop portfolio");
   if (sceneDescriptionId) {
-    newCanvas.setAttribute("aria-describedby", sceneDescriptionId);
+    replacement.setAttribute("aria-describedby", sceneDescriptionId);
   }
-  canvas.replaceWith(newCanvas);
-  canvas = newCanvas;
+
+  canvas.replaceWith(replacement);
+  canvas = replacement;
+
+  if (sceneWrap && canvas.parentElement !== sceneWrap) {
+    sceneWrap.prepend(canvas);
+  }
 }
 
 function initRendererWithRetry() {
   const attempts = [
-    () => new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }),
-    () =>
-      new THREE.WebGLRenderer({
-        canvas,
-        antialias: true,
-        alpha: true,
-        powerPreference: "high-performance",
-      }),
+    {
+      name: "detached-canvas",
+      run: () => {
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        replaceSceneCanvas(renderer.domElement);
+        return renderer;
+      },
+    },
+    {
+      name: "existing-canvas",
+      run: () => new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }),
+    },
+    {
+      name: "existing-canvas-high-performance",
+      run: () =>
+        new THREE.WebGLRenderer({
+          canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        }),
+    },
+    {
+      name: "replacement-canvas",
+      run: () => {
+        replaceSceneCanvas();
+        return new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      },
+    },
   ];
 
   let lastError = null;
-  for (const makeRenderer of attempts) {
+  for (const attempt of attempts) {
     try {
-      return makeRenderer();
+      debugEvent(`Renderer attempt start: ${attempt.name}`);
+      const renderer = attempt.run();
+      debugEvent(`Renderer attempt success: ${attempt.name}`);
+      return renderer;
     } catch (error) {
       lastError = error;
+      const reason = error instanceof Error ? error.message : String(error);
+      debugEvent(`Renderer attempt failed: ${attempt.name} | ${reason}`);
     }
   }
 
-  // Recovery path: if some script grabbed a 2D context on the original canvas,
-  // creating a fresh canvas can restore WebGL initialization.
+  // Final recovery: brand new canvas, then retries.
   replaceSceneCanvas();
 
-  for (const makeRenderer of attempts) {
+  for (let i = 0; i < 2; i += 1) {
     try {
-      return makeRenderer();
+      const attemptName = `post-replacement-retry-${i + 1}`;
+      debugEvent(`Renderer attempt start: ${attemptName}`);
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      debugEvent(`Renderer attempt success: ${attemptName}`);
+      return renderer;
     } catch (error) {
       lastError = error;
+      const reason = error instanceof Error ? error.message : String(error);
+      debugEvent(`Renderer attempt failed: post-replacement-retry-${i + 1} | ${reason}`);
     }
   }
 
+  webglDebug.lastError = lastError ? String(lastError?.message || lastError) : "Unknown error";
   throw lastError;
 }
 
 function boot3D() {
+  debugEvent("boot3D start");
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(58, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
   camera.position.set(6.4, 3.8, 7.4);
@@ -573,15 +626,24 @@ function boot3D() {
   try {
     renderer = initRendererWithRetry();
   } catch (error) {
-    const freshCanvasWebGL2 = Boolean(document.createElement("canvas").getContext("webgl2"));
+    const probeCanvas = document.createElement("canvas");
+    const freshCanvasWebGL2 = Boolean(probeCanvas.getContext("webgl2"));
+    const freshCanvasWebGL = Boolean(probeCanvas.getContext("webgl"));
+    const reason = error instanceof Error ? error.message : String(error);
+    webglDebug.lastError = reason;
     console.error("WebGL renderer initialization failed:", error);
+    debugEvent(`Renderer init failed after retries: ${reason}`);
     updateStatus("WebGL initialization failed. Quick-access mode active.");
     sceneOverlay.hidden = false;
     sceneOverlay.querySelector("p").textContent =
-      `WebGL renderer failed. Browser WebGL2 support: ${freshCanvasWebGL2 ? "yes" : "no"}.`;
+      `WebGL renderer failed. webgl2=${freshCanvasWebGL2 ? "yes" : "no"}, webgl=${
+        freshCanvasWebGL ? "yes" : "no"
+      }. Inspect window.__portfolioWebGLDebug in console.`;
     openPanel("experience", { keepCollapsed: true, skip3DFocus: true });
     return;
   }
+
+  debugEvent("Renderer initialized successfully.");
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
