@@ -257,26 +257,29 @@ function createScreenTexture(title, subtitle, color = "#78b5ff") {
   textureCanvas.height = 512;
   const ctx = textureCanvas.getContext("2d");
 
-  ctx.fillStyle = "#0d182d";
+  ctx.fillStyle = "#f8fbff";
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
   const gradient = ctx.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height);
-  gradient.addColorStop(0, "#1a315e");
-  gradient.addColorStop(1, "#0a1020");
+  gradient.addColorStop(0, "#eef6ff");
+  gradient.addColorStop(1, "#d8e8ff");
   ctx.fillStyle = gradient;
   ctx.fillRect(12, 12, textureCanvas.width - 24, textureCanvas.height - 24);
 
+  ctx.fillStyle = "rgba(37, 93, 170, 0.18)";
+  ctx.fillRect(12, 12, textureCanvas.width - 24, 74);
+
   ctx.textAlign = "center";
-  ctx.fillStyle = color;
-  ctx.font = "700 52px Inter, sans-serif";
+  ctx.fillStyle = "#2f5b9b";
+  ctx.font = "700 44px Inter, sans-serif";
   ctx.fillText("CLICK", textureCanvas.width / 2, textureCanvas.height * 0.28);
 
-  ctx.fillStyle = "#eff5ff";
-  ctx.font = "800 88px Inter, sans-serif";
+  ctx.fillStyle = "#18427f";
+  ctx.font = "800 80px Inter, sans-serif";
   ctx.fillText(title, textureCanvas.width / 2, textureCanvas.height * 0.58);
 
-  ctx.fillStyle = "#a9bee6";
-  ctx.font = "500 31px Inter, sans-serif";
+  ctx.fillStyle = color;
+  ctx.font = "600 31px Inter, sans-serif";
   ctx.fillText(subtitle, textureCanvas.width / 2, textureCanvas.height * 0.79);
 
   const texture = new THREE.CanvasTexture(textureCanvas);
@@ -305,57 +308,127 @@ function createExperienceTexture() {
   const ctx = textureCanvas.getContext("2d");
 
   const bg = ctx.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height);
-  bg.addColorStop(0, "#12315c");
-  bg.addColorStop(1, "#0a1326");
+  bg.addColorStop(0, "#f5f9ff");
+  bg.addColorStop(1, "#dde9ff");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
-  ctx.fillStyle = "rgba(202, 224, 255, 0.15)";
+  ctx.fillStyle = "rgba(33, 76, 143, 0.1)";
   ctx.fillRect(18, 18, textureCanvas.width - 36, textureCanvas.height - 36);
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#eaf4ff";
-  ctx.font = "800 74px Inter, sans-serif";
-  ctx.fillText("EXPERIENCE", textureCanvas.width / 2, 116);
+  ctx.fillStyle = "#18427f";
+  ctx.font = "800 68px Inter, sans-serif";
+  ctx.fillText("EXPERIENCE", textureCanvas.width / 2, 108);
 
-  ctx.fillStyle = "#b8cef5";
-  ctx.font = "500 30px Inter, sans-serif";
-  ctx.fillText("Internships and product impact", textureCanvas.width / 2, 160);
+  ctx.fillStyle = "#4c6993";
+  ctx.font = "600 30px Inter, sans-serif";
+  ctx.fillText("Selected teams and internships", textureCanvas.width / 2, 152);
 
   const companies = [
-    { name: "Expedia Group", bg: "#124a96", border: "#ffd059" },
-    { name: "HCSS", bg: "#f27831", border: "#ffffff" },
-    { name: "HubSpot", bg: "#ff7a59", border: "#ffd2c3" },
-    { name: "Oceaneering", bg: "#2a7e9d", border: "#b6ebff" },
+    { name: "EXPEDIA GROUP", mark: "EG", markBg: "#2a4f96", cardStroke: "#9db5dd", markFg: "#ffffff" },
+    { name: "HCSS", mark: "HC", markBg: "#ef7d32", cardStroke: "#d8b094", markFg: "#1d1d1d" },
+    { name: "HUBSPOT", mark: "HS", markBg: "#ff7a59", cardStroke: "#e5b2a7", markFg: "#1d1d1d" },
+    { name: "OCEANEERING", mark: "OC", markBg: "#3384a6", cardStroke: "#9ecfe0", markFg: "#ffffff" },
   ];
 
   const badgeWidth = 430;
-  const badgeHeight = 64;
+  const badgeHeight = 88;
   const leftX = 82;
   const rightX = 512;
-  const rowsY = [220, 308];
+  const rowsY = [206, 320];
 
   companies.forEach((company, index) => {
     const x = index % 2 === 0 ? leftX : rightX;
     const y = rowsY[Math.floor(index / 2)];
 
-    drawRoundedRect(ctx, x, y, badgeWidth, badgeHeight, 14);
-    ctx.fillStyle = company.bg;
+    drawRoundedRect(ctx, x, y, badgeWidth, badgeHeight, 16);
+    ctx.fillStyle = "#ffffff";
     ctx.fill();
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = company.border;
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = company.cardStroke;
     ctx.stroke();
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "700 31px Inter, sans-serif";
+    drawRoundedRect(ctx, x + 15, y + 14, 60, 60, 14);
+    ctx.fillStyle = company.markBg;
+    ctx.fill();
+
+    ctx.fillStyle = company.markFg;
+    ctx.font = "800 27px Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(company.mark, x + 45, y + 52);
+
+    ctx.fillStyle = "#1f3862";
+    ctx.font = "700 29px Inter, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(company.name, x + 20, y + 42);
+    ctx.fillText(company.name, x + 94, y + 54);
   });
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#8fb2e5";
-  ctx.font = "500 25px Inter, sans-serif";
+  ctx.fillStyle = "#426794";
+  ctx.font = "600 25px Inter, sans-serif";
   ctx.fillText("Click monitor for details", textureCanvas.width / 2, 430);
+
+  const texture = new THREE.CanvasTexture(textureCanvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function createProjectsTexture() {
+  const textureCanvas = document.createElement("canvas");
+  textureCanvas.width = 1024;
+  textureCanvas.height = 512;
+  const ctx = textureCanvas.getContext("2d");
+
+  const bg = ctx.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height);
+  bg.addColorStop(0, "#f6faff");
+  bg.addColorStop(1, "#e2eeff");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+
+  ctx.fillStyle = "rgba(40, 84, 146, 0.12)";
+  ctx.fillRect(18, 18, textureCanvas.width - 36, textureCanvas.height - 36);
+
+  ctx.fillStyle = "#1c4382";
+  ctx.textAlign = "center";
+  ctx.font = "800 66px Inter, sans-serif";
+  ctx.fillText("PROJECTS", textureCanvas.width / 2, 106);
+
+  ctx.fillStyle = "#4d6993";
+  ctx.font = "600 28px Inter, sans-serif";
+  ctx.fillText("Current build focus", textureCanvas.width / 2, 148);
+
+  const cards = [
+    { title: "Fantasy Football Bot", detail: "in progress" },
+    { title: "Spoiler Shield", detail: "in progress" },
+    { title: "Discord Insight Bot", detail: "200+ MAU" },
+  ];
+
+  cards.forEach((card, index) => {
+    const x = 88;
+    const y = 190 + index * 96;
+    drawRoundedRect(ctx, x, y, 848, 74, 16);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.strokeStyle = "#9fb7dd";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#204476";
+    ctx.font = "700 31px Inter, sans-serif";
+    ctx.fillText(card.title, x + 26, y + 47);
+
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#5c769d";
+    ctx.font = "600 24px Inter, sans-serif";
+    ctx.fillText(card.detail, x + 820, y + 47);
+  });
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#446995";
+  ctx.font = "600 24px Inter, sans-serif";
+  ctx.fillText("Click side monitor for details", textureCanvas.width / 2, 478);
 
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -472,7 +545,7 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({
       map: createExperienceTexture(),
       emissive: 0x3d7ec5,
-      emissiveIntensity: 1.35,
+      emissiveIntensity: 0.82,
       roughness: 0.25,
     })
   );
@@ -547,9 +620,9 @@ function buildScene(scene) {
   const sideMonitorScreen = new THREE.Mesh(
     new THREE.PlaneGeometry(1.32, 0.75),
     new THREE.MeshStandardMaterial({
-      map: createScreenTexture("PROJECTS", "build lab", "#74ddff"),
-      emissive: 0x46a2e0,
-      emissiveIntensity: 1.3,
+      map: createProjectsTexture(),
+      emissive: 0x4f8fd6,
+      emissiveIntensity: 0.82,
       roughness: 0.25,
     })
   );
@@ -570,21 +643,10 @@ function buildScene(scene) {
   sideMonitorBase.position.set(0, -0.84, 0);
   sideMonitor.add(sideMonitorBase);
 
-  sideMonitor.position.set(-1.76, 0.92, -1.02);
-  sideMonitor.rotation.y = 0.24;
+  sideMonitor.position.set(-2.24, 0.94, -1.09);
+  sideMonitor.rotation.y = 0.31;
   applyShadows(sideMonitor);
   scene.add(sideMonitor);
-
-  const leftLightBar = new THREE.Mesh(
-    new THREE.BoxGeometry(0.14, 0.6, 0.14),
-    new THREE.MeshStandardMaterial({ color: 0xdbf1ff, emissive: 0x7cc6ff, emissiveIntensity: 1.65 })
-  );
-  leftLightBar.position.set(-2.35, 0.28, -1.12);
-  scene.add(leftLightBar);
-
-  const rightLightBar = leftLightBar.clone();
-  rightLightBar.position.set(2.35, 0.28, -1.12);
-  scene.add(rightLightBar);
 
   const pcTower = new THREE.Group();
   const towerBody = new THREE.Mesh(
@@ -849,7 +911,7 @@ function buildScene(scene) {
   scene.add(headphones);
 
   const expHit = createHitMesh(2.55, 1.4, 0.6, new THREE.Vector3(0, 0.92, -1.2));
-  const projHit = createHitMesh(1.55, 1.0, 0.6, new THREE.Vector3(-1.76, 0.92, -1.02));
+  const projHit = createHitMesh(1.55, 1.0, 0.6, new THREE.Vector3(-2.24, 0.94, -1.09));
   const skillsHit = createHitMesh(1.95, 0.32, 0.62, new THREE.Vector3(0.1, 0.11, -0.18));
   const activitiesHit = createHitMesh(0.48, 0.34, 0.45, new THREE.Vector3(1.2, 0.12, 0.02));
   const interestsHit = createHitMesh(1.15, 0.42, 0.45, new THREE.Vector3(-1.72, 0.2, 0.22));
@@ -872,9 +934,9 @@ function buildScene(scene) {
     objectName: "side monitor",
     hitMesh: projHit,
     floatObject: sideMonitor,
-    labelAnchor: new THREE.Vector3(-1.76, 1.58, -1.02),
-    focusTarget: new THREE.Vector3(-1.76, 0.9, -1.02),
-    focusCameraPosition: new THREE.Vector3(-2.1, 1.72, 2.7),
+    labelAnchor: new THREE.Vector3(-2.24, 1.6, -1.09),
+    focusTarget: new THREE.Vector3(-2.24, 0.92, -1.09),
+    focusCameraPosition: new THREE.Vector3(-2.5, 1.72, 2.74),
     highlightMaterials: collectEmissiveMaterials([sideMonitor]),
   });
 
