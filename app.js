@@ -284,6 +284,16 @@ function createScreenTexture(title, subtitle, color = "#78b5ff") {
   return texture;
 }
 
+function applyShadows(object, options = {}) {
+  const cast = options.cast !== false;
+  const receive = options.receive !== false;
+  object.traverse((node) => {
+    if (!node.isMesh) return;
+    node.castShadow = cast;
+    node.receiveShadow = receive;
+  });
+}
+
 function buildScene(scene) {
   scene.fog = new THREE.Fog(0x04090f, 5, 18);
 
@@ -292,6 +302,15 @@ function buildScene(scene) {
 
   const keyLight = new THREE.DirectionalLight(0xd8ecff, 1.05);
   keyLight.position.set(1.2, 5, 4.3);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(2048, 2048);
+  keyLight.shadow.camera.near = 0.5;
+  keyLight.shadow.camera.far = 20;
+  keyLight.shadow.camera.left = -6;
+  keyLight.shadow.camera.right = 6;
+  keyLight.shadow.camera.top = 5;
+  keyLight.shadow.camera.bottom = -5;
+  keyLight.shadow.bias = -0.00035;
   scene.add(keyLight);
 
   const blueFill = new THREE.PointLight(0x5aa8ff, 1.15, 12, 2.1);
@@ -308,6 +327,7 @@ function buildScene(scene) {
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.92;
+  floor.receiveShadow = true;
   scene.add(floor);
 
   const backWall = new THREE.Mesh(
@@ -315,6 +335,7 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({ color: 0x0d1a36, roughness: 0.9 })
   );
   backWall.position.set(0, 1.1, -4);
+  backWall.receiveShadow = true;
   scene.add(backWall);
 
   const desk = new THREE.Mesh(
@@ -322,6 +343,8 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({ color: 0x131b2b, roughness: 0.78, metalness: 0.1 })
   );
   desk.position.set(0, -0.12, -0.55);
+  desk.castShadow = true;
+  desk.receiveShadow = true;
   scene.add(desk);
 
   const deskMat = new THREE.Mesh(
@@ -329,6 +352,7 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({ color: 0x0a0f19, roughness: 0.92 })
   );
   deskMat.position.set(0, -0.02, -0.45);
+  deskMat.receiveShadow = true;
   scene.add(deskMat);
 
   const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0x10192c, roughness: 0.82 });
@@ -401,6 +425,7 @@ function buildScene(scene) {
   monitorGroup.add(monitorBase);
 
   monitorGroup.position.set(0, 0.93, -1.26);
+  applyShadows(monitorGroup);
   scene.add(monitorGroup);
 
   const leftSpeaker = new THREE.Group();
@@ -417,10 +442,12 @@ function buildScene(scene) {
   leftSpeakerRing.position.set(0, -0.06, 0.19);
   leftSpeaker.add(leftSpeakerRing);
   leftSpeaker.position.set(-1.66, 0.23, -1.18);
+  applyShadows(leftSpeaker);
   scene.add(leftSpeaker);
 
   const rightSpeaker = leftSpeaker.clone();
   rightSpeaker.position.set(1.66, 0.23, -1.18);
+  applyShadows(rightSpeaker);
   scene.add(rightSpeaker);
 
   const sideMonitor = new THREE.Group();
@@ -448,6 +475,7 @@ function buildScene(scene) {
   sideMonitor.add(sideMonitorScreen);
   sideMonitor.position.set(-1.45, 0.87, -0.95);
   sideMonitor.rotation.y = 0.36;
+  applyShadows(sideMonitor);
   scene.add(sideMonitor);
 
   const leftLightBar = new THREE.Mesh(
@@ -484,6 +512,7 @@ function buildScene(scene) {
   fanRingBottom.position.y = -0.34;
   pcTower.add(fanRingBottom);
   pcTower.position.set(2.2, 0.58, -0.95);
+  applyShadows(pcTower);
   scene.add(pcTower);
 
   const keyboard = new THREE.Mesh(
@@ -497,6 +526,8 @@ function buildScene(scene) {
     })
   );
   keyboard.position.set(0.1, 0.07, -0.18);
+  keyboard.castShadow = true;
+  keyboard.receiveShadow = true;
   scene.add(keyboard);
 
   const wristRest = new THREE.Mesh(
@@ -504,6 +535,8 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({ color: 0x101827, roughness: 0.7 })
   );
   wristRest.position.set(0.1, 0.06, 0.19);
+  wristRest.castShadow = true;
+  wristRest.receiveShadow = true;
   scene.add(wristRest);
 
   for (let row = 0; row < 3; row += 1) {
@@ -513,6 +546,8 @@ function buildScene(scene) {
         new THREE.MeshStandardMaterial({ color: 0x273e66, roughness: 0.55, metalness: 0.12 })
       );
       keycap.position.set(-0.47 + col * 0.102, 0.12, -0.38 + row * 0.13);
+      keycap.castShadow = true;
+      keycap.receiveShadow = true;
       scene.add(keycap);
     }
   }
@@ -529,6 +564,8 @@ function buildScene(scene) {
   );
   mouse.scale.set(1, 0.58, 1.32);
   mouse.position.set(1.2, 0.11, 0.02);
+  mouse.castShadow = true;
+  mouse.receiveShadow = true;
   scene.add(mouse);
 
   const mousePad = new THREE.Mesh(
@@ -536,6 +573,7 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({ color: 0x0c121e, roughness: 0.92 })
   );
   mousePad.position.set(1.2, 0.01, 0.02);
+  mousePad.receiveShadow = true;
   scene.add(mousePad);
 
   const phone = new THREE.Mesh(
@@ -550,6 +588,8 @@ function buildScene(scene) {
   phone.rotation.x = -0.4;
   phone.rotation.z = -0.25;
   phone.position.set(1.72, 0.1, -0.06);
+  phone.castShadow = true;
+  phone.receiveShadow = true;
   scene.add(phone);
 
   const dumbbell = new THREE.Group();
@@ -575,6 +615,7 @@ function buildScene(scene) {
     dumbbell.add(plate);
   });
   dumbbell.position.set(-1.72, 0.2, 0.22);
+  applyShadows(dumbbell);
   scene.add(dumbbell);
 
   const lamp = new THREE.Group();
@@ -603,6 +644,7 @@ function buildScene(scene) {
   lampHead.rotation.z = 1.2;
   lamp.add(lampHead);
   lamp.position.set(2.72, 0.02, -0.25);
+  applyShadows(lamp);
   scene.add(lamp);
 
   const lampGlow = new THREE.PointLight(0x69c3ff, 0.75, 4, 1.6);
@@ -614,6 +656,8 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({ color: 0x1b2c47, roughness: 0.65 })
   );
   plantPot.position.set(-2.55, 0.03, -0.3);
+  plantPot.castShadow = true;
+  plantPot.receiveShadow = true;
   scene.add(plantPot);
 
   for (let i = 0; i < 7; i += 1) {
@@ -628,6 +672,8 @@ function buildScene(scene) {
     );
     leaf.position.set(-2.55 + (i - 3) * 0.018, 0.21 + Math.random() * 0.09, -0.3 + (Math.random() - 0.5) * 0.08);
     leaf.rotation.z = (i - 3) * 0.2;
+    leaf.castShadow = true;
+    leaf.receiveShadow = true;
     scene.add(leaf);
   }
 
@@ -650,6 +696,7 @@ function buildScene(scene) {
   headphones.add(earRight);
   headphones.position.set(2.5, 0.22, 0.38);
   headphones.rotation.y = -0.45;
+  applyShadows(headphones);
   scene.add(headphones);
 
   const expHit = createHitMesh(2.55, 1.4, 0.6, new THREE.Vector3(0, 0.92, -1.2));
@@ -854,14 +901,18 @@ function boot3D() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.06;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.enablePan = false;
   controls.minDistance = 2.5;
-  controls.maxDistance = 14.5;
-  controls.minAzimuthAngle = -1.25;
-  controls.maxAzimuthAngle = 1.25;
+  controls.maxDistance = 18;
+  controls.minAzimuthAngle = -1.4;
+  controls.maxAzimuthAngle = 1.4;
   controls.minPolarAngle = 0.62;
   controls.maxPolarAngle = 1.38;
   controls.target.set(0.1, 0.74, -0.6);
