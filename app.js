@@ -109,6 +109,8 @@ const state3d = {
   pointer: null,
   desiredTarget: null,
   desiredCameraPosition: null,
+  homeTarget: null,
+  homeCameraPosition: null,
   intro: null,
   interactiveRecords: [],
   interactiveBySection: new Map(),
@@ -171,6 +173,36 @@ function cycleSection(direction) {
   const currentIndex = Math.max(sectionOrder.indexOf(activeSectionId), 0);
   const nextIndex = (currentIndex + direction + sectionOrder.length) % sectionOrder.length;
   openPanel(sectionOrder[nextIndex]);
+}
+
+function setOverviewMode(options = {}) {
+  const hidePanel = options.hidePanel !== false;
+  const instant = options.instant === true;
+
+  activeSectionId = null;
+  markActiveButton(null);
+
+  if (hidePanel) {
+    setPanelVisible(false);
+  }
+
+  if (
+    state3d.desiredTarget &&
+    state3d.desiredCameraPosition &&
+    state3d.homeTarget &&
+    state3d.homeCameraPosition
+  ) {
+    state3d.desiredTarget.copy(state3d.homeTarget);
+    state3d.desiredCameraPosition.copy(state3d.homeCameraPosition);
+
+    if (instant && state3d.camera && state3d.controls) {
+      state3d.camera.position.copy(state3d.homeCameraPosition);
+      state3d.controls.target.copy(state3d.homeTarget);
+      state3d.controls.update();
+    }
+  }
+
+  updateStatus("Overview mode. Click a desk object to explore.");
 }
 
 function collectEmissiveMaterials(rootObjects) {
@@ -299,6 +331,23 @@ function buildScene(scene) {
   deskMat.position.set(0, -0.02, -0.45);
   scene.add(deskMat);
 
+  const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0x10192c, roughness: 0.82 });
+  [-2.55, 2.55].forEach((x) => {
+    [-1.45, 0.35].forEach((z) => {
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.88, 0.12), deskLegMaterial);
+      leg.position.set(x, -0.57, z);
+      scene.add(leg);
+    });
+  });
+
+  const floorGlow = new THREE.Mesh(
+    new THREE.RingGeometry(1.75, 2.65, 64),
+    new THREE.MeshBasicMaterial({ color: 0x2f7dcc, transparent: true, opacity: 0.22 })
+  );
+  floorGlow.rotation.x = -Math.PI / 2;
+  floorGlow.position.set(0, -0.905, -0.62);
+  scene.add(floorGlow);
+
   const monitorGroup = new THREE.Group();
   const monitorFrame = new THREE.Mesh(
     new THREE.BoxGeometry(2.5, 1.2, 0.07),
@@ -323,6 +372,19 @@ function buildScene(scene) {
   );
   monitorScreen.position.z = 0.043;
   monitorGroup.add(monitorScreen);
+
+  const monitorWebcam = new THREE.Mesh(
+    new THREE.BoxGeometry(0.24, 0.06, 0.06),
+    new THREE.MeshStandardMaterial({
+      color: 0x202f4e,
+      roughness: 0.4,
+      metalness: 0.2,
+      emissive: 0x1f4f86,
+      emissiveIntensity: 0.65,
+    })
+  );
+  monitorWebcam.position.set(0, 0.64, -0.01);
+  monitorGroup.add(monitorWebcam);
 
   const monitorStand = new THREE.Mesh(
     new THREE.CylinderGeometry(0.05, 0.06, 0.46, 22),
@@ -360,6 +422,33 @@ function buildScene(scene) {
   const rightSpeaker = leftSpeaker.clone();
   rightSpeaker.position.set(1.66, 0.23, -1.18);
   scene.add(rightSpeaker);
+
+  const sideMonitor = new THREE.Group();
+  const sideMonitorFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(0.72, 1.36, 0.07),
+    new THREE.MeshStandardMaterial({
+      color: 0x1c2a47,
+      roughness: 0.42,
+      metalness: 0.2,
+      emissive: 0x11284a,
+      emissiveIntensity: 0.7,
+    })
+  );
+  sideMonitor.add(sideMonitorFrame);
+  const sideMonitorScreen = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.62, 1.24),
+    new THREE.MeshStandardMaterial({
+      map: createScreenTexture("PROJECTS", "build lab", "#5ed4ff"),
+      emissive: 0x2f78b8,
+      emissiveIntensity: 0.9,
+      roughness: 0.25,
+    })
+  );
+  sideMonitorScreen.position.z = 0.04;
+  sideMonitor.add(sideMonitorScreen);
+  sideMonitor.position.set(-1.45, 0.87, -0.95);
+  sideMonitor.rotation.y = 0.36;
+  scene.add(sideMonitor);
 
   const leftLightBar = new THREE.Mesh(
     new THREE.BoxGeometry(0.14, 0.6, 0.14),
@@ -410,6 +499,24 @@ function buildScene(scene) {
   keyboard.position.set(0.1, 0.07, -0.18);
   scene.add(keyboard);
 
+  const wristRest = new THREE.Mesh(
+    new THREE.BoxGeometry(1.62, 0.05, 0.14),
+    new THREE.MeshStandardMaterial({ color: 0x101827, roughness: 0.7 })
+  );
+  wristRest.position.set(0.1, 0.06, 0.19);
+  scene.add(wristRest);
+
+  for (let row = 0; row < 3; row += 1) {
+    for (let col = 0; col < 11; col += 1) {
+      const keycap = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.02, 0.11),
+        new THREE.MeshStandardMaterial({ color: 0x273e66, roughness: 0.55, metalness: 0.12 })
+      );
+      keycap.position.set(-0.47 + col * 0.102, 0.12, -0.38 + row * 0.13);
+      scene.add(keycap);
+    }
+  }
+
   const mouse = new THREE.Mesh(
     new THREE.SphereGeometry(0.2, 22, 22),
     new THREE.MeshStandardMaterial({
@@ -430,6 +537,20 @@ function buildScene(scene) {
   );
   mousePad.position.set(1.2, 0.01, 0.02);
   scene.add(mousePad);
+
+  const phone = new THREE.Mesh(
+    new THREE.BoxGeometry(0.24, 0.42, 0.02),
+    new THREE.MeshStandardMaterial({
+      color: 0x151f32,
+      roughness: 0.36,
+      emissive: 0x1f4f7f,
+      emissiveIntensity: 0.8,
+    })
+  );
+  phone.rotation.x = -0.4;
+  phone.rotation.z = -0.25;
+  phone.position.set(1.72, 0.1, -0.06);
+  scene.add(phone);
 
   const dumbbell = new THREE.Group();
   const dumbbellBar = new THREE.Mesh(
@@ -455,6 +576,81 @@ function buildScene(scene) {
   });
   dumbbell.position.set(-1.72, 0.2, 0.22);
   scene.add(dumbbell);
+
+  const lamp = new THREE.Group();
+  const lampBase = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.12, 0.15, 0.05, 24),
+    new THREE.MeshStandardMaterial({ color: 0x131c2f, roughness: 0.7 })
+  );
+  lamp.add(lampBase);
+  const lampArm = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.03, 0.03, 0.82, 18),
+    new THREE.MeshStandardMaterial({ color: 0x1d2d4a, roughness: 0.5 })
+  );
+  lampArm.position.set(0, 0.4, 0);
+  lampArm.rotation.z = 0.35;
+  lamp.add(lampArm);
+  const lampHead = new THREE.Mesh(
+    new THREE.ConeGeometry(0.17, 0.3, 20),
+    new THREE.MeshStandardMaterial({
+      color: 0x3e8fd7,
+      emissive: 0x4c9fe9,
+      emissiveIntensity: 1.25,
+      roughness: 0.25,
+    })
+  );
+  lampHead.position.set(0.26, 0.8, 0);
+  lampHead.rotation.z = 1.2;
+  lamp.add(lampHead);
+  lamp.position.set(2.72, 0.02, -0.25);
+  scene.add(lamp);
+
+  const lampGlow = new THREE.PointLight(0x69c3ff, 0.75, 4, 1.6);
+  lampGlow.position.set(2.9, 0.82, -0.2);
+  scene.add(lampGlow);
+
+  const plantPot = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.12, 0.1, 0.2, 18),
+    new THREE.MeshStandardMaterial({ color: 0x1b2c47, roughness: 0.65 })
+  );
+  plantPot.position.set(-2.55, 0.03, -0.3);
+  scene.add(plantPot);
+
+  for (let i = 0; i < 7; i += 1) {
+    const leaf = new THREE.Mesh(
+      new THREE.BoxGeometry(0.03, 0.28, 0.06),
+      new THREE.MeshStandardMaterial({
+        color: 0x67d8bc,
+        emissive: 0x2b7566,
+        emissiveIntensity: 0.68,
+        roughness: 0.4,
+      })
+    );
+    leaf.position.set(-2.55 + (i - 3) * 0.018, 0.21 + Math.random() * 0.09, -0.3 + (Math.random() - 0.5) * 0.08);
+    leaf.rotation.z = (i - 3) * 0.2;
+    scene.add(leaf);
+  }
+
+  const headphones = new THREE.Group();
+  const band = new THREE.Mesh(
+    new THREE.TorusGeometry(0.2, 0.03, 14, 36, Math.PI),
+    new THREE.MeshStandardMaterial({ color: 0x1f3152, roughness: 0.5, metalness: 0.2 })
+  );
+  band.rotation.z = Math.PI;
+  headphones.add(band);
+  const earLeft = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.08, 0.08, 0.05, 20),
+    new THREE.MeshStandardMaterial({ color: 0x1a2a48, roughness: 0.48, metalness: 0.18 })
+  );
+  earLeft.rotation.x = Math.PI / 2;
+  earLeft.position.set(-0.16, -0.02, 0);
+  headphones.add(earLeft);
+  const earRight = earLeft.clone();
+  earRight.position.x = 0.16;
+  headphones.add(earRight);
+  headphones.position.set(2.5, 0.22, 0.38);
+  headphones.rotation.y = -0.45;
+  scene.add(headphones);
 
   const expHit = createHitMesh(2.55, 1.4, 0.6, new THREE.Vector3(0, 0.92, -1.2));
   const projHit = createHitMesh(0.9, 1.6, 1.05, new THREE.Vector3(2.2, 0.58, -0.95));
@@ -607,7 +803,7 @@ function initRendererWithRetry() {
 }
 
 function setupEvents() {
-  panelClose.addEventListener("click", () => setPanelVisible(false));
+  panelClose.addEventListener("click", () => setOverviewMode({ hidePanel: true }));
 
   sectionButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -617,7 +813,7 @@ function setupEvents() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      setPanelVisible(false);
+      setOverviewMode({ hidePanel: true });
       return;
     }
     if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
@@ -630,7 +826,7 @@ function boot3D() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(52, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-  camera.position.set(0.6, 2.9, 6.9);
+  camera.position.set(0.9, 3.2, 7.9);
 
   let renderer = null;
   try {
@@ -662,13 +858,13 @@ function boot3D() {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.enablePan = false;
-  controls.minDistance = 3.1;
-  controls.maxDistance = 9.3;
-  controls.minAzimuthAngle = -0.95;
-  controls.maxAzimuthAngle = 0.95;
+  controls.minDistance = 2.5;
+  controls.maxDistance = 14.5;
+  controls.minAzimuthAngle = -1.25;
+  controls.maxAzimuthAngle = 1.25;
   controls.minPolarAngle = 0.62;
   controls.maxPolarAngle = 1.38;
-  controls.target.set(0.1, 0.72, -0.58);
+  controls.target.set(0.1, 0.74, -0.6);
   controls.update();
 
   state3d.camera = camera;
@@ -677,7 +873,9 @@ function boot3D() {
   state3d.raycaster = new THREE.Raycaster();
   state3d.pointer = new THREE.Vector2();
   state3d.desiredTarget = controls.target.clone();
-  state3d.desiredCameraPosition = new THREE.Vector3(0.4, 1.95, 4.95);
+  state3d.desiredCameraPosition = new THREE.Vector3(0.55, 2.05, 5.2);
+  state3d.homeTarget = state3d.desiredTarget.clone();
+  state3d.homeCameraPosition = state3d.desiredCameraPosition.clone();
 
   buildScene(scene);
 
@@ -685,10 +883,10 @@ function boot3D() {
     active: true,
     start: performance.now(),
     duration: 2100,
-    fromPosition: new THREE.Vector3(0.6, 2.9, 6.9),
-    toPosition: state3d.desiredCameraPosition.clone(),
-    fromTarget: new THREE.Vector3(0.6, 1.4, 0.4),
-    toTarget: state3d.desiredTarget.clone(),
+    fromPosition: new THREE.Vector3(1.0, 3.3, 8.1),
+    toPosition: state3d.homeCameraPosition.clone(),
+    fromTarget: new THREE.Vector3(0.7, 1.45, 0.45),
+    toTarget: state3d.homeTarget.clone(),
   };
   controls.enabled = false;
 
@@ -718,9 +916,14 @@ function boot3D() {
     state3d.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
   }
 
-  function onClick() {
-    if (!hoveredRecord) return;
-    openPanel(hoveredRecord.id);
+  function onClick(event) {
+    onPointerMove(event);
+    const clickedRecord = pickRecord();
+    if (!clickedRecord) {
+      setOverviewMode({ hidePanel: true });
+      return;
+    }
+    openPanel(clickedRecord.id);
   }
 
   canvas.addEventListener("pointermove", onPointerMove);
@@ -730,11 +933,11 @@ function boot3D() {
     hoverLabel.hidden = true;
     hoverLabel.style.display = "none";
     document.body.style.cursor = "default";
-    updateStatus(sectionMap.get(activeSectionId)?.status || "Click an object to explore.");
+    updateStatus(sectionMap.get(activeSectionId)?.status || "Overview mode. Click a desk object to explore.");
   });
 
   updateStatus("Cinematic intro...");
-  openPanel("experience", { keepPanelHidden: true, skip3DFocus: true });
+  setOverviewMode({ hidePanel: true, instant: false });
 
   const clock = new THREE.Clock();
   function animate() {
@@ -749,7 +952,7 @@ function boot3D() {
       if (progress >= 1) {
         state3d.intro.active = false;
         controls.enabled = true;
-        updateStatus("Click an object to explore.");
+        setOverviewMode({ hidePanel: true, instant: true });
       }
     } else {
       camera.position.lerp(state3d.desiredCameraPosition, 0.08);
@@ -779,7 +982,7 @@ function boot3D() {
       updateStatus(`Click ${hoveredRecord.objectName} to open ${sectionMap.get(hoveredRecord.id).label}.`);
     } else if (!state3d.intro?.active) {
       document.body.style.cursor = "default";
-      updateStatus(sectionMap.get(activeSectionId)?.status || "Click an object to explore.");
+      updateStatus(sectionMap.get(activeSectionId)?.status || "Overview mode. Click a desk object to explore.");
     }
 
     controls.update();
