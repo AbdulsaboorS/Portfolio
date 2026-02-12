@@ -44,8 +44,7 @@ body {
 }
 
 .name-block {
-  display: grid;
-  gap: 0.08rem;
+  display: block;
 }
 
 .top-bar h1 {
@@ -54,14 +53,18 @@ body {
   letter-spacing: 0.01em;
   font-weight: 800;
   text-shadow: 0 0 24px rgba(99, 154, 255, 0.26);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
 }
 
-.name-role {
-  margin: 0;
+.name-role-inline {
   color: #c6d7fb;
-  font-size: 0.88rem;
+  font-size: clamp(0.86rem, 1.25vw, 1.03rem);
   font-weight: 600;
   letter-spacing: 0.01em;
+  text-shadow: none;
 }
 
 .top-links {

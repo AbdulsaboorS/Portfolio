@@ -15,7 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=2026-02-12-9" />
+    <link rel="stylesheet" href="styles.css?v=2026-02-12-10" />
   </head>
   <body>
     <a href="#detail-panel" class="sr-only-focusable">Skip scene</a>
@@ -23,8 +23,10 @@
     <div id="app">
       <header class="top-bar">
         <div class="name-block">
-          <h1>Abdulsaboor Shaikh</h1>
-          <p class="name-role">Product Manager and Builder</p>
+          <h1>
+            Abdulsaboor Shaikh
+            <span class="name-role-inline">| Product Manager and Builder</span>
+          </h1>
         </div>
         <nav class="top-links" aria-label="External links">
           <a href="https://www.linkedin.com/in/shaikhabdulsaboor/" target="_blank" rel="noreferrer">LinkedIn</a>
@@ -38,7 +40,7 @@
         <section class="scene-wrap" aria-describedby="scene-description">
           <canvas id="scene" aria-label="Interactive 3D desktop portfolio"></canvas>
           <p id="scene-description" class="sr-only">
-            Interactive desktop scene with clickable monitor, side monitor, and pc tower.
+            Interactive desktop scene with clickable monitor, side monitor, keyboard, mouse, and dumbbell.
           </p>
 
           <div id="scene-overlay" class="scene-overlay" hidden>
@@ -66,7 +68,7 @@
           <h2 id="panel-title">Welcome</h2>
           <p id="panel-subtitle">Click a desk object to explore.</p>
           <div id="panel-content">
-            <p>Monitor, side monitor, and PC tower are clickable.</p>
+            <p>Monitor, side monitor, keyboard, mouse, and dumbbell are clickable.</p>
           </div>
         </aside>
       </main>
@@ -74,7 +76,7 @@
 
     <script>
       window.__portfolioBoot = {
-        build: "2026-02-12-logo-monitor-v5",
+        build: "2026-02-12-logo-monitor-v6",
         moduleLoaded: false,
         moduleError: null,
         events: [],
@@ -93,7 +95,7 @@
       });
     </script>
     <script type="module">
-      import("./app.js?v=2026-02-12-8")
+      import("./app.js?v=2026-02-12-9")
         .then(function () {
           window.__portfolioBoot.moduleLoaded = true;
           window.__portfolioBoot.events.push("app module loaded");
