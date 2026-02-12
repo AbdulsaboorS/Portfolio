@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Abdulsaboor Shaikh | Interactive Portfolio</title>
+    <title>Abdulsaboor Shaikh | Portfolio</title>
     <meta
       name="description"
       content="Interactive 3D desktop portfolio for Abdulsaboor Shaikh."
@@ -15,23 +15,19 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=2026-02-12-3" />
+    <link rel="stylesheet" href="styles.css?v=2026-02-12-4" />
   </head>
   <body>
-    <a href="#panel" class="sr-only-focusable">Skip 3D scene</a>
+    <a href="#detail-panel" class="sr-only-focusable">Skip scene</a>
 
     <div id="app">
       <header class="top-bar">
-        <div class="brand">
-          <p class="eyebrow">Product Manager | Builder</p>
-          <h1>Abdulsaboor Shaikh</h1>
-        </div>
+        <h1>Abdulsaboor Shaikh</h1>
         <nav class="top-links" aria-label="External links">
           <a href="https://www.linkedin.com/in/shaikhabdulsaboor/" target="_blank" rel="noreferrer">LinkedIn</a>
           <a href="https://github.com/AbdulsaboorS" target="_blank" rel="noreferrer">GitHub</a>
           <a href="mailto:shaikhabdulsaboor1@gmail.com">Email</a>
           <a href="resume-highlights.html">Resume</a>
-          <a href="debug-webgl.html">Debug WebGL</a>
         </nav>
       </header>
 
@@ -39,58 +35,43 @@
         <section class="scene-wrap" aria-describedby="scene-description">
           <canvas id="scene" aria-label="Interactive 3D desktop portfolio"></canvas>
           <p id="scene-description" class="sr-only">
-            Interactive desktop scene with clickable monitor, PC tower, mouse, keyboard, and dumbbell.
+            Interactive desktop scene with clickable monitor, pc tower, mouse, keyboard, and dumbbell.
           </p>
 
-          <div class="quick-nav" role="toolbar" aria-label="Section shortcuts">
-            <button type="button" data-section="experience" aria-controls="panel">Experience</button>
-            <button type="button" data-section="projects" aria-controls="panel">Projects</button>
-            <button type="button" data-section="activities" aria-controls="panel">Activities</button>
-            <button type="button" data-section="skills" aria-controls="panel">Skills</button>
-            <button type="button" data-section="interests" aria-controls="panel">Interests</button>
+          <div id="scene-overlay" class="scene-overlay" hidden>
+            <p>WebGL unavailable. Use quick nav to browse.</p>
           </div>
 
-          <div id="scene-status" class="scene-status" role="status" aria-live="polite">Loading desktop scene...</div>
+          <div id="scene-status" class="scene-status" role="status" aria-live="polite">Loading 3D setup...</div>
           <div id="hover-label" class="hover-label" hidden></div>
 
-          <div id="scene-overlay" class="scene-overlay" hidden>
-            <p>WebGL unavailable. Use quick buttons to browse sections.</p>
+          <div class="hint-line">
+            <p>Drag to rotate | Scroll to zoom | Click objects to open details</p>
           </div>
 
-          <div class="scene-help">
-            <p><strong>Explore:</strong> drag to rotate | scroll to zoom | hover objects | click to open</p>
+          <div class="quick-nav" role="toolbar" aria-label="Quick sections">
+            <button type="button" data-section="experience">Experience</button>
+            <button type="button" data-section="projects">Projects</button>
+            <button type="button" data-section="activities">Activities</button>
+            <button type="button" data-section="skills">Skills</button>
+            <button type="button" data-section="interests">Interests</button>
           </div>
         </section>
 
-        <aside id="panel" class="panel is-collapsed" aria-live="polite">
-          <button id="panel-toggle" class="panel-toggle" type="button" aria-expanded="false">
-            Open details
-          </button>
-          <div class="panel-body">
-            <h2 id="panel-title">Welcome</h2>
-            <p id="panel-subtitle">Click a desktop object to open section details.</p>
-            <div id="panel-content">
-              <p>
-                Use the monitor for experience, PC for projects, mouse for activities,
-                keyboard for skills, and dumbbell for interests.
-              </p>
-            </div>
+        <aside id="detail-panel" class="detail-panel is-hidden" aria-live="polite" aria-hidden="true" tabindex="-1">
+          <button id="panel-close" class="panel-close" type="button" aria-label="Close panel">Close</button>
+          <h2 id="panel-title">Welcome</h2>
+          <p id="panel-subtitle">Click a desk object to explore.</p>
+          <div id="panel-content">
+            <p>Monitor, PC, mouse, keyboard, and dumbbell are all clickable.</p>
           </div>
         </aside>
       </main>
-
-      <footer class="bottom-bar">
-        <p>"Want it bad. Build it right. Improve daily."</p>
-        <div class="bottom-actions">
-          <button id="start-tour" type="button">Start guided tour</button>
-          <span class="key-tip">Tip: use left/right arrow keys</span>
-        </div>
-      </footer>
     </div>
 
     <script>
       window.__portfolioBoot = {
-        build: "2026-02-12-7663dbe-fix1",
+        build: "2026-02-12-polish-v1",
         moduleLoaded: false,
         moduleError: null,
         events: [],
@@ -109,7 +90,7 @@
       });
     </script>
     <script type="module">
-      import("./app.js?v=2026-02-12-2")
+      import("./app.js?v=2026-02-12-3")
         .then(function () {
           window.__portfolioBoot.moduleLoaded = true;
           window.__portfolioBoot.events.push("app module loaded");
