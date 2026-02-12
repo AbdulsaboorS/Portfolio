@@ -52,10 +52,10 @@ const sectionData = [
   },
   {
     id: "activities",
-    objectName: "mouse",
+    objectName: "quick nav",
     label: "Activities",
     subtitle: "Leadership and service",
-    status: "Mouse selected: activities loaded.",
+    status: "Activities loaded.",
     html: `
       <ul>
         <li>Vice President at United Mission Relief.</li>
@@ -66,10 +66,10 @@ const sectionData = [
   },
   {
     id: "skills",
-    objectName: "keyboard",
+    objectName: "pc tower",
     label: "Skills",
     subtitle: "PM + technical stack",
-    status: "Keyboard selected: skills loaded.",
+    status: "PC tower selected: skills loaded.",
     html: `
       <p><strong>PM:</strong> PRDs, prioritization, user research, roadmapping, agile delivery.</p>
       <p><strong>Tools:</strong> Figma, Jira, Confluence, Amplitude, Power BI, Tableau.</p>
@@ -78,10 +78,10 @@ const sectionData = [
   },
   {
     id: "interests",
-    objectName: "dumbbell",
+    objectName: "quick nav",
     label: "Interests",
     subtitle: "Routine and lifestyle",
-    status: "Dumbbell selected: interests loaded.",
+    status: "Interests loaded.",
     html: `
       <ul>
         <li>Faith-driven consistency and growth.</li>
@@ -301,102 +301,87 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
   ctx.closePath();
 }
 
+function drawImageContain(ctx, image, x, y, width, height, padding = 0) {
+  const availableWidth = width - padding * 2;
+  const availableHeight = height - padding * 2;
+  const scale = Math.min(availableWidth / image.width, availableHeight / image.height);
+  const drawWidth = image.width * scale;
+  const drawHeight = image.height * scale;
+  const drawX = x + (width - drawWidth) * 0.5;
+  const drawY = y + (height - drawHeight) * 0.5;
+  ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+}
+
 function createExperienceTexture() {
   const textureCanvas = document.createElement("canvas");
-  textureCanvas.width = 1024;
-  textureCanvas.height = 512;
+  textureCanvas.width = 1280;
+  textureCanvas.height = 720;
   const ctx = textureCanvas.getContext("2d");
-
-  const bg = ctx.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height);
-  bg.addColorStop(0, "#f5f9ff");
-  bg.addColorStop(1, "#dde9ff");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
-
-  ctx.fillStyle = "rgba(33, 76, 143, 0.1)";
-  ctx.fillRect(18, 18, textureCanvas.width - 36, textureCanvas.height - 36);
-
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#18427f";
-  ctx.font = "800 68px Inter, sans-serif";
-  ctx.fillText("EXPERIENCE", textureCanvas.width / 2, 108);
-
-  ctx.fillStyle = "#4c6993";
-  ctx.font = "600 30px Inter, sans-serif";
-  ctx.fillText("Selected teams and internships", textureCanvas.width / 2, 152);
-
-  const companies = [
-    { name: "EXPEDIA GROUP", mark: "EG", markBg: "#2a4f96", cardStroke: "#9db5dd", markFg: "#ffffff" },
-    { name: "HCSS", mark: "HC", markBg: "#ef7d32", cardStroke: "#d8b094", markFg: "#1d1d1d" },
-    { name: "HUBSPOT", mark: "HS", markBg: "#ff7a59", cardStroke: "#e5b2a7", markFg: "#1d1d1d" },
-    { name: "OCEANEERING", mark: "OC", markBg: "#3384a6", cardStroke: "#9ecfe0", markFg: "#ffffff" },
-  ];
-
-  const badgeWidth = 430;
-  const badgeHeight = 88;
-  const leftX = 82;
-  const rightX = 512;
-  const rowsY = [206, 320];
-
-  companies.forEach((company, index) => {
-    const x = index % 2 === 0 ? leftX : rightX;
-    const y = rowsY[Math.floor(index / 2)];
-
-    drawRoundedRect(ctx, x, y, badgeWidth, badgeHeight, 16);
-    ctx.fillStyle = "#ffffff";
-    ctx.fill();
-    ctx.lineWidth = 2.5;
-    ctx.strokeStyle = company.cardStroke;
-    ctx.stroke();
-
-    drawRoundedRect(ctx, x + 15, y + 14, 60, 60, 14);
-    ctx.fillStyle = company.markBg;
-    ctx.fill();
-
-    ctx.fillStyle = company.markFg;
-    ctx.font = "800 27px Inter, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(company.mark, x + 45, y + 52);
-
-    ctx.fillStyle = "#1f3862";
-    ctx.font = "700 29px Inter, sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText(company.name, x + 94, y + 54);
-  });
-
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#426794";
-  ctx.font = "600 25px Inter, sans-serif";
-  ctx.fillText("Click monitor for details", textureCanvas.width / 2, 430);
 
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+
+  const logoSlots = [
+    { src: "assets/logos/expedia-group.png", x: 70, y: 70, width: 540, height: 250 },
+    { src: "assets/logos/hcss.png", x: 670, y: 70, width: 540, height: 250 },
+    { src: "assets/logos/hubspot.png", x: 70, y: 400, width: 540, height: 250 },
+    { src: "assets/logos/oceaneering.png", x: 670, y: 400, width: 540, height: 250 },
+  ];
+
+  const loadedImages = new Map();
+
+  const render = () => {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+
+    logoSlots.forEach((slot) => {
+      const image = loadedImages.get(slot.src);
+      if (!image) return;
+      drawImageContain(ctx, image, slot.x, slot.y, slot.width, slot.height, 6);
+    });
+
+    texture.needsUpdate = true;
+  };
+
+  logoSlots.forEach((slot) => {
+    const image = new Image();
+    image.onload = () => {
+      loadedImages.set(slot.src, image);
+      render();
+    };
+    image.onerror = () => {
+      debugEvent(`logo load failed | ${slot.src}`);
+    };
+    image.src = slot.src;
+  });
+
+  render();
   return texture;
 }
 
 function createProjectsTexture() {
   const textureCanvas = document.createElement("canvas");
-  textureCanvas.width = 1024;
-  textureCanvas.height = 512;
+  textureCanvas.width = 768;
+  textureCanvas.height = 1280;
   const ctx = textureCanvas.getContext("2d");
 
   const bg = ctx.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height);
-  bg.addColorStop(0, "#f6faff");
-  bg.addColorStop(1, "#e2eeff");
+  bg.addColorStop(0, "#f6fbff");
+  bg.addColorStop(1, "#e0ecff");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
-  ctx.fillStyle = "rgba(40, 84, 146, 0.12)";
-  ctx.fillRect(18, 18, textureCanvas.width - 36, textureCanvas.height - 36);
+  ctx.fillStyle = "rgba(35, 79, 140, 0.11)";
+  ctx.fillRect(20, 20, textureCanvas.width - 40, textureCanvas.height - 40);
 
   ctx.fillStyle = "#1c4382";
   ctx.textAlign = "center";
-  ctx.font = "800 66px Inter, sans-serif";
-  ctx.fillText("PROJECTS", textureCanvas.width / 2, 106);
+  ctx.font = "800 80px Inter, sans-serif";
+  ctx.fillText("PROJECTS", textureCanvas.width / 2, 150);
 
-  ctx.fillStyle = "#4d6993";
-  ctx.font = "600 28px Inter, sans-serif";
-  ctx.fillText("Current build focus", textureCanvas.width / 2, 148);
+  ctx.fillStyle = "#4a678f";
+  ctx.font = "600 34px Inter, sans-serif";
+  ctx.fillText("build focus", textureCanvas.width / 2, 205);
 
   const cards = [
     { title: "Fantasy Football Bot", detail: "in progress" },
@@ -405,30 +390,29 @@ function createProjectsTexture() {
   ];
 
   cards.forEach((card, index) => {
-    const x = 88;
-    const y = 190 + index * 96;
-    drawRoundedRect(ctx, x, y, 848, 74, 16);
+    const x = 58;
+    const y = 300 + index * 245;
+    drawRoundedRect(ctx, x, y, 652, 190, 22);
     ctx.fillStyle = "#ffffff";
     ctx.fill();
-    ctx.strokeStyle = "#9fb7dd";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#9eb6db";
+    ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    ctx.textAlign = "left";
+    ctx.textAlign = "center";
     ctx.fillStyle = "#204476";
-    ctx.font = "700 31px Inter, sans-serif";
-    ctx.fillText(card.title, x + 26, y + 47);
+    ctx.font = "700 46px Inter, sans-serif";
+    ctx.fillText(card.title, x + 326, y + 92);
 
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#5c769d";
-    ctx.font = "600 24px Inter, sans-serif";
-    ctx.fillText(card.detail, x + 820, y + 47);
+    ctx.fillStyle = "#5c779d";
+    ctx.font = "600 30px Inter, sans-serif";
+    ctx.fillText(card.detail, x + 326, y + 145);
   });
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#446995";
-  ctx.font = "600 24px Inter, sans-serif";
-  ctx.fillText("Click side monitor for details", textureCanvas.width / 2, 478);
+  ctx.fillStyle = "#456895";
+  ctx.font = "600 29px Inter, sans-serif";
+  ctx.fillText("Click side monitor for details", textureCanvas.width / 2, 1186);
 
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -583,46 +567,24 @@ function buildScene(scene) {
   applyShadows(monitorGroup);
   scene.add(monitorGroup);
 
-  const leftSpeaker = new THREE.Group();
-  const leftSpeakerBody = new THREE.Mesh(
-    new THREE.BoxGeometry(0.42, 0.58, 0.36),
-    new THREE.MeshStandardMaterial({ color: 0x171f33, roughness: 0.6, metalness: 0.16 })
-  );
-  leftSpeaker.add(leftSpeakerBody);
-  const leftSpeakerRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.11, 0.02, 14, 40),
-    new THREE.MeshStandardMaterial({ color: 0x7db7ff, emissive: 0x316fba, emissiveIntensity: 1.22 })
-  );
-  leftSpeakerRing.rotation.x = Math.PI / 2;
-  leftSpeakerRing.position.set(0, -0.06, 0.19);
-  leftSpeaker.add(leftSpeakerRing);
-  leftSpeaker.position.set(-1.66, 0.23, -1.18);
-  applyShadows(leftSpeaker);
-  scene.add(leftSpeaker);
-
-  const rightSpeaker = leftSpeaker.clone();
-  rightSpeaker.position.set(1.66, 0.23, -1.18);
-  applyShadows(rightSpeaker);
-  scene.add(rightSpeaker);
-
   const sideMonitor = new THREE.Group();
   const sideMonitorFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(1.46, 0.9, 0.08),
+    new THREE.BoxGeometry(0.72, 1.36, 0.07),
     new THREE.MeshStandardMaterial({
-      color: 0x1e2e4f,
-      roughness: 0.36,
-      metalness: 0.24,
-      emissive: 0x17345f,
-      emissiveIntensity: 1.05,
+      color: 0x1c2a47,
+      roughness: 0.42,
+      metalness: 0.2,
+      emissive: 0x11284a,
+      emissiveIntensity: 0.7,
     })
   );
   sideMonitor.add(sideMonitorFrame);
   const sideMonitorScreen = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.32, 0.75),
+    new THREE.PlaneGeometry(0.62, 1.24),
     new THREE.MeshStandardMaterial({
       map: createProjectsTexture(),
-      emissive: 0x4f8fd6,
-      emissiveIntensity: 0.82,
+      emissive: 0x2f78b8,
+      emissiveIntensity: 0.9,
       roughness: 0.25,
     })
   );
@@ -630,21 +592,21 @@ function buildScene(scene) {
   sideMonitor.add(sideMonitorScreen);
 
   const sideMonitorStand = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.04, 0.05, 0.38, 20),
+    new THREE.CylinderGeometry(0.03, 0.04, 0.34, 18),
     new THREE.MeshStandardMaterial({ color: 0x1c2c48, roughness: 0.55, metalness: 0.22 })
   );
-  sideMonitorStand.position.set(0, -0.63, 0);
+  sideMonitorStand.position.set(0, -0.88, 0);
   sideMonitor.add(sideMonitorStand);
 
   const sideMonitorBase = new THREE.Mesh(
-    new THREE.BoxGeometry(0.46, 0.04, 0.26),
+    new THREE.BoxGeometry(0.34, 0.03, 0.22),
     new THREE.MeshStandardMaterial({ color: 0x16233c, roughness: 0.6 })
   );
-  sideMonitorBase.position.set(0, -0.84, 0);
+  sideMonitorBase.position.set(0, -1.07, 0);
   sideMonitor.add(sideMonitorBase);
 
-  sideMonitor.position.set(-2.24, 0.94, -1.09);
-  sideMonitor.rotation.y = 0.31;
+  sideMonitor.position.set(-1.45, 0.87, -0.95);
+  sideMonitor.rotation.y = 0.36;
   applyShadows(sideMonitor);
   scene.add(sideMonitor);
 
@@ -726,197 +688,12 @@ function buildScene(scene) {
   applyShadows(pcTower);
   scene.add(pcTower);
 
-  const keyboard = new THREE.Mesh(
-    new THREE.BoxGeometry(1.9, 0.08, 0.58),
-    new THREE.MeshStandardMaterial({
-      color: 0x141e33,
-      roughness: 0.52,
-      metalness: 0.16,
-      emissive: 0x122a4c,
-      emissiveIntensity: 0.76,
-    })
-  );
-  keyboard.position.set(0.1, 0.07, -0.18);
-  keyboard.castShadow = true;
-  keyboard.receiveShadow = true;
-  scene.add(keyboard);
-
-  const wristRest = new THREE.Mesh(
-    new THREE.BoxGeometry(1.62, 0.05, 0.14),
-    new THREE.MeshStandardMaterial({ color: 0x101827, roughness: 0.7 })
-  );
-  wristRest.position.set(0.1, 0.06, 0.19);
-  wristRest.castShadow = true;
-  wristRest.receiveShadow = true;
-  scene.add(wristRest);
-
-  for (let row = 0; row < 3; row += 1) {
-    for (let col = 0; col < 11; col += 1) {
-      const keycap = new THREE.Mesh(
-        new THREE.BoxGeometry(0.12, 0.02, 0.11),
-        new THREE.MeshStandardMaterial({ color: 0x355481, roughness: 0.5, metalness: 0.12 })
-      );
-      keycap.position.set(-0.47 + col * 0.102, 0.12, -0.38 + row * 0.13);
-      keycap.castShadow = true;
-      keycap.receiveShadow = true;
-      scene.add(keycap);
-    }
-  }
-
-  const mouse = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2, 22, 22),
-    new THREE.MeshStandardMaterial({
-      color: 0x213757,
-      roughness: 0.36,
-      metalness: 0.18,
-      emissive: 0x123058,
-      emissiveIntensity: 0.86,
-    })
-  );
-  mouse.scale.set(1, 0.58, 1.32);
-  mouse.position.set(1.2, 0.11, 0.02);
-  mouse.castShadow = true;
-  mouse.receiveShadow = true;
-  scene.add(mouse);
-
-  const mousePad = new THREE.Mesh(
-    new THREE.BoxGeometry(0.94, 0.02, 0.68),
-    new THREE.MeshStandardMaterial({ color: 0x0c121e, roughness: 0.92 })
-  );
-  mousePad.position.set(1.2, 0.01, 0.02);
-  mousePad.receiveShadow = true;
-  scene.add(mousePad);
-
-  const phone = new THREE.Mesh(
-    new THREE.BoxGeometry(0.24, 0.42, 0.02),
-    new THREE.MeshStandardMaterial({
-      color: 0x151f32,
-      roughness: 0.36,
-      emissive: 0x1f4f7f,
-      emissiveIntensity: 1,
-    })
-  );
-  phone.rotation.x = -0.4;
-  phone.rotation.z = -0.25;
-  phone.position.set(1.72, 0.1, -0.06);
-  phone.castShadow = true;
-  phone.receiveShadow = true;
-  scene.add(phone);
-
-  const dumbbell = new THREE.Group();
-  const dumbbellBar = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.055, 0.055, 0.95, 16),
-    new THREE.MeshStandardMaterial({
-      color: 0x1a2e4f,
-      roughness: 0.44,
-      metalness: 0.6,
-      emissive: 0x102542,
-      emissiveIntensity: 0.8,
-    })
-  );
-  dumbbellBar.rotation.z = Math.PI / 2;
-  dumbbell.add(dumbbellBar);
-  [-0.36, 0.36].forEach((offset) => {
-    const plate = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.16, 0.16, 0.18, 22),
-      new THREE.MeshStandardMaterial({ color: 0x172741, roughness: 0.45, metalness: 0.5 })
-    );
-    plate.rotation.z = Math.PI / 2;
-    plate.position.x = offset;
-    dumbbell.add(plate);
-  });
-  dumbbell.position.set(-1.72, 0.2, 0.22);
-  applyShadows(dumbbell);
-  scene.add(dumbbell);
-
-  const lamp = new THREE.Group();
-  const lampBase = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.12, 0.15, 0.05, 24),
-    new THREE.MeshStandardMaterial({ color: 0x131c2f, roughness: 0.7 })
-  );
-  lamp.add(lampBase);
-  const lampArm = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.03, 0.03, 0.82, 18),
-    new THREE.MeshStandardMaterial({ color: 0x1d2d4a, roughness: 0.5 })
-  );
-  lampArm.position.set(0, 0.4, 0);
-  lampArm.rotation.z = 0.35;
-  lamp.add(lampArm);
-  const lampHead = new THREE.Mesh(
-    new THREE.ConeGeometry(0.17, 0.3, 20),
-    new THREE.MeshStandardMaterial({
-      color: 0x3e8fd7,
-      emissive: 0x4c9fe9,
-      emissiveIntensity: 1.55,
-      roughness: 0.25,
-    })
-  );
-  lampHead.position.set(0.26, 0.8, 0);
-  lampHead.rotation.z = 1.2;
-  lamp.add(lampHead);
-  lamp.position.set(2.72, 0.02, -0.25);
-  applyShadows(lamp);
-  scene.add(lamp);
-
-  const lampGlow = new THREE.PointLight(0x8ad2ff, 1.08, 4.8, 1.6);
-  lampGlow.position.set(2.9, 0.82, -0.2);
-  scene.add(lampGlow);
-
-  const plantPot = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.12, 0.1, 0.2, 18),
-    new THREE.MeshStandardMaterial({ color: 0x1b2c47, roughness: 0.65 })
-  );
-  plantPot.position.set(-2.55, 0.03, -0.3);
-  plantPot.castShadow = true;
-  plantPot.receiveShadow = true;
-  scene.add(plantPot);
-
-  for (let i = 0; i < 7; i += 1) {
-    const leaf = new THREE.Mesh(
-      new THREE.BoxGeometry(0.03, 0.28, 0.06),
-      new THREE.MeshStandardMaterial({
-        color: 0x67d8bc,
-        emissive: 0x2b7566,
-        emissiveIntensity: 0.86,
-        roughness: 0.4,
-      })
-    );
-    leaf.position.set(-2.55 + (i - 3) * 0.018, 0.21 + Math.random() * 0.09, -0.3 + (Math.random() - 0.5) * 0.08);
-    leaf.rotation.z = (i - 3) * 0.2;
-    leaf.castShadow = true;
-    leaf.receiveShadow = true;
-    scene.add(leaf);
-  }
-
-  const headphones = new THREE.Group();
-  const band = new THREE.Mesh(
-    new THREE.TorusGeometry(0.2, 0.03, 14, 36, Math.PI),
-    new THREE.MeshStandardMaterial({ color: 0x1f3152, roughness: 0.5, metalness: 0.2 })
-  );
-  band.rotation.z = Math.PI;
-  headphones.add(band);
-  const earLeft = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.08, 0.08, 0.05, 20),
-    new THREE.MeshStandardMaterial({ color: 0x1a2a48, roughness: 0.48, metalness: 0.18 })
-  );
-  earLeft.rotation.x = Math.PI / 2;
-  earLeft.position.set(-0.16, -0.02, 0);
-  headphones.add(earLeft);
-  const earRight = earLeft.clone();
-  earRight.position.x = 0.16;
-  headphones.add(earRight);
-  headphones.position.set(2.5, 0.22, 0.38);
-  headphones.rotation.y = -0.45;
-  applyShadows(headphones);
-  scene.add(headphones);
 
   const expHit = createHitMesh(2.55, 1.4, 0.6, new THREE.Vector3(0, 0.92, -1.2));
-  const projHit = createHitMesh(1.55, 1.0, 0.6, new THREE.Vector3(-2.24, 0.94, -1.09));
-  const skillsHit = createHitMesh(1.95, 0.32, 0.62, new THREE.Vector3(0.1, 0.11, -0.18));
-  const activitiesHit = createHitMesh(0.48, 0.34, 0.45, new THREE.Vector3(1.2, 0.12, 0.02));
-  const interestsHit = createHitMesh(1.15, 0.42, 0.45, new THREE.Vector3(-1.72, 0.2, 0.22));
+  const projHit = createHitMesh(0.92, 1.5, 0.6, new THREE.Vector3(-1.45, 0.87, -0.95));
+  const skillsHit = createHitMesh(1.14, 1.92, 1.34, new THREE.Vector3(2.2, 0.58, -0.95));
 
-  scene.add(expHit, projHit, skillsHit, activitiesHit, interestsHit);
+  scene.add(expHit, projHit, skillsHit);
 
   addInteractiveRecord({
     id: "experience",
@@ -934,43 +711,21 @@ function buildScene(scene) {
     objectName: "side monitor",
     hitMesh: projHit,
     floatObject: sideMonitor,
-    labelAnchor: new THREE.Vector3(-2.24, 1.6, -1.09),
-    focusTarget: new THREE.Vector3(-2.24, 0.92, -1.09),
-    focusCameraPosition: new THREE.Vector3(-2.5, 1.72, 2.74),
+    labelAnchor: new THREE.Vector3(-1.45, 1.76, -0.95),
+    focusTarget: new THREE.Vector3(-1.45, 0.9, -0.95),
+    focusCameraPosition: new THREE.Vector3(-2.15, 1.78, 2.62),
     highlightMaterials: collectEmissiveMaterials([sideMonitor]),
   });
 
   addInteractiveRecord({
     id: "skills",
-    objectName: "keyboard",
+    objectName: "pc tower",
     hitMesh: skillsHit,
-    floatObject: keyboard,
-    labelAnchor: new THREE.Vector3(0.1, 0.5, -0.18),
-    focusTarget: new THREE.Vector3(0.1, 0.08, -0.18),
-    focusCameraPosition: new THREE.Vector3(1.82, 1.08, 1.84),
-    highlightMaterials: collectEmissiveMaterials([keyboard]),
-  });
-
-  addInteractiveRecord({
-    id: "activities",
-    objectName: "mouse",
-    hitMesh: activitiesHit,
-    floatObject: mouse,
-    labelAnchor: new THREE.Vector3(1.2, 0.56, 0.02),
-    focusTarget: new THREE.Vector3(1.2, 0.12, 0.02),
-    focusCameraPosition: new THREE.Vector3(1.92, 1.02, 1.67),
-    highlightMaterials: collectEmissiveMaterials([mouse]),
-  });
-
-  addInteractiveRecord({
-    id: "interests",
-    objectName: "dumbbell",
-    hitMesh: interestsHit,
-    floatObject: dumbbell,
-    labelAnchor: new THREE.Vector3(-1.72, 0.82, 0.22),
-    focusTarget: new THREE.Vector3(-1.72, 0.2, 0.22),
-    focusCameraPosition: new THREE.Vector3(-2.25, 1.2, 2.08),
-    highlightMaterials: collectEmissiveMaterials([dumbbell]),
+    floatObject: pcTower,
+    labelAnchor: new THREE.Vector3(2.2, 1.66, -0.95),
+    focusTarget: new THREE.Vector3(2.2, 0.68, -0.95),
+    focusCameraPosition: new THREE.Vector3(2.35, 1.66, 2.36),
+    highlightMaterials: collectEmissiveMaterials([pcTower]),
   });
 }
 
