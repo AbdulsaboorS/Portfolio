@@ -14,6 +14,13 @@ const sceneStatus = document.getElementById("scene-status");
 const sceneOverlay = document.getElementById("scene-overlay");
 const hoverLabel = document.getElementById("hover-label");
 
+// Force initial hidden state at runtime so stale CSS caches cannot keep
+// fallback overlays visible when WebGL is actually working.
+sceneOverlay.hidden = true;
+sceneOverlay.style.display = "none";
+hoverLabel.hidden = true;
+hoverLabel.style.display = "none";
+
 const sectionData = [
   {
     id: "experience",
@@ -470,6 +477,7 @@ function buildScene(scene) {
 function updateHoverLabel(record) {
   if (!record) {
     hoverLabel.hidden = true;
+    hoverLabel.style.display = "none";
     return;
   }
 
@@ -478,6 +486,7 @@ function updateHoverLabel(record) {
   const y = (-state3d.tempVector.y * 0.5 + 0.5) * canvas.clientHeight;
 
   hoverLabel.hidden = false;
+  hoverLabel.style.display = "block";
   hoverLabel.textContent = `Click ${record.objectName} for ${sectionMap.get(record.id).label}`;
   hoverLabel.style.left = `${x}px`;
   hoverLabel.style.top = `${y}px`;
@@ -635,6 +644,7 @@ function boot3D() {
     debugEvent(`Renderer init failed after retries: ${reason}`);
     updateStatus("WebGL initialization failed. Quick-access mode active.");
     sceneOverlay.hidden = false;
+    sceneOverlay.style.display = "grid";
     sceneOverlay.querySelector("p").textContent =
       `WebGL renderer failed. webgl2=${freshCanvasWebGL2 ? "yes" : "no"}, webgl=${
         freshCanvasWebGL ? "yes" : "no"
@@ -644,6 +654,8 @@ function boot3D() {
   }
 
   debugEvent("Renderer initialized successfully.");
+  sceneOverlay.hidden = true;
+  sceneOverlay.style.display = "none";
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
