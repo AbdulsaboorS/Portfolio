@@ -295,13 +295,13 @@ function applyShadows(object, options = {}) {
 }
 
 function buildScene(scene) {
-  scene.fog = new THREE.Fog(0x04090f, 5, 18);
+  scene.fog = new THREE.Fog(0x0b1730, 7, 26);
 
-  const ambient = new THREE.AmbientLight(0x86a7ff, 0.45);
+  const ambient = new THREE.AmbientLight(0xa4c2ff, 0.68);
   scene.add(ambient);
 
-  const keyLight = new THREE.DirectionalLight(0xd8ecff, 1.05);
-  keyLight.position.set(1.2, 5, 4.3);
+  const keyLight = new THREE.DirectionalLight(0xe8f4ff, 1.34);
+  keyLight.position.set(0.9, 5.8, 4.8);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
   keyLight.shadow.camera.near = 0.5;
@@ -313,17 +313,21 @@ function buildScene(scene) {
   keyLight.shadow.bias = -0.00035;
   scene.add(keyLight);
 
-  const blueFill = new THREE.PointLight(0x5aa8ff, 1.15, 12, 2.1);
-  blueFill.position.set(0, 2.1, -1.8);
+  const blueFill = new THREE.PointLight(0x5aa8ff, 1.7, 14, 2.1);
+  blueFill.position.set(0, 2.3, -1.7);
   scene.add(blueFill);
 
-  const cyanFill = new THREE.PointLight(0x67d6ff, 0.8, 10, 2.2);
-  cyanFill.position.set(-3.5, 1.8, 0.8);
+  const cyanFill = new THREE.PointLight(0x67d6ff, 1.2, 12, 2.2);
+  cyanFill.position.set(-3.2, 2, 0.8);
   scene.add(cyanFill);
+
+  const frontFill = new THREE.PointLight(0xa9d2ff, 0.7, 10, 2.1);
+  frontFill.position.set(0, 1.4, 2.6);
+  scene.add(frontFill);
 
   const floor = new THREE.Mesh(
     new THREE.CircleGeometry(7.5, 72),
-    new THREE.MeshStandardMaterial({ color: 0x050911, roughness: 0.98, metalness: 0.02 })
+    new THREE.MeshStandardMaterial({ color: 0x0a1221, roughness: 0.94, metalness: 0.04 })
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.92;
@@ -332,7 +336,7 @@ function buildScene(scene) {
 
   const backWall = new THREE.Mesh(
     new THREE.BoxGeometry(11, 3.4, 0.2),
-    new THREE.MeshStandardMaterial({ color: 0x0d1a36, roughness: 0.9 })
+    new THREE.MeshStandardMaterial({ color: 0x14284c, roughness: 0.82 })
   );
   backWall.position.set(0, 1.1, -4);
   backWall.receiveShadow = true;
@@ -340,7 +344,7 @@ function buildScene(scene) {
 
   const desk = new THREE.Mesh(
     new THREE.BoxGeometry(5.6, 0.18, 2.2),
-    new THREE.MeshStandardMaterial({ color: 0x131b2b, roughness: 0.78, metalness: 0.1 })
+    new THREE.MeshStandardMaterial({ color: 0x1b2a43, roughness: 0.66, metalness: 0.14 })
   );
   desk.position.set(0, -0.12, -0.55);
   desk.castShadow = true;
@@ -349,13 +353,13 @@ function buildScene(scene) {
 
   const deskMat = new THREE.Mesh(
     new THREE.BoxGeometry(4.3, 0.02, 1.55),
-    new THREE.MeshStandardMaterial({ color: 0x0a0f19, roughness: 0.92 })
+    new THREE.MeshStandardMaterial({ color: 0x121d31, roughness: 0.85 })
   );
   deskMat.position.set(0, -0.02, -0.45);
   deskMat.receiveShadow = true;
   scene.add(deskMat);
 
-  const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0x10192c, roughness: 0.82 });
+  const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0x1b2a44, roughness: 0.75 });
   [-2.55, 2.55].forEach((x) => {
     [-1.45, 0.35].forEach((z) => {
       const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.88, 0.12), deskLegMaterial);
@@ -366,7 +370,7 @@ function buildScene(scene) {
 
   const floorGlow = new THREE.Mesh(
     new THREE.RingGeometry(1.75, 2.65, 64),
-    new THREE.MeshBasicMaterial({ color: 0x2f7dcc, transparent: true, opacity: 0.22 })
+    new THREE.MeshBasicMaterial({ color: 0x4f99e5, transparent: true, opacity: 0.34 })
   );
   floorGlow.rotation.x = -Math.PI / 2;
   floorGlow.position.set(0, -0.905, -0.62);
@@ -380,7 +384,7 @@ function buildScene(scene) {
       roughness: 0.4,
       metalness: 0.2,
       emissive: 0x0e1d3a,
-      emissiveIntensity: 0.52,
+      emissiveIntensity: 0.72,
     })
   );
   monitorGroup.add(monitorFrame);
@@ -390,7 +394,7 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({
       map: createScreenTexture("EXPERIENCE", "impact and internships", "#7cb9ff"),
       emissive: 0x3d7ec5,
-      emissiveIntensity: 1.05,
+      emissiveIntensity: 1.35,
       roughness: 0.25,
     })
   );
@@ -436,7 +440,7 @@ function buildScene(scene) {
   leftSpeaker.add(leftSpeakerBody);
   const leftSpeakerRing = new THREE.Mesh(
     new THREE.TorusGeometry(0.11, 0.02, 14, 40),
-    new THREE.MeshStandardMaterial({ color: 0x7db7ff, emissive: 0x316fba, emissiveIntensity: 1 })
+    new THREE.MeshStandardMaterial({ color: 0x7db7ff, emissive: 0x316fba, emissiveIntensity: 1.22 })
   );
   leftSpeakerRing.rotation.x = Math.PI / 2;
   leftSpeakerRing.position.set(0, -0.06, 0.19);
@@ -458,7 +462,7 @@ function buildScene(scene) {
       roughness: 0.42,
       metalness: 0.2,
       emissive: 0x11284a,
-      emissiveIntensity: 0.7,
+      emissiveIntensity: 0.95,
     })
   );
   sideMonitor.add(sideMonitorFrame);
@@ -467,7 +471,7 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({
       map: createScreenTexture("PROJECTS", "build lab", "#5ed4ff"),
       emissive: 0x2f78b8,
-      emissiveIntensity: 0.9,
+      emissiveIntensity: 1.12,
       roughness: 0.25,
     })
   );
@@ -480,7 +484,7 @@ function buildScene(scene) {
 
   const leftLightBar = new THREE.Mesh(
     new THREE.BoxGeometry(0.14, 0.6, 0.14),
-    new THREE.MeshStandardMaterial({ color: 0xcde7ff, emissive: 0x6cb7ff, emissiveIntensity: 1.35 })
+    new THREE.MeshStandardMaterial({ color: 0xdbf1ff, emissive: 0x7cc6ff, emissiveIntensity: 1.65 })
   );
   leftLightBar.position.set(-2.35, 0.28, -1.12);
   scene.add(leftLightBar);
@@ -497,13 +501,13 @@ function buildScene(scene) {
       roughness: 0.48,
       metalness: 0.26,
       emissive: 0x0d1c35,
-      emissiveIntensity: 0.58,
+      emissiveIntensity: 0.82,
     })
   );
   pcTower.add(towerBody);
   const fanRingTop = new THREE.Mesh(
     new THREE.TorusGeometry(0.17, 0.025, 16, 44),
-    new THREE.MeshStandardMaterial({ color: 0x78b8ff, emissive: 0x2e78cb, emissiveIntensity: 1.2 })
+    new THREE.MeshStandardMaterial({ color: 0x9dd0ff, emissive: 0x3a8ce1, emissiveIntensity: 1.5 })
   );
   fanRingTop.rotation.y = Math.PI / 2;
   fanRingTop.position.set(-0.41, 0.34, 0.02);
@@ -522,7 +526,7 @@ function buildScene(scene) {
       roughness: 0.52,
       metalness: 0.16,
       emissive: 0x122a4c,
-      emissiveIntensity: 0.56,
+      emissiveIntensity: 0.76,
     })
   );
   keyboard.position.set(0.1, 0.07, -0.18);
@@ -543,7 +547,7 @@ function buildScene(scene) {
     for (let col = 0; col < 11; col += 1) {
       const keycap = new THREE.Mesh(
         new THREE.BoxGeometry(0.12, 0.02, 0.11),
-        new THREE.MeshStandardMaterial({ color: 0x273e66, roughness: 0.55, metalness: 0.12 })
+        new THREE.MeshStandardMaterial({ color: 0x355481, roughness: 0.5, metalness: 0.12 })
       );
       keycap.position.set(-0.47 + col * 0.102, 0.12, -0.38 + row * 0.13);
       keycap.castShadow = true;
@@ -559,7 +563,7 @@ function buildScene(scene) {
       roughness: 0.36,
       metalness: 0.18,
       emissive: 0x123058,
-      emissiveIntensity: 0.62,
+      emissiveIntensity: 0.86,
     })
   );
   mouse.scale.set(1, 0.58, 1.32);
@@ -582,7 +586,7 @@ function buildScene(scene) {
       color: 0x151f32,
       roughness: 0.36,
       emissive: 0x1f4f7f,
-      emissiveIntensity: 0.8,
+      emissiveIntensity: 1,
     })
   );
   phone.rotation.x = -0.4;
@@ -600,7 +604,7 @@ function buildScene(scene) {
       roughness: 0.44,
       metalness: 0.6,
       emissive: 0x102542,
-      emissiveIntensity: 0.55,
+      emissiveIntensity: 0.8,
     })
   );
   dumbbellBar.rotation.z = Math.PI / 2;
@@ -636,7 +640,7 @@ function buildScene(scene) {
     new THREE.MeshStandardMaterial({
       color: 0x3e8fd7,
       emissive: 0x4c9fe9,
-      emissiveIntensity: 1.25,
+      emissiveIntensity: 1.55,
       roughness: 0.25,
     })
   );
@@ -647,7 +651,7 @@ function buildScene(scene) {
   applyShadows(lamp);
   scene.add(lamp);
 
-  const lampGlow = new THREE.PointLight(0x69c3ff, 0.75, 4, 1.6);
+  const lampGlow = new THREE.PointLight(0x8ad2ff, 1.08, 4.8, 1.6);
   lampGlow.position.set(2.9, 0.82, -0.2);
   scene.add(lampGlow);
 
@@ -666,7 +670,7 @@ function buildScene(scene) {
       new THREE.MeshStandardMaterial({
         color: 0x67d8bc,
         emissive: 0x2b7566,
-        emissiveIntensity: 0.68,
+        emissiveIntensity: 0.86,
         roughness: 0.4,
       })
     );
@@ -902,7 +906,7 @@ function boot3D() {
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.06;
+  renderer.toneMappingExposure = 1.22;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
