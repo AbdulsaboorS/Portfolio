@@ -89,6 +89,26 @@ body {
   text-shadow: 0 0 14px rgba(120, 181, 255, 0.45);
 }
 
+.top-message-bar {
+  position: absolute;
+  top: 1rem;
+  left: calc(50% + 2in);
+  transform: translateX(-50%);
+  max-width: 26rem;
+  margin: 0;
+  padding: 0.6rem 1.1rem;
+  z-index: 20;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #ffffff;
+  text-align: left;
+  background: #1b2a3e;
+  border: 1px solid rgba(74, 96, 132, 0.65);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
 main {
   min-height: 100vh;
 }
