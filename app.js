@@ -18,6 +18,176 @@ sceneOverlay.style.display = "none";
 hoverLabel.hidden = true;
 hoverLabel.style.display = "none";
 
+const experienceItems = [
+  {
+    title: "HCSS",
+    subtitle: "Product Manager Intern",
+    dateRange: "January 2026",
+    detailHtml: `
+      <p>Working for the spring term.</p>
+      <p>Will report back in 2 months with my full impact here. Stay tuned :D</p>
+    `,
+  },
+  {
+    title: "Expedia Group",
+    subtitle: "Product Manager Intern, Session Management (IAM)",
+    dateRange: "June 2025 – August 2025",
+    detailHtml: `
+      <ul>
+        <li>Launched an MVP AI anomaly detection system to prevent $XXX+ in annual fraud losses; led 5 engineers to cut user churn by 12% via incident report reviews.</li>
+        <li>Drove product strategy for fraud detection impacting 50K+ users; aligned 4 teams 1 week ahead of schedule by stack ranking and prototyping the leading solution.</li>
+        <li>Shaped roadmap via user research to reduce login friction; demoed an AI-powered account recovery chatbot to leadership, now prioritized for a 25% reduction in support tickets.</li>
+      </ul>
+      <p><strong>More Wins</strong></p>
+      <ul>
+        <li>Networked Deeply: Completed 30+ coffee chats with PMs and leaders across the company to learn different product philosophies.</li>
+        <li>PNW Exploration: Took full advantage of Seattle's location and traveled to Oregon, Vancouver, and many national parks :D</li>
+      </ul>
+    `,
+  },
+  {
+    title: "HubSpot",
+    subtitle: "Product & Systems Intern, Employee Technology – Internal AI",
+    dateRange: "January 2025 – May 2025",
+    detailHtml: `
+      <ul>
+        <li>Led a POC for an AI RFP automation tool projected to save $XXX+ annually; secured executive buy-in through 10+ user interviews and cross-functional leadership.</li>
+        <li>Improved internal Helpdesk AI Agent to reduce IT support tickets by 20%; identified logic gaps and drove 3 design/eng iterations to prevent user drop-offs.</li>
+        <li>Scoped and prioritized 6 features for internal AI platform serving 6,000+ weekly active users; drove a 32% adoption increase through usability testing and Loom tutorials.</li>
+      </ul>
+      <p><strong>More Wins</strong></p>
+      <ul>
+        <li>Build vs. Buy: Performed a deep-dive competitive analysis of AI vendors to justify the strategic decision to develop a tool in-house.</li>
+        <li>Org Onsite: Attended the team onsite in person, which was a highlight for building real-world relationships and connections across the org.</li>
+      </ul>
+    `,
+  },
+  {
+    title: "Oceaneering International, Inc.",
+    subtitle: "Business Analyst Intern, Space Systems (NASA contractor)",
+    dateRange: "May 2024 – December 2024",
+    detailHtml: `
+      <ul>
+        <li>Automated monthly reporting workflows via Excel to eliminate data delays; saved 20+ hours per month, enabling faster forecasting and budget planning.</li>
+        <li>Reduced project costs by $XXX by auditing budget allocations to identify delivery risks; partnered with engineering leads to reprioritize scope for essential deliverables.</li>
+        <li>Increased process efficiency by 8% by developing a standardized compliance checklist; reduced review times and eliminated bottlenecks in client document approval.</li>
+      </ul>
+      <p><strong>More Wins</strong></p>
+      <ul>
+        <li>SharePoint Optimization: Revamped the team site for 50+ members, improving documentation accessibility by 30% and resolving legacy permission issues.</li>
+        <li>This was my first internship ever so it built my core foundation, especially since it was such a high-stakes, fast-paced space industry environment!</li>
+      </ul>
+    `,
+  },
+];
+
+const projectItems = [
+  {
+    title: "3D Desk Portfolio",
+    subtitle: "Three.js & Vanilla JS",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/Portfolio",
+    detailHtml: `
+      <p>An immersive 3D workspace experience where my portfolio comes to life. Each desk item (monitor, keyboard, mouse) opens rich detail panels showcasing my experience, projects, and skills with smooth overview-to-detail navigation.</p>
+      <p>Skipped the heavy frameworks and build steps to keep the performance high and the code clean; just pure, lightweight HTML/CSS/JS.</p>
+      <p>Built this using Three.js and vibe coded all this with Cursor :D</p>
+    `,
+  },
+  {
+    title: "Discord Feedback Bot",
+    subtitle: "Finished but not using anymore",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/discord-bot-project",
+    detailHtml: `
+      <p>AI-powered Discord chatbot using Azure Cognitive Services and spaCy for sentiment analysis and key phrase extraction. Resume highlight: 200+ MAU, 4.6/5 satisfaction. This was my first ever project building something—I learned a lot even though it was simple.</p>
+    `,
+  },
+  {
+    title: "Fantasy Football Bot",
+    subtitle: "In progress",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/fantasyfootballbot",
+    detailHtml: `
+      <p>Making a bot to help me not get last place in my fantasy team because I NEED to avoid that punishment.</p>
+    `,
+  },
+  {
+    title: "Spoiler Shield",
+    subtitle: "In progress",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/spoiler-shield",
+    detailHtml: `
+      <p>App that answers your questions while watching shows without spoiling. No more searching things up and accidentally getting spoiled. You just use my extension and you're safe!</p>
+    `,
+  },
+];
+
+const activityItems = [
+  {
+    title: "United Mission Relief",
+    subtitle: "Co-President",
+    dateRange: "August 2025 – Present",
+    detailHtml: `
+      <p>Houston, TX.</p>
+      <ul>
+        <li>Lead service events reaching 1,000+ unhoused individuals by coordinating food prep, distribution, and volunteers.</li>
+        <li>Developed a digital platform for volunteer check-in and hour tracking, reducing manual coordination by 40%.</li>
+      </ul>
+    `,
+  },
+  {
+    title: "Hamd Institute",
+    subtitle: "Quran Class Teacher (Jan 2023 – May 2024)",
+    dateRange: "Houston, TX",
+    detailHtml: `
+      <ul>
+        <li>Improved student performance by 27% by analyzing test results in Excel and tailoring learning content to those results.</li>
+        <li>Grew student engagement and retention by 13% through the integration of interactive teaching methods.</li>
+      </ul>
+      <p>I don't teach anymore but I still volunteer here and there and mentor some students from there.</p>
+    `,
+  },
+  {
+    title: "Mentoring",
+    subtitle: "School & Bauer",
+    dateRange: "",
+    detailHtml: `
+      <p>I mentor underclassmen in:</p>
+      <ul>
+        <li><strong>Management Information Systems Student Organization (MISSO)</strong><br/><span class="panel-detail-note">My school's MIS club!</span></li>
+        <li><strong>BUMP Bauer Mentorship Program</strong><br/><span class="panel-detail-note">My business school's mentorship program!</span></li>
+      </ul>
+    `,
+  },
+];
+
+const skillGroups = [
+  {
+    name: "Programming languages",
+    items: ["JavaScript", "Python", "Java", "HTML5", "CSS3", "SQL", "R", "React", "Node.js", "TypeScript"],
+  },
+  {
+    name: "Software & tools",
+    items: ["Figma", "Jira", "Confluence", "Asana", "Miro", "Slack", "Looker", "Amplitude", "Power BI", "Tableau", "Lovable", "Loom", "GitHub", "Git"],
+  },
+  {
+    name: "Databases",
+    items: ["SQL"],
+  },
+  {
+    name: "AI stack",
+    items: ["Codex", "Claude", "Cursor"],
+  },
+];
+
+const skillSlugMap = {
+  JavaScript: "javascript", Python: "python", Java: "java", HTML5: "html5", CSS3: "css3", SQL: "sql", R: "r",
+  React: "react", "Node.js": "nodedotjs", TypeScript: "typescript",
+  Figma: "figma", Jira: "jira", Confluence: "confluence", Asana: "asana", Miro: "miro", Slack: "slack",
+  Looker: "looker", Amplitude: "amplitude", "Power BI": "powerbi", Tableau: "tableau", Lovable: "lovable", Loom: "loom",
+  GitHub: "github", Git: "git", Codex: "openai", Claude: "anthropic", Cursor: "cursor",
+};
+
 const sectionData = [
   {
     id: "experience",
@@ -25,15 +195,7 @@ const sectionData = [
     label: "Experience",
     subtitle: "Internship outcomes",
     status: "Monitor selected: experience loaded.",
-    html: `
-      <div class="metric-grid">
-        <div class="metric-tile"><strong>$210K+</strong><span>annual fraud loss prevented</span></div>
-        <div class="metric-tile"><strong>12%</strong><span>churn reduction</span></div>
-        <div class="metric-tile"><strong>$770K+</strong><span>projected annual savings</span></div>
-        <div class="metric-tile"><strong>20%</strong><span>support tickets reduced</span></div>
-      </div>
-      <p><span class="badge">Expedia</span><span class="badge">HubSpot</span><span class="badge">Oceaneering</span></p>
-    `,
+    items: experienceItems,
   },
   {
     id: "projects",
@@ -41,14 +203,7 @@ const sectionData = [
     label: "Projects",
     subtitle: "Builds in progress",
     status: "Side monitor selected: projects loaded.",
-    html: `
-      <ul>
-        <li><strong>Discord feedback bot:</strong> 200+ MAU, 4.6/5 satisfaction.</li>
-        <li><strong>Fantasy Football Bot:</strong> weekly recommendation engine in progress.</li>
-        <li><strong>Spoiler Shield:</strong> spoiler filtering concept in progress.</li>
-      </ul>
-      <p><span class="badge">AI x PM</span><span class="badge">Rapid MVPs</span></p>
-    `,
+    items: projectItems,
   },
   {
     id: "activities",
@@ -56,13 +211,7 @@ const sectionData = [
     label: "Activities",
     subtitle: "Leadership and service",
     status: "Mouse selected: activities loaded.",
-    html: `
-      <ul>
-        <li>Vice President at United Mission Relief.</li>
-        <li>Service events supporting 1,000+ unhoused individuals.</li>
-        <li>Built volunteer check-in platform reducing manual work by 40%.</li>
-      </ul>
-    `,
+    items: activityItems,
   },
   {
     id: "skills",
@@ -70,11 +219,8 @@ const sectionData = [
     label: "Skills",
     subtitle: "PM + technical stack",
     status: "Keyboard selected: skills loaded.",
-    html: `
-      <p><strong>PM:</strong> PRDs, prioritization, user research, roadmapping, agile delivery.</p>
-      <p><strong>Tools:</strong> Figma, Jira, Confluence, Amplitude, Power BI, Tableau.</p>
-      <p><strong>Technical:</strong> JavaScript, Python, Java, SQL, R.</p>
-    `,
+    skillGroups,
+    skillSlugMap,
   },
   {
     id: "interests",
@@ -84,9 +230,11 @@ const sectionData = [
     status: "Dumbbell selected: interests loaded.",
     html: `
       <ul>
-        <li>Faith-driven consistency and growth.</li>
-        <li>Gym discipline and nutrition.</li>
-        <li>Sports, anime, gaming, and trading.</li>
+        <li>I like sports, anime, gaming, and losing money investing in the stock market.</li>
+        <li>I'm a gym goer.</li>
+        <li>I like fragrances; just got into hiking and nature recently too.</li>
+        <li>Just got into golf (I'm a 35 handicap) and love playing tennis.</li>
+        <li>I also like wearing clothes.</li>
       </ul>
     `,
   },
@@ -98,6 +246,7 @@ const webglDebug = { events: [], lastError: null };
 window.__portfolioWebGLDebug = webglDebug;
 
 let activeSectionId = null;
+let activeItemIndex = null;
 let hoveredRecord = null;
 let currentStatus = "";
 
@@ -148,16 +297,90 @@ function focusSectionIn3D(id) {
   state3d.desiredCameraPosition.copy(record.focusCameraPosition);
 }
 
+function renderOverview(section) {
+  const items = section.items;
+  const cardsHtml = items
+    .map(
+      (item, i) => {
+        const inner = `<span class="panel-overview-title">${escapeHtml(item.title)}</span>
+          <span class="panel-overview-subtitle">${escapeHtml(item.subtitle)}</span>
+          ${item.dateRange ? `<span class="panel-overview-daterange">${escapeHtml(item.dateRange)}</span>` : ""}`;
+        const linkHtml = item.link
+          ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-card-github" aria-label="View on GitHub"><img src="https://cdn.simpleicons.org/github" alt="" width="20" height="20" /></a>`
+          : "";
+        return `<div class="panel-overview-card" data-index="${i}">
+          <button type="button" class="panel-overview-card-inner">${inner}</button>
+          ${linkHtml}
+        </div>`;
+      }
+    )
+    .join("");
+  panelContent.innerHTML = `<div class="panel-overview-grid">${cardsHtml}</div>`;
+  panelTitle.textContent = section.label;
+  panelSubtitle.textContent = section.subtitle;
+  activeItemIndex = null;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function renderDetail(section, index) {
+  const item = section.items[index];
+  panelContent.innerHTML = `<div class="panel-detail-content">${item.detailHtml}</div>`;
+  panelTitle.textContent = item.title;
+  panelSubtitle.textContent = "";
+  activeItemIndex = index;
+}
+
+function renderSkills(section) {
+  const base = "https://cdn.simpleicons.org";
+  const slugMap = section.skillSlugMap || {};
+  const groupsHtml = section.skillGroups
+    .map(
+      (group) => `
+    <div class="panel-skills-group">
+      <h3 class="panel-skills-group-title">${escapeHtml(group.name)}</h3>
+      <div class="panel-skills-logos">
+        ${group.items
+          .map((name) => {
+            const slug = slugMap[name] || name.toLowerCase().replace(/\s+/g, "");
+            const url = `${base}/${slug}`;
+            return `<span class="panel-skill-item" title="${escapeHtml(name)}">
+              <img src="${url}" alt="${escapeHtml(name)}" class="panel-skill-logo" onerror="this.style.display='none'" />
+              <span class="panel-skill-label">${escapeHtml(name)}</span>
+            </span>`;
+          })
+          .join("")}
+      </div>
+    </div>`
+    )
+    .join("");
+  panelContent.innerHTML = `<div class="panel-skills">${groupsHtml}</div>`;
+  panelTitle.textContent = section.label;
+  panelSubtitle.textContent = section.subtitle;
+}
+
 function openPanel(id, options = {}) {
   const selected = sectionMap.get(id);
   if (!selected) return;
 
   activeSectionId = id;
-  panelTitle.textContent = selected.label;
-  panelSubtitle.textContent = selected.subtitle;
-  panelContent.innerHTML = selected.html;
+  activeItemIndex = null;
   markActiveButton(id);
   updateStatus(selected.status);
+
+  if (selected.items) {
+    renderOverview(selected);
+  } else if (selected.skillGroups) {
+    renderSkills(selected);
+  } else {
+    panelTitle.textContent = selected.label;
+    panelSubtitle.textContent = selected.subtitle;
+    panelContent.innerHTML = selected.html;
+  }
 
   if (!options.keepPanelHidden) {
     setPanelVisible(true);
@@ -167,6 +390,30 @@ function openPanel(id, options = {}) {
   if (!options.skip3DFocus) {
     focusSectionIn3D(id);
   }
+}
+
+function openPanelItem(sectionId, index) {
+  const section = sectionMap.get(sectionId);
+  if (!section || !section.items || index < 0 || index >= section.items.length) return;
+  activeItemIndex = index;
+  renderDetail(section, index);
+  setPanelVisible(true);
+  panel.focus();
+}
+
+function cycleItem(direction) {
+  const section = sectionMap.get(activeSectionId);
+  if (!section || !section.items || activeItemIndex == null) return false;
+  const len = section.items.length;
+  const next = (activeItemIndex + direction + len) % len;
+  openPanelItem(activeSectionId, next);
+  return true;
+}
+
+function backToOverview() {
+  const section = sectionMap.get(activeSectionId);
+  if (!section || !section.items) return;
+  renderOverview(section);
 }
 
 function cycleSection(direction) {
@@ -180,6 +427,7 @@ function setOverviewMode(options = {}) {
   const instant = options.instant === true;
 
   activeSectionId = null;
+  activeItemIndex = null;
   markActiveButton(null);
 
   if (hidePanel) {
@@ -1023,7 +1271,22 @@ function initRendererWithRetry() {
 }
 
 function setupEvents() {
-  panelClose.addEventListener("click", () => setOverviewMode({ hidePanel: true }));
+  panelContent.addEventListener("click", (event) => {
+    if (event.target.closest(".panel-card-github")) return;
+    const card = event.target.closest(".panel-overview-card");
+    if (card != null && activeSectionId != null) {
+      const index = parseInt(card.getAttribute("data-index"), 10);
+      if (!isNaN(index)) openPanelItem(activeSectionId, index);
+    }
+  });
+
+  panelClose.addEventListener("click", () => {
+    if (activeItemIndex != null) {
+      backToOverview();
+    } else {
+      setOverviewMode({ hidePanel: true });
+    }
+  });
 
   sectionButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -1033,11 +1296,18 @@ function setupEvents() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      setOverviewMode({ hidePanel: true });
+      if (activeItemIndex != null) {
+        backToOverview();
+      } else {
+        setOverviewMode({ hidePanel: true });
+      }
       return;
     }
     if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
-    cycleSection(event.key === "ArrowRight" ? 1 : -1);
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    if (!cycleItem(direction)) {
+      cycleSection(direction);
+    }
   });
 }
 
@@ -1206,7 +1476,12 @@ function boot3D() {
       updateStatus(`Click ${hoveredRecord.objectName} to open ${sectionMap.get(hoveredRecord.id).label}.`);
     } else if (!state3d.intro?.active) {
       document.body.style.cursor = "default";
-      updateStatus(sectionMap.get(activeSectionId)?.status || "Overview mode. Click a desk object to explore.");
+      const section = activeSectionId != null ? sectionMap.get(activeSectionId) : null;
+      const status =
+        section && activeItemIndex != null && section.items
+          ? `Use arrows to browse ${section.label}. Escape to go back.`
+          : section?.status || "Overview mode. Click a desk object to explore.";
+      updateStatus(status);
     }
 
     controls.update();
