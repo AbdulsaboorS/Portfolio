@@ -88,9 +88,12 @@ const projectItems = [
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/Portfolio",
     detailHtml: `
-      <p>An immersive 3D workspace experience where my portfolio comes to life. Each desk item (monitor, keyboard, mouse) opens rich detail panels showcasing my experience, projects, and skills with smooth overview-to-detail navigation.</p>
-      <p>Skipped the heavy frameworks and build steps to keep the performance high and the code clean; just pure, lightweight HTML/CSS/JS.</p>
-      <p>Built this using Three.js and vibe coded all this with Cursor :D</p>
+      <p>An immersive 3D workspace experience where my portfolio comes to life.</p>
+      <ul>
+        <li>Each desk item (monitor, keyboard, mouse) opens rich detail panels for experience, projects, skills, and interests, with smooth overview-to-detail flow and arrow-key navigation.</li>
+        <li>Skipped heavy frameworks and build steps; pure, lightweight HTML/CSS/JS for high performance and clean code.</li>
+        <li>Built with Three.js and vibe coded with Cursor :D</li>
+      </ul>
     `,
   },
   {
@@ -99,7 +102,13 @@ const projectItems = [
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/discord-bot-project",
     detailHtml: `
-      <p>AI-powered Discord chatbot using Azure Cognitive Services and spaCy for sentiment analysis and key phrase extraction. Resume highlight: 200+ MAU, 4.6/5 satisfaction. This was my first ever project building something—I learned a lot even though it was simple.</p>
+      <p>A Discord bot I built to collect and analyze feedback within channels in real time.</p>
+      <ul>
+        <li>Users submit feedback with a simple command; the bot returns per-message sentiment and key phrases.</li>
+        <li>Uses Azure Text Analytics for sentiment (positive/negative/neutral) and spaCy for key phrase extraction.</li>
+        <li>Keeps a running summary of themes across the session, so you get both per-message analysis and an aggregate view.</li>
+        <li>Built with Python, discord.py, and environment-based configuration for tokens and API keys.</li>
+      </ul>
     `,
   },
   {
