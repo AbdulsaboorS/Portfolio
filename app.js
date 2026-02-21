@@ -104,6 +104,7 @@ const projectItems = [
     detailHtml: `
       <p>A Discord bot I built to collect and analyze feedback within channels in real time.</p>
       <ul>
+        <li>I put this bot into a friend's stock trading Discord server and got 200+ MAU using it, with a 4.6/5 satisfaction score (average rating from an optional in-server feedback survey).</li>
         <li>Users submit feedback with a simple command; the bot returns per-message sentiment and key phrases.</li>
         <li>Uses Azure Text Analytics for sentiment (positive/negative/neutral) and spaCy for key phrase extraction.</li>
         <li>Keeps a running summary of themes across the session, so you get both per-message analysis and an aggregate view.</li>
