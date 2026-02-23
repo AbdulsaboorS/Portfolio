@@ -91,7 +91,7 @@ const projectItems = [
     detailHtml: `
       <p>An immersive 3D workspace experience where my portfolio comes to life.</p>
       <ul>
-        <li>Each desk item (monitor, keyboard, mouse) opens rich detail panels for experience, projects, skills, and interests, with smooth overview-to-detail flow and arrow-key navigation.</li>
+        <li>Each desk item (monitor, side monitor, keyboard, mouse, PC, dumbbell) opens rich detail panels for experience, projects, skills, activities, and interests, with smooth overview-to-detail flow and arrow-key navigation.</li>
       </ul>
     `,
   },
@@ -210,7 +210,7 @@ const sectionData = [
     objectName: "monitor",
     label: "Experience",
     subtitle: "Internship outcomes",
-    status: "Monitor selected: experience loaded.",
+    status: "Click a card for details · ← → to browse · ← or Esc for overview.",
     items: experienceItems,
   },
   {
@@ -218,15 +218,15 @@ const sectionData = [
     objectName: "side monitor",
     label: "Projects",
     subtitle: "Builds in progress",
-    status: "Side monitor selected: projects loaded.",
+    status: "Click a card for details · ← → to browse · ← or Esc for overview.",
     items: projectItems,
   },
   {
     id: "activities",
-    objectName: "mouse",
+    objectName: "PC",
     label: "Activities",
     subtitle: "Leadership and service",
-    status: "Mouse selected: activities loaded.",
+    status: "Click a card for details · ← → to browse · ← or Esc for overview.",
     items: activityItems,
   },
   {
@@ -234,7 +234,7 @@ const sectionData = [
     objectName: "keyboard",
     label: "Skills",
     subtitle: "",
-    status: "Keyboard selected: skills loaded.",
+    status: "Click a card for details · ← or Esc for overview.",
     skillGroups,
     skillSlugMap,
   },
@@ -243,7 +243,7 @@ const sectionData = [
     objectName: "dumbbell",
     label: "Interests",
     subtitle: "Routine and lifestyle",
-    status: "Dumbbell selected: interests loaded.",
+    status: "← or Esc for overview.",
     html: `
       <ul>
         <li>I like sports, anime, gaming, and losing money investing in the stock market.</li>
@@ -476,7 +476,7 @@ function setOverviewMode(options = {}) {
     }
   }
 
-  updateStatus("Overview mode. Click a desk object to explore.");
+  updateStatus("Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.");
 }
 
 function collectEmissiveMaterials(rootObjects) {
@@ -1149,7 +1149,7 @@ function buildScene(scene) {
   const expHit = createHitMesh(2.55, 1.4, 0.6, new THREE.Vector3(0, 0.92, -1.2));
   const projHit = createHitMesh(0.92, 1.5, 0.6, new THREE.Vector3(-1.45, 0.87, -0.95));
   const skillsHit = createHitMesh(1.95, 0.32, 0.62, new THREE.Vector3(0.1, 0.11, -0.18));
-  const activitiesHit = createHitMesh(0.48, 0.34, 0.45, new THREE.Vector3(1.2, 0.12, 0.02));
+  const activitiesHit = createHitMesh(0.94, 1.76, 1.12, new THREE.Vector3(2.2, 0.58, -0.95));
   const interestsHit = createHitMesh(1.15, 0.42, 0.45, new THREE.Vector3(-1.72, 0.2, 0.22));
 
   scene.add(expHit, projHit, skillsHit, activitiesHit, interestsHit);
@@ -1189,13 +1189,13 @@ function buildScene(scene) {
 
   addInteractiveRecord({
     id: "activities",
-    objectName: "mouse",
+    objectName: "PC",
     hitMesh: activitiesHit,
-    floatObject: mouse,
-    labelAnchor: new THREE.Vector3(1.2, 0.56, 0.02),
-    focusTarget: new THREE.Vector3(1.2, 0.12, 0.02),
-    focusCameraPosition: new THREE.Vector3(1.92, 1.02, 1.67),
-    highlightMaterials: collectEmissiveMaterials([mouse]),
+    floatObject: pcTower,
+    labelAnchor: new THREE.Vector3(2.2, 1.5, -0.95),
+    focusTarget: new THREE.Vector3(2.2, 0.58, -0.95),
+    focusCameraPosition: new THREE.Vector3(2.9, 1.1, 0.3),
+    highlightMaterials: collectEmissiveMaterials([pcTower]),
   });
 
   addInteractiveRecord({
@@ -1335,6 +1335,16 @@ function setupEvents() {
       cycleSection(direction);
     }
   });
+
+  const engagementEl = document.getElementById("engagement-instructions");
+  const engagementTrigger = document.getElementById("engagement-instructions-trigger");
+  const engagementContent = document.getElementById("engagement-instructions-content");
+  if (engagementEl && engagementTrigger && engagementContent) {
+    engagementTrigger.addEventListener("click", () => {
+      const expanded = engagementEl.classList.toggle("is-expanded");
+      engagementTrigger.setAttribute("aria-expanded", String(expanded));
+    });
+  }
 }
 
 function boot3D() {
@@ -1457,7 +1467,7 @@ function boot3D() {
     hoverLabel.hidden = true;
     hoverLabel.style.display = "none";
     document.body.style.cursor = "default";
-    updateStatus(sectionMap.get(activeSectionId)?.status || "Overview mode. Click a desk object to explore.");
+      updateStatus(sectionMap.get(activeSectionId)?.status || "Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.");
   });
 
   updateStatus("Cinematic intro...");
@@ -1509,8 +1519,8 @@ function boot3D() {
       const section = activeSectionId != null ? sectionMap.get(activeSectionId) : null;
       const status =
         section && activeItemIndex != null && section.items
-          ? `Use arrows to browse ${section.label}. Escape to go back.`
-          : section?.status || "Overview mode. Click a desk object to explore.";
+          ? "Click a card for details · ← → to browse · ← or Esc for overview."
+          : section?.status || "Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.";
       updateStatus(status);
     }
 

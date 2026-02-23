@@ -39,7 +39,7 @@
         <section class="scene-wrap" aria-describedby="scene-description">
           <canvas id="scene" aria-label="Interactive 3D desktop portfolio"></canvas>
           <p id="scene-description" class="sr-only">
-            Interactive desktop scene with clickable monitor, side monitor, keyboard, mouse, and dumbbell.
+            Interactive desktop scene with clickable monitor, side monitor, keyboard, mouse, PC, and dumbbell.
           </p>
 
           <div id="scene-overlay" class="scene-overlay" hidden>
@@ -49,8 +49,18 @@
           <div id="scene-status" class="scene-status" role="status" aria-live="polite">Loading 3D setup...</div>
           <div id="hover-label" class="hover-label" hidden></div>
 
-          <div class="hint-line">
-            <p>Drag to rotate | Scroll to zoom | Click objects to open details</p>
+          <div class="engagement-instructions" id="engagement-instructions" aria-label="How to use this portfolio">
+            <button type="button" class="engagement-instructions-trigger" id="engagement-instructions-trigger" aria-expanded="false" aria-controls="engagement-instructions-content">
+              How to use
+              <span class="engagement-instructions-chevron" aria-hidden="true">▼</span>
+            </button>
+            <div class="engagement-instructions-content" id="engagement-instructions-content" role="region" aria-label="Instructions">
+              <ul class="engagement-instructions-list">
+                <li><strong>Overview:</strong> Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.</li>
+                <li><strong>In a section:</strong> Click a card for details; use ← → to move between items; press ← or Esc to go back.</li>
+                <li><strong>3D scene:</strong> Drag to rotate, scroll to zoom.</li>
+              </ul>
+            </div>
           </div>
 
           <div class="quick-nav" role="toolbar" aria-label="Quick sections">
@@ -67,7 +77,7 @@
           <h2 id="panel-title">Welcome</h2>
           <p id="panel-subtitle">Click a desk object to explore.</p>
           <div id="panel-content">
-            <p>Monitor, side monitor, keyboard, mouse, and dumbbell are clickable.</p>
+            <p>Monitor, side monitor, keyboard, mouse, PC, and dumbbell are clickable.</p>
           </div>
         </aside>
       </main>

@@ -185,21 +185,94 @@ main {
   display: none !important;
 }
 
-.hint-line {
+.engagement-instructions {
   position: absolute;
   left: 1rem;
   bottom: 1rem;
-  color: #d9e5ff;
-  font-size: 0.82rem;
-  background: rgba(14, 23, 41, 0.45);
-  border-radius: 999px;
-  padding: 0.45rem 0.7rem;
+  max-width: 22rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  background: rgba(14, 23, 41, 0.5);
+  border: 1px solid rgba(122, 166, 255, 0.18);
+  border-radius: 10px;
   backdrop-filter: blur(8px);
   z-index: 12;
+  overflow: hidden;
 }
 
-.hint-line p {
+.engagement-instructions-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.engagement-instructions-trigger:hover,
+.engagement-instructions-trigger:focus-visible {
+  background: rgba(122, 166, 255, 0.12);
+  color: #cde5ff;
+  outline: none;
+}
+
+.engagement-instructions-chevron {
+  font-size: 0.6rem;
+  opacity: 0.9;
+  transition: transform 0.2s ease;
+}
+
+.engagement-instructions.is-expanded .engagement-instructions-chevron {
+  transform: rotate(180deg);
+}
+
+.engagement-instructions-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease;
+  padding: 0 0.85rem;
+}
+
+.engagement-instructions-content .engagement-instructions-list {
+  padding: 0 0 0.6rem;
+  margin: 0.4rem 0 0;
+  border-top: 1px solid rgba(122, 166, 255, 0.15);
+}
+
+.engagement-instructions:hover .engagement-instructions-content,
+.engagement-instructions.is-expanded .engagement-instructions-content {
+  max-height: 12rem;
+  opacity: 1;
+  padding: 0 0.85rem;
+}
+
+.engagement-instructions-list {
   margin: 0;
+  padding-left: 1.1rem;
+}
+
+.engagement-instructions-list li {
+  margin-bottom: 0.25rem;
+}
+
+.engagement-instructions-list li:last-child {
+  margin-bottom: 0;
+}
+
+.engagement-instructions-list strong {
+  color: #c6d7fb;
+  font-weight: 600;
 }
 
 .quick-nav {
@@ -598,14 +671,25 @@ main {
     max-height: 44vh;
   }
 
+  .engagement-instructions {
+    max-width: 18rem;
+    font-size: 0.76rem;
+  }
+
   .metric-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
-  .hint-line {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.55rem;
+  .engagement-instructions {
+    max-width: 100%;
+    left: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .engagement-instructions-trigger {
+    padding: 0.5rem 0.65rem;
   }
 }
