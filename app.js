@@ -87,12 +87,11 @@ const projectItems = [
     subtitle: "Three.js & Vanilla JS",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/Portfolio",
+    techStack: ["Three.js", "Vanilla JS", "HTML", "CSS"],
     detailHtml: `
       <p>An immersive 3D workspace experience where my portfolio comes to life.</p>
       <ul>
         <li>Each desk item (monitor, keyboard, mouse) opens rich detail panels for experience, projects, skills, and interests, with smooth overview-to-detail flow and arrow-key navigation.</li>
-        <li>Skipped heavy frameworks and build steps; pure, lightweight HTML/CSS/JS for high performance and clean code.</li>
-        <li>Built with Three.js and vibe coded with Cursor :D</li>
       </ul>
     `,
   },
@@ -101,14 +100,13 @@ const projectItems = [
     subtitle: "Finished but not using anymore",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/discord-bot-project",
+    techStack: ["Python", "discord.py", "Azure Text Analytics", "spaCy"],
     detailHtml: `
       <p>A Discord bot I built to collect and analyze feedback within channels in real time.</p>
       <ul>
         <li>I put this bot into a friend's stock trading Discord server and got 200+ MAU using it, with a 4.6/5 satisfaction score (average rating from an optional in-server feedback survey).</li>
         <li>Users submit feedback with a simple command; the bot returns per-message sentiment and key phrases.</li>
-        <li>Uses Azure Text Analytics for sentiment (positive/negative/neutral) and spaCy for key phrase extraction.</li>
         <li>Keeps a running summary of themes across the session, so you get both per-message analysis and an aggregate view.</li>
-        <li>Built with Python, discord.py, and environment-based configuration for tokens and API keys.</li>
       </ul>
     `,
   },
@@ -117,6 +115,7 @@ const projectItems = [
     subtitle: "In progress",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/fantasyfootballbot",
+    techStack: [],
     detailHtml: `
       <p>Making a bot to help me not get last place in my fantasy team because I NEED to avoid that punishment.</p>
     `,
@@ -126,6 +125,7 @@ const projectItems = [
     subtitle: "In progress",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/spoiler-shield",
+    techStack: [],
     detailHtml: `
       <p>App that answers your questions while watching shows without spoiling. No more searching things up and accidentally getting spoiled. You just use my extension and you're safe!</p>
     `,
@@ -173,29 +173,35 @@ const activityItems = [
 
 const skillGroups = [
   {
-    name: "Programming languages",
-    items: ["JavaScript", "Python", "Java", "HTML5", "CSS3", "SQL", "R", "React", "Node.js", "TypeScript"],
+    name: "Software / tools",
+    items: ["Figma", "Jira", "Confluence", "Asana", "Miro", "Amplitude", "Looker", "Tableau", "Power BI", "Loom"],
   },
   {
-    name: "Software & tools",
-    items: ["Figma", "Jira", "Confluence", "Asana", "Miro", "Slack", "Looker", "Amplitude", "Power BI", "Tableau", "Lovable", "Loom", "GitHub", "Git"],
+    name: "Programming languages",
+    items: ["TypeScript", "JavaScript", "Python", "Java", "HTML5", "CSS3", "R"],
+  },
+  {
+    name: "Frameworks",
+    items: ["React", "Node.js"],
   },
   {
     name: "Databases",
-    items: ["SQL"],
+    items: ["Supabase", "SQL"],
   },
   {
-    name: "AI stack",
-    items: ["Codex", "Claude", "Cursor"],
+    name: "AI & DEV TOOLS",
+    items: ["Cursor", "Claude", "Lovable", "Vercel", "Replit", "Cloudflare", "GitHub", "Git"],
   },
 ];
 
+// Path under cdn.simpleicons.org; use "slug/white" for high-contrast on dark background
 const skillSlugMap = {
-  JavaScript: "javascript", Python: "python", Java: "java", HTML5: "html5", CSS3: "css3", SQL: "sql", R: "r",
-  React: "react", "Node.js": "nodedotjs", TypeScript: "typescript",
-  Figma: "figma", Jira: "jira", Confluence: "confluence", Asana: "asana", Miro: "miro", Slack: "slack",
-  Looker: "looker", Amplitude: "amplitude", "Power BI": "powerbi", Tableau: "tableau", Lovable: "lovable", Loom: "loom",
-  GitHub: "github", Git: "git", Codex: "openai", Claude: "anthropic", Cursor: "cursor",
+  Figma: "figma", Jira: "jira", Confluence: "confluence", Asana: "asana", Miro: "miro",
+  Amplitude: "amplitude/white", Looker: "looker/white", Tableau: "tableau/white", "Power BI": "powerbi/white", Loom: "loom",
+  TypeScript: "typescript", JavaScript: "javascript", Python: "python", Java: "openjdk/white", HTML5: "html5", CSS3: "css3/white", R: "r",
+  React: "react", "Node.js": "nodedotjs",
+  Supabase: "supabase", SQL: "sqlite",
+  Cursor: "cursor/white", Claude: "anthropic/white", Lovable: "openai", Vercel: "vercel/white", Replit: "replit", Cloudflare: "cloudflare", GitHub: "github/white", Git: "git",
 };
 
 const sectionData = [
@@ -227,7 +233,7 @@ const sectionData = [
     id: "skills",
     objectName: "keyboard",
     label: "Skills",
-    subtitle: "PM + technical stack",
+    subtitle: "",
     status: "Keyboard selected: skills loaded.",
     skillGroups,
     skillSlugMap,
@@ -339,7 +345,17 @@ function escapeHtml(text) {
 
 function renderDetail(section, index) {
   const item = section.items[index];
-  panelContent.innerHTML = `<div class="panel-detail-content">${item.detailHtml}</div>`;
+  const techStackHtml =
+    item.techStack && item.techStack.length
+      ? `<div class="panel-detail-tech"><span class="panel-detail-tech-label">Tech:</span> ${item.techStack
+          .map((t) => `<span class="panel-detail-tech-pill">${escapeHtml(t)}</span>`)
+          .join("")}</div>`
+      : "";
+  const githubLinkHtml =
+    item.link
+      ? `<p class="panel-detail-github"><a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-detail-github-link"><img src="https://cdn.simpleicons.org/github" alt="" width="18" height="18" /> View on GitHub</a></p>`
+      : "";
+  panelContent.innerHTML = `<div class="panel-detail-content">${techStackHtml}${githubLinkHtml}${item.detailHtml}</div>`;
   panelTitle.textContent = item.title;
   panelSubtitle.textContent = "";
   activeItemIndex = index;
@@ -357,7 +373,7 @@ function renderSkills(section) {
         ${group.items
           .map((name) => {
             const slug = slugMap[name] || name.toLowerCase().replace(/\s+/g, "");
-            const url = `${base}/${slug}`;
+            const url = slug.startsWith("http") ? slug : `${base}/${slug}`;
             return `<span class="panel-skill-item" title="${escapeHtml(name)}">
               <img src="${url}" alt="${escapeHtml(name)}" class="panel-skill-logo" onerror="this.style.display='none'" />
               <span class="panel-skill-label">${escapeHtml(name)}</span>
@@ -1361,13 +1377,17 @@ function boot3D() {
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
+  controls.dampingFactor = 0.04;
   controls.enablePan = false;
   controls.minDistance = 2.5;
   controls.maxDistance = 18;
-  controls.minAzimuthAngle = -1.4;
-  controls.maxAzimuthAngle = 1.4;
-  controls.minPolarAngle = 0.62;
-  controls.maxPolarAngle = 1.38;
+  controls.zoomSpeed = 1.5;
+  controls.rotateSpeed = 1.25;
+  controls.zoomToCursor = true;
+  controls.minAzimuthAngle = -1.5;
+  controls.maxAzimuthAngle = 1.5;
+  controls.minPolarAngle = 0.52;
+  controls.maxPolarAngle = 1.42;
   controls.target.set(0.1, 0.74, -0.6);
   controls.update();
 
