@@ -111,10 +111,11 @@ const projectItems = [
     `,
   },
   {
-    title: "Fantasy Football Bot",
-    subtitle: "In progress",
+    title: "Fantasy Basketball Bot",
+    subtitle: "Almost done",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/fantasyfootballbot",
+    vercelLink: "https://fantasybasketballbot.vercel.app/",
     techStack: [],
     detailHtml: `
       <p>Making a bot to help me not get last place in my fantasy team because I NEED to avoid that punishment.</p>
@@ -321,9 +322,10 @@ function renderOverview(section) {
         const inner = `<span class="panel-overview-title">${escapeHtml(item.title)}</span>
           <span class="panel-overview-subtitle">${escapeHtml(item.subtitle)}</span>
           ${item.dateRange ? `<span class="panel-overview-daterange">${escapeHtml(item.dateRange)}</span>` : ""}`;
-        const linkHtml = item.link
-          ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-card-github" aria-label="View on GitHub"><img src="https://cdn.simpleicons.org/github" alt="" width="20" height="20" /></a>`
-          : "";
+        const cardLinks = [];
+        if (item.vercelLink) cardLinks.push(`<a href="${escapeHtml(item.vercelLink)}" target="_blank" rel="noreferrer" class="panel-card-vercel" aria-label="View on Vercel"><img src="https://cdn.simpleicons.org/vercel" alt="" width="20" height="20" /></a>`);
+        if (item.link) cardLinks.push(`<a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-card-github" aria-label="View on GitHub"><img src="https://cdn.simpleicons.org/github" alt="" width="20" height="20" /></a>`);
+        const linkHtml = cardLinks.length ? cardLinks.join("") : "";
         return `<div class="panel-overview-card" data-index="${i}">
           <button type="button" class="panel-overview-card-inner">${inner}</button>
           ${linkHtml}
@@ -351,11 +353,11 @@ function renderDetail(section, index) {
           .map((t) => `<span class="panel-detail-tech-pill">${escapeHtml(t)}</span>`)
           .join("")}</div>`
       : "";
-  const githubLinkHtml =
-    item.link
-      ? `<p class="panel-detail-github"><a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-detail-github-link"><img src="https://cdn.simpleicons.org/github" alt="" width="18" height="18" /> View on GitHub</a></p>`
-      : "";
-  panelContent.innerHTML = `<div class="panel-detail-content">${techStackHtml}${githubLinkHtml}${item.detailHtml}</div>`;
+  const detailLinks = [];
+  if (item.vercelLink) detailLinks.push(`<a href="${escapeHtml(item.vercelLink)}" target="_blank" rel="noreferrer" class="panel-detail-vercel-link"><img src="https://cdn.simpleicons.org/vercel" alt="" width="18" height="18" /> Check it out here!</a>`);
+  if (item.link) detailLinks.push(`<a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-detail-github-link"><img src="https://cdn.simpleicons.org/github" alt="" width="18" height="18" /> View on GitHub</a>`);
+  const detailLinksHtml = detailLinks.length ? `<p class="panel-detail-github">${detailLinks.join(" ")}</p>` : "";
+  panelContent.innerHTML = `<div class="panel-detail-content">${techStackHtml}${detailLinksHtml}${item.detailHtml}</div>`;
   panelTitle.textContent = item.title;
   panelSubtitle.textContent = "";
   activeItemIndex = index;
@@ -658,7 +660,7 @@ function createProjectsTexture() {
   ctx.fillText("build focus", textureCanvas.width / 2, 205);
 
   const cards = [
-    { title: "Fantasy Football Bot", detail: "in progress" },
+    { title: "Fantasy Basketball Bot", detail: "Almost done" },
     { title: "Spoiler Shield", detail: "in progress" },
     { title: "Discord Insight Bot", detail: "200+ MAU" },
   ];
@@ -1298,7 +1300,7 @@ function initRendererWithRetry() {
 
 function setupEvents() {
   panelContent.addEventListener("click", (event) => {
-    if (event.target.closest(".panel-card-github")) return;
+    if (event.target.closest(".panel-card-github") || event.target.closest(".panel-card-vercel")) return;
     const card = event.target.closest(".panel-overview-card");
     if (card != null && activeSectionId != null) {
       const index = parseInt(card.getAttribute("data-index"), 10);

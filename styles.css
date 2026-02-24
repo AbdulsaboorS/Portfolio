@@ -32,6 +32,12 @@ body {
   overflow: hidden;
 }
 
+@supports (padding: max(0px)) {
+  #app {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 .top-bar {
   position: absolute;
   inset: 1rem 1.2rem auto 1.2rem;
@@ -165,6 +171,22 @@ main {
   border-radius: 999px;
   padding: 0.32rem 0.55rem;
   z-index: 12;
+}
+
+.orientation-hint {
+  display: none; /* shown only on mobile */
+  position: absolute;
+  left: 50%;
+  bottom: 0.75rem;
+  transform: translateX(-50%);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: rgba(10, 16, 32, 0.82);
+  border-radius: 999px;
+  border: 1px solid rgba(122, 166, 255, 0.3);
+  z-index: 13;
+  pointer-events: none;
 }
 
 .hover-label {
@@ -311,8 +333,8 @@ main {
   position: absolute;
   top: 9rem;
   right: 1.15rem;
-  width: min(34rem, 42vw);
-  max-height: calc(100vh - 8rem);
+  width: min(32rem, 46vw);
+  max-height: calc(100vh - 7.5rem);
   overflow: auto;
   z-index: 22;
   border-radius: 16px;
@@ -352,19 +374,19 @@ main {
 }
 
 #panel-title {
-  margin: 0.6rem 0 0.26rem;
-  font-size: 1.35rem;
+  margin: 0.4rem 0 0.2rem;
+  font-size: 1.25rem;
 }
 
 #panel-subtitle {
   margin: 0;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
 }
 
 #panel-content {
-  margin-top: 0.7rem;
-  font-size: 0.9rem;
+  margin-top: 0.55rem;
+  font-size: 0.88rem;
   line-height: 1.5;
 }
 
@@ -429,6 +451,26 @@ main {
 }
 
 .panel-card-github img {
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+.panel-card-vercel {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  opacity: 0.85;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.panel-card-vercel:hover {
+  color: var(--text);
+  opacity: 1;
+}
+
+.panel-card-vercel img {
   display: block;
   filter: brightness(0) invert(1);
 }
@@ -520,10 +562,33 @@ main {
   opacity: 1;
 }
 
-.panel-detail-github-link img {
+.panel-detail-github-link img,
+.panel-detail-vercel-link img {
   display: block;
   filter: brightness(0) invert(1);
   opacity: 0.95;
+}
+
+/* Space between the two links only when both present (e.g. Fantasy Basketball) */
+.panel-detail-vercel-link + .panel-detail-github-link {
+  margin-left: 0.75rem;
+}
+
+.panel-detail-vercel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.panel-detail-vercel-link:hover,
+.panel-detail-vercel-link:focus-visible {
+  color: var(--accent-2);
+  opacity: 1;
 }
 
 .panel-skills {
@@ -658,6 +723,10 @@ main {
     gap: 0.58rem;
   }
 
+  .quick-nav {
+    display: none;
+  }
+
   .scene-status,
   .quick-nav {
     top: 9rem;
@@ -668,12 +737,15 @@ main {
     top: auto;
     right: 1rem;
     bottom: 1rem;
-    max-height: 44vh;
+    max-height: 80vh;
   }
 
   .engagement-instructions {
-    max-width: 18rem;
-    font-size: 0.76rem;
+    display: none;
+  }
+
+  .orientation-hint {
+    display: block;
   }
 
   .metric-grid {
