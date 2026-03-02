@@ -1,45 +1,35 @@
-# Abdulsaboor Shaikh Interactive Portfolio
+# Abdulsaboor Shaikh – Interactive 3D Portfolio
 
-Dark, interactive landing page with a 3D "Night Ops Command Room" scene and recruiter-focused content panels.
+**[→ Live portfolio](https://abdulsaboors.github.io/Portfolio/)**
 
-## Run locally
+An interactive 3D desk that replaces a static resume with a "Night Ops Command Room" workspace. Click objects on the desk (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open sections: experience, projects, activities, skills, and interests. Built for recruiters and hiring managers who want to explore content in one place without scrolling a long page.
 
-```bash
-python3 -m http.server 4173
-```
+**What it does**
 
-Open:
+- **Single-page experience** – One scene; section panels slide in so you stay in context.
+- **Keyboard-friendly** – Arrow keys move between cards; Esc or Back returns to the section overview.
+- **Graceful fallback** – If WebGL isn’t available, quick-nav buttons and the same content stay usable.
+- **Focused panels** – Each section shows an overview grid; click a card for full detail (e.g. project descriptions, tech stacks, links).
 
-```text
-http://localhost:4173/index.html
-```
+**Why it exists**
 
-## Compare two versions
+I wanted a portfolio that feels like a product: something you interact with instead of skim. The 3D desk is the entry point; the real value is the structured content behind each object, so the layout supports both “quick scan” and “deep dive.”
 
-This repo now includes an alternate implementation under `/alt`.
+---
 
-```text
-http://localhost:4173/compare.html
-```
+## Tech stack (this site)
 
-Direct URLs:
+- **Frontend:** Vanilla JS, HTML, CSS
+- **3D:** Three.js
+- **Hosting:** GitHub Pages
+- **Accessibility:** Keyboard navigation, reduced-motion aware, non-WebGL fallback
 
-- Current build: `http://localhost:4173/index.html`
-- Alternate build: `http://localhost:4173/alt/index.html`
+---
 
-## WebGL diagnostics
+## How to use the live site
 
-Use this route to isolate renderer setup issues without portfolio UI complexity:
+- **Rotate:** Drag to rotate the camera; scroll to zoom.
+- **Open a section:** Click a glowing desk object or use the quick section buttons above the scene.
+- **Browse cards:** Click a card for details; use ← → to move between items; press ← or Esc to go back to the overview.
 
-- Debug harness: `http://localhost:4173/debug-webgl.html`
-
-## Controls
-
-- Drag to rotate camera
-- Scroll to zoom
-- Click glowing objects to switch sections
-- Use quick section buttons above the scene
-- Use left and right arrow keys to cycle sections
-- Click "Start guided tour" for auto walkthrough
-
-If WebGL is unavailable, the app automatically falls back to quick-access mode.
+If WebGL is unavailable, the app switches to quick-access mode and the same content is available via the section buttons.

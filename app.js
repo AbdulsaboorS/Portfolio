@@ -96,6 +96,33 @@ const projectItems = [
     `,
   },
   {
+    title: "Fantasy Basketball Bot",
+    subtitle: "Python, FastAPI & React",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/fantasybasketballbot",
+    vercelLink: "https://fantasybasketballbot.vercel.app/",
+    techStack: ["Python 3.11", "FastAPI", "React", "TypeScript", "Tailwind CSS", "GitHub Actions", "Railway", "Vercel"],
+    detailHtml: `
+      <p><strong>Live demo above is a read only dashboard (you will not make changes to my actual team lol)</strong></p>
+      <p>I built an ESPN fantasy basketball bot to stop losing points to missed game-day swaps and inefficient streaming.</p>
+      <ul>
+        <li><strong>Game-day checks:</strong> Every 30 minutes before tip-off, identifies OUT/DTD starters and recommends (or executes) valid replacements who play that day.</li>
+        <li><strong>Daily optimization:</strong> Nightly IR and lineup optimization, plus streaming evaluation using games-remaining value.</li>
+        <li><strong>Protection guardrails:</strong> Untouchables, rank thresholds, weekly transaction limits, and explicit execute mode.</li>
+      </ul>
+    `,
+  },
+  {
+    title: "Spoiler Shield",
+    subtitle: "In progress",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/spoiler-shield",
+    techStack: [],
+    detailHtml: `
+      <p>App that answers your questions while watching shows without spoiling. No more searching things up and accidentally getting spoiled. You just use my extension and you're safe!</p>
+    `,
+  },
+  {
     title: "Discord Feedback Bot",
     subtitle: "Finished but not using anymore",
     dateRange: "",
@@ -108,27 +135,6 @@ const projectItems = [
         <li>Users submit feedback with a simple command; the bot returns per-message sentiment and key phrases.</li>
         <li>Keeps a running summary of themes across the session, so you get both per-message analysis and an aggregate view.</li>
       </ul>
-    `,
-  },
-  {
-    title: "Fantasy Basketball Bot",
-    subtitle: "Almost done",
-    dateRange: "",
-    link: "https://github.com/AbdulsaboorS/fantasyfootballbot",
-    vercelLink: "https://fantasybasketballbot.vercel.app/",
-    techStack: [],
-    detailHtml: `
-      <p>Making a bot to help me not get last place in my fantasy team because I NEED to avoid that punishment.</p>
-    `,
-  },
-  {
-    title: "Spoiler Shield",
-    subtitle: "In progress",
-    dateRange: "",
-    link: "https://github.com/AbdulsaboorS/spoiler-shield",
-    techStack: [],
-    detailHtml: `
-      <p>App that answers your questions while watching shows without spoiling. No more searching things up and accidentally getting spoiled. You just use my extension and you're safe!</p>
     `,
   },
 ];
@@ -218,7 +224,7 @@ const sectionData = [
     id: "projects",
     objectName: "side monitor",
     label: "Projects",
-    subtitle: "Builds in progress",
+    subtitle: "",
     status: "Click a card for details · ← → to browse · ← or Esc for overview.",
     items: projectItems,
   },
@@ -660,7 +666,7 @@ function createProjectsTexture() {
   ctx.fillText("build focus", textureCanvas.width / 2, 205);
 
   const cards = [
-    { title: "Fantasy Basketball Bot", detail: "Almost done" },
+    { title: "Fantasy Basketball Bot", detail: "Finished" },
     { title: "Spoiler Shield", detail: "in progress" },
     { title: "Discord Insight Bot", detail: "200+ MAU" },
   ];
