@@ -13,6 +13,10 @@ const sceneStatus = document.getElementById("scene-status");
 const sceneOverlay = document.getElementById("scene-overlay");
 const hoverLabel = document.getElementById("hover-label");
 
+function defaultStatus() {
+  return window.innerWidth <= 900 ? "Click on an object!" : "Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.";
+}
+
 sceneOverlay.hidden = true;
 sceneOverlay.style.display = "none";
 hoverLabel.hidden = true;
@@ -418,7 +422,7 @@ function openPanel(id, options = {}) {
 
   if (!options.keepPanelHidden) {
     setPanelVisible(true);
-    panel.focus();
+    panel.focus({ preventScroll: true });
   }
 
   if (!options.skip3DFocus) {
@@ -432,7 +436,7 @@ function openPanelItem(sectionId, index) {
   activeItemIndex = index;
   renderDetail(section, index);
   setPanelVisible(true);
-  panel.focus();
+  panel.focus({ preventScroll: true });
 }
 
 function cycleItem(direction) {
@@ -484,7 +488,7 @@ function setOverviewMode(options = {}) {
     }
   }
 
-  updateStatus("Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.");
+  updateStatus(defaultStatus());
 }
 
 function collectEmissiveMaterials(rootObjects) {
@@ -1475,7 +1479,7 @@ function boot3D() {
     hoverLabel.hidden = true;
     hoverLabel.style.display = "none";
     document.body.style.cursor = "default";
-      updateStatus(sectionMap.get(activeSectionId)?.status || "Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.");
+      updateStatus(sectionMap.get(activeSectionId)?.status || defaultStatus());
   });
 
   updateStatus("Cinematic intro...");
@@ -1528,7 +1532,7 @@ function boot3D() {
       const status =
         section && activeItemIndex != null && section.items
           ? "Click a card for details · ← → to browse · ← or Esc for overview."
-          : section?.status || "Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.";
+          : section?.status || defaultStatus();
       updateStatus(status);
     }
 

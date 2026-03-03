@@ -174,19 +174,19 @@ main {
 }
 
 .orientation-hint {
-  display: none; /* shown only on mobile */
-  position: absolute;
-  left: 50%;
-  bottom: 0.75rem;
-  transform: translateX(-50%);
-  padding: 0.3rem 0.7rem;
-  font-size: 0.75rem;
-  color: var(--muted);
-  background: rgba(10, 16, 32, 0.82);
-  border-radius: 999px;
-  border: 1px solid rgba(122, 166, 255, 0.3);
-  z-index: 13;
-  pointer-events: none;
+  display: none; /* shown only on mobile portrait */
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(3, 6, 12, 0.96);
+  color: var(--text);
+  font-size: 1.1rem;
+  text-align: center;
+  padding: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .hover-label {
@@ -708,60 +708,100 @@ main {
   font-weight: 700;
 }
 
-@media (max-width: 900px) {
-  body {
+/* Portrait on mobile: block the site, require landscape */
+@media (max-width: 900px) and (orientation: portrait) {
+  .orientation-hint {
+    display: flex;
+  }
+}
+
+/* Mobile landscape: small screen in landscape orientation */
+@media (max-height: 500px) {
+  html, body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  #app, main, .scene-wrap {
     overflow: hidden;
   }
 
   .top-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    inset: 0.5rem 0.8rem auto 0.8rem;
+    gap: 0.4rem;
   }
 
-  .top-links {
-    gap: 0.58rem;
+  .top-bar h1 {
+    font-size: 1.1rem;
+  }
+
+  .name-role-inline {
+    font-size: 0.7rem;
+  }
+
+  .top-links a {
+    font-size: 0.75rem;
   }
 
   .quick-nav {
-    display: none;
+    top: 2.8rem;
+    left: 0.8rem;
   }
 
-  .scene-status,
-  .quick-nav {
-    top: 9rem;
+  .quick-nav button {
+    font-size: 0.62rem;
+    padding: 0.22rem 0.42rem;
+  }
+
+  .scene-status {
+    top: 2.8rem;
+    font-size: 0.68rem;
+    padding: 0.22rem 0.45rem;
   }
 
   .detail-panel {
-    width: calc(100% - 2rem);
-    top: auto;
-    right: 1rem;
-    bottom: 1rem;
-    max-height: 80vh;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: min(28rem, 42vw);
+    max-height: calc(100vh - 1rem);
+    padding: 0.6rem;
+    font-size: 0.82rem;
+    border-radius: 12px;
+  }
+
+  #panel-title {
+    font-size: 1rem;
+    margin: 0.2rem 0 0.1rem;
+  }
+
+  #panel-subtitle {
+    font-size: 0.72rem;
+  }
+
+  #panel-content {
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+  }
+
+  .panel-overview-title {
+    font-size: 0.82rem;
+  }
+
+  .panel-overview-subtitle {
+    font-size: 0.7rem;
+  }
+
+  .panel-overview-card {
+    padding: 0.35rem 0.45rem;
   }
 
   .engagement-instructions {
     display: none;
-  }
-
-  .orientation-hint {
-    display: block;
   }
 
   .metric-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .engagement-instructions {
-    max-width: 100%;
-    left: 0.5rem;
-    right: 0.5rem;
-    font-size: 0.72rem;
-  }
-
-  .engagement-instructions-trigger {
-    padding: 0.5rem 0.65rem;
   }
 }
