@@ -25,7 +25,7 @@ hoverLabel.style.display = "none";
 const experienceItems = [
   {
     title: "HCSS",
-    subtitle: "Product Manager Intern",
+    subtitle: "Product Intern",
     dateRange: "January 2026",
     detailHtml: `
       <p>Working for the spring term.</p>
@@ -34,7 +34,7 @@ const experienceItems = [
   },
   {
     title: "Expedia Group",
-    subtitle: "Product Manager Intern, Session Management (IAM)",
+    subtitle: "Product Intern, Session Management (IAM)",
     dateRange: "June 2025 – August 2025",
     detailHtml: `
       <ul>
@@ -51,7 +51,7 @@ const experienceItems = [
   },
   {
     title: "HubSpot",
-    subtitle: "Product & Systems Intern, Employee Technology – Internal AI",
+    subtitle: "Product Intern, Employee Technology – Internal AI",
     dateRange: "January 2025 – May 2025",
     detailHtml: `
       <ul>
