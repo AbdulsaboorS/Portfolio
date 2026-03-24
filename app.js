@@ -87,6 +87,26 @@ const experienceItems = [
 
 const projectItems = [
   {
+    title: "Veil",
+    subtitle: "Browser extension · in progress",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/veil",
+    techStack: [],
+    detailHtml: `
+      <p>Asks and answers your questions while you watch—without spoiling what happens next. Use the extension instead of risky searches mid-episode.</p>
+    `,
+  },
+  {
+    title: "Circles",
+    subtitle: "iOS · in development",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/circles-ios",
+    techStack: [],
+    detailHtml: `
+      <p>Think of Islamic Bereal, sort of. 🤫</p>
+    `,
+  },
+  {
     title: "3D Desk Portfolio",
     subtitle: "Three.js & Vanilla JS",
     dateRange: "",
@@ -114,16 +134,6 @@ const projectItems = [
         <li><strong>Daily optimization:</strong> Nightly IR and lineup optimization, plus streaming evaluation using games-remaining value.</li>
         <li><strong>Protection guardrails:</strong> Untouchables, rank thresholds, weekly transaction limits, and explicit execute mode.</li>
       </ul>
-    `,
-  },
-  {
-    title: "Spoiler Shield",
-    subtitle: "In progress",
-    dateRange: "",
-    link: "https://github.com/AbdulsaboorS/spoiler-shield",
-    techStack: [],
-    detailHtml: `
-      <p>App that answers your questions while watching shows without spoiling. No more searching things up and accidentally getting spoiled. You just use my extension and you're safe!</p>
     `,
   },
   {
@@ -670,15 +680,18 @@ function createProjectsTexture() {
   ctx.fillText("build focus", textureCanvas.width / 2, 205);
 
   const cards = [
+    { title: "Veil", detail: "in progress" },
+    { title: "Circles", detail: "in development" },
+    { title: "3D Desk Portfolio", detail: "Three.js" },
     { title: "Fantasy Basketball Bot", detail: "Finished" },
-    { title: "Spoiler Shield", detail: "in progress" },
-    { title: "Discord Insight Bot", detail: "200+ MAU" },
+    { title: "Discord Feedback Bot", detail: "200+ MAU" },
   ];
 
   cards.forEach((card, index) => {
     const x = 58;
-    const y = 300 + index * 245;
-    drawRoundedRect(ctx, x, y, 652, 190, 22);
+    const y = 230 + index * 168;
+    const cardH = 158;
+    drawRoundedRect(ctx, x, y, 652, cardH, 22);
     ctx.fillStyle = "#ffffff";
     ctx.fill();
     ctx.strokeStyle = "#9eb6db";
@@ -687,12 +700,12 @@ function createProjectsTexture() {
 
     ctx.textAlign = "center";
     ctx.fillStyle = "#204476";
-    ctx.font = "700 46px Inter, sans-serif";
-    ctx.fillText(card.title, x + 326, y + 92);
+    ctx.font = "700 42px Inter, sans-serif";
+    ctx.fillText(card.title, x + 326, y + 68);
 
     ctx.fillStyle = "#5c779d";
-    ctx.font = "600 30px Inter, sans-serif";
-    ctx.fillText(card.detail, x + 326, y + 145);
+    ctx.font = "600 28px Inter, sans-serif";
+    ctx.fillText(card.detail, x + 326, y + 118);
   });
 
   ctx.textAlign = "center";
