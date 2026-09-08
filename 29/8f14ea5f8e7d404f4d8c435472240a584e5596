@@ -1,0 +1,19 @@
+.gitignore
+  s_4567d23c960b3f::t_d59aaaa2904aa4 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "298f14ea5f8e7d404f4d8c435472240a584e5596",
+  "prompts": {},
+  "sessions": {
+    "s_4567d23c960b3f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb08841e2ffeIHckURxLVyXgBi",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "abdulsaboor <abdulsaboor@cloudflare.com>"
+    }
+  }
+}
