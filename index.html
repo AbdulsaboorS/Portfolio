@@ -12,10 +12,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=2026-03-05-1" />
+    <link rel="stylesheet" href="styles.css?v=2026-09-08-1" />
   </head>
   <body>
     <a href="#detail-panel" class="sr-only-focusable">Skip scene</a>
@@ -55,26 +55,17 @@
             <span style="font-size:0.9rem;color:var(--muted);">This portfolio is built for a widescreen experience.</span>
           </div>
 
-          <div class="engagement-instructions" id="engagement-instructions" aria-label="How to use this portfolio">
-            <button type="button" class="engagement-instructions-trigger" id="engagement-instructions-trigger" aria-expanded="false" aria-controls="engagement-instructions-content">
-              How to use
-              <span class="engagement-instructions-chevron" aria-hidden="true">▼</span>
+          <div class="quick-nav-shell">
+            <button class="quick-nav-toggle" id="quick-nav-toggle" type="button" aria-expanded="false" aria-controls="quick-nav">
+              <span aria-hidden="true">+</span> System index
             </button>
-            <div class="engagement-instructions-content" id="engagement-instructions-content" role="region" aria-label="Instructions">
-              <ul class="engagement-instructions-list">
-                <li><strong>Overview:</strong> Click a desk object (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open a section.</li>
-                <li><strong>In a section:</strong> Click a card for details; use ← → to move between items; press ← or Esc to go back.</li>
-                <li><strong>3D scene:</strong> Drag to rotate, scroll to zoom.</li>
-              </ul>
+            <div class="quick-nav" id="quick-nav" role="toolbar" aria-label="Quick sections">
+              <button type="button" data-index="01" data-section="experience">Experience</button>
+              <button type="button" data-index="02" data-section="projects">Projects</button>
+              <button type="button" data-index="03" data-section="activities">Activities</button>
+              <button type="button" data-index="04" data-section="skills">Skills</button>
+              <button type="button" data-index="05" data-section="interests">Interests</button>
             </div>
-          </div>
-
-          <div class="quick-nav" role="toolbar" aria-label="Quick sections">
-            <button type="button" data-section="experience">Experience</button>
-            <button type="button" data-section="projects">Projects</button>
-            <button type="button" data-section="activities">Activities</button>
-            <button type="button" data-section="skills">Skills</button>
-            <button type="button" data-section="interests">Interests</button>
           </div>
         </section>
 
@@ -110,7 +101,7 @@
       });
     </script>
     <script type="module">
-      import("./app.js?v=2026-03-05-1")
+      import("./app.js?v=2026-09-08-1")
         .then(function () {
           window.__portfolioBoot.moduleLoaded = true;
           window.__portfolioBoot.events.push("app module loaded");
