@@ -1,5 +1,6 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.162.0/+esm";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/controls/OrbitControls.js/+esm";
+import { RoundedBoxGeometry } from "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/geometries/RoundedBoxGeometry.js/+esm";
 
 const panel = document.getElementById("detail-panel");
 const panelClose = document.getElementById("panel-close");
@@ -94,6 +95,7 @@ const projectItems = [
     subtitle: "Browser extension · in progress",
     signal: "AI / VIDEO",
     marker: "VL",
+    artifact: "veil",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/veil",
     techStack: [],
@@ -106,6 +108,7 @@ const projectItems = [
     subtitle: "iOS · in development",
     signal: "SOCIAL / IOS",
     marker: "CR",
+    artifact: "circles",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/circles-ios",
     techStack: [],
@@ -118,6 +121,7 @@ const projectItems = [
     subtitle: "Three.js & Vanilla JS",
     signal: "WEBGL / SPACE",
     marker: "3D",
+    artifact: "spatial",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/Portfolio",
     techStack: ["Three.js", "Vanilla JS", "HTML", "CSS"],
@@ -133,6 +137,7 @@ const projectItems = [
     subtitle: "Python, FastAPI & React",
     signal: "SPORT / AUTO",
     marker: "FB",
+    artifact: "lineup",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/fantasybasketballbot",
     vercelLink: "https://fantasybasketballbot.vercel.app/",
@@ -152,6 +157,7 @@ const projectItems = [
     subtitle: "Finished but not using anymore",
     signal: "NLP / COMMUNITY",
     marker: "DB",
+    artifact: "sentiment",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/discord-bot-project",
     techStack: ["Python", "discord.py", "Azure Text Analytics", "spaCy"],
@@ -328,10 +334,123 @@ function updateStatus(message) {
   sceneStatus.textContent = message;
 }
 
+function projectedRect(record) {
+  if (!record?.sourceObject || !record.sourceCorners || !state3d.camera) return null;
+
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  const projected = [];
+  const canvasRect = canvas.getBoundingClientRect();
+
+  record.sourceCorners.forEach((corner) => {
+    state3d.tempVector.copy(corner);
+    record.sourceObject.localToWorld(state3d.tempVector);
+    state3d.tempVector.project(state3d.camera);
+    const x = canvasRect.left + (state3d.tempVector.x * 0.5 + 0.5) * canvasRect.width;
+    const y = canvasRect.top + (-state3d.tempVector.y * 0.5 + 0.5) * canvasRect.height;
+    projected.push({ x, y });
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
+  });
+
+  return {
+    left: minX,
+    top: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+    points: projected,
+  };
+}
+
+function projectiveMatrix(width, height, points) {
+  const [p0, p1, p2, p3] = points;
+  const dx1 = p1.x - p2.x;
+  const dx2 = p3.x - p2.x;
+  const dx3 = p0.x - p1.x + p2.x - p3.x;
+  const dy1 = p1.y - p2.y;
+  const dy2 = p3.y - p2.y;
+  const dy3 = p0.y - p1.y + p2.y - p3.y;
+  const determinant = dx1 * dy2 - dx2 * dy1;
+  const perspectiveX = Math.abs(determinant) < 0.0001 ? 0 : (dx3 * dy2 - dx2 * dy3) / determinant;
+  const perspectiveY = Math.abs(determinant) < 0.0001 ? 0 : (dx1 * dy3 - dx3 * dy1) / determinant;
+  const scaleX = p1.x - p0.x + perspectiveX * p1.x;
+  const skewX = p3.x - p0.x + perspectiveY * p3.x;
+  const scaleY = p1.y - p0.y + perspectiveX * p1.y;
+  const skewY = p3.y - p0.y + perspectiveY * p3.y;
+
+  return `matrix3d(${scaleX / width},${scaleY / width},0,${perspectiveX / width},${skewX / height},${skewY / height},0,${perspectiveY / height},0,0,1,0,${p0.x},${p0.y},0,1)`;
+}
+
+function setPanelFlightOrigin() {
+  const source = projectedRect(state3d.interactiveBySection.get(activeSectionId));
+  if (!source || source.width <= 0 || source.height <= 0) return;
+
+  panel.classList.add("is-positioning");
+  panel.classList.remove("is-hidden");
+  const target = panel.getBoundingClientRect();
+  const rawOrigin = { left: target.left, top: target.top + target.height * 0.44 };
+  const sourceQuad = [source.points[3], source.points[2], source.points[1], source.points[0]].map((point) => ({
+    x: point.x - rawOrigin.left,
+    y: point.y - rawOrigin.top,
+  }));
+  panel.style.setProperty("--flight-matrix", projectiveMatrix(target.width, target.height, sourceQuad));
+  panel.classList.add("is-hidden");
+  panel.classList.add("is-preflight");
+  panel.classList.remove("is-positioning");
+}
+
 function setPanelVisible(visible) {
+  const shouldFly = visible && panel.classList.contains("is-hidden") && panel.classList.contains("is-projects-panel") && state3d.camera;
+  if (shouldFly) {
+    setPanelFlightOrigin();
+    void panel.offsetWidth;
+    const hiddenStyle = getComputedStyle(panel);
+    const from = {
+      transform: hiddenStyle.transform,
+      clipPath: hiddenStyle.clipPath,
+      opacity: hiddenStyle.opacity,
+    };
+    panel.classList.add("is-animating");
+    panel.classList.remove("is-hidden");
+    panel.classList.remove("is-preflight");
+    const visibleStyle = getComputedStyle(panel);
+    const to = {
+      transform: visibleStyle.transform,
+      clipPath: visibleStyle.clipPath,
+      opacity: visibleStyle.opacity,
+    };
+    panel.setAttribute("aria-hidden", "false");
+    document.body.classList.remove("is-dossier-open");
+    document.body.classList.add("is-panel-flight");
+    if (!prefersReducedMotion.matches) {
+      const flight = panel.animate([
+        { ...from, offset: 0 },
+        { ...from, opacity: "1", offset: 0.18 },
+        { ...to, offset: 1 },
+      ], {
+        duration: 920,
+        easing: "cubic-bezier(0.5, 0, 0.18, 1)",
+      });
+      flight.finished.finally(() => {
+        panel.classList.remove("is-animating");
+        document.body.classList.remove("is-panel-flight");
+        if (!panel.classList.contains("is-hidden")) document.body.classList.add("is-dossier-open");
+      });
+    } else {
+      panel.classList.remove("is-animating");
+      document.body.classList.remove("is-panel-flight");
+      document.body.classList.add("is-dossier-open");
+    }
+    return;
+  }
   panel.classList.toggle("is-hidden", !visible);
   panel.setAttribute("aria-hidden", String(!visible));
   document.body.classList.toggle("is-dossier-open", visible);
+  if (!visible) document.body.classList.remove("is-panel-flight");
 }
 
 function markActiveButton(id) {
@@ -415,6 +534,18 @@ function renderProjects(section, selectedIndex) {
     ? `<div class="project-tech">${item.techStack.map((tech) => `<span>${escapeHtml(tech)}</span>`).join("")}</div>`
     : "";
 
+  const artifactPatterns = {
+    veil: `<span class="artifact-playhead"></span><span class="artifact-caption">ASK WITHOUT SPOILERS</span>`,
+    circles: `<span class="artifact-orbit artifact-orbit-a"></span><span class="artifact-orbit artifact-orbit-b"></span><span class="artifact-core">24H</span>`,
+    spatial: `<span class="artifact-cube"><i></i><i></i><i></i></span><span class="artifact-caption">SCENE / INTERACTIVE</span>`,
+    lineup: `<span class="artifact-court"><i></i><i></i><i></i><i></i><i></i></span><span class="artifact-caption">LINEUP OPTIMIZER</span>`,
+    sentiment: `<span class="artifact-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="artifact-caption">LIVE SENTIMENT</span>`,
+  };
+  const artifact = `<div class="project-artifact artifact-${escapeHtml(item.artifact)}" aria-hidden="true">
+    <span class="artifact-label">SIGNAL VISUAL // ${escapeHtml(item.marker)}-${String(selectedIndex + 1).padStart(2, "0")}</span>
+    <span class="artifact-field">${artifactPatterns[item.artifact] || ""}</span>
+  </div>`;
+
   panelContent.innerHTML = `
     <div class="projects-console signal-${selectedIndex}">
       <nav class="project-index" aria-label="Project signals">${projectNav}</nav>
@@ -426,6 +557,7 @@ function renderProjects(section, selectedIndex) {
         <p class="project-readout-kicker">${escapeHtml(item.signal)}</p>
         <h3>${escapeHtml(item.title)}</h3>
         <p class="project-readout-subtitle">${escapeHtml(item.subtitle)}</p>
+        ${artifact}
         <div class="project-actions">${actions.join("")}</div>
         <div class="project-readout-body">${item.detailHtml}</div>
         ${techStack}
@@ -610,6 +742,8 @@ function addInteractiveRecord(data) {
     focusTarget: data.focusTarget,
     focusCameraPosition: data.focusCameraPosition,
     highlightMaterials: data.highlightMaterials,
+    sourceObject: data.sourceObject,
+    sourceCorners: data.sourceCorners,
     baseY: data.floatObject.position.y,
     baseScale: data.floatObject.scale.clone(),
   };
@@ -630,6 +764,10 @@ function createHitMesh(width, height, depth, position) {
   );
   mesh.position.copy(position);
   return mesh;
+}
+
+function roundedBox(width, height, depth, radius = 0.02, segments = 3) {
+  return new RoundedBoxGeometry(width, height, depth, segments, radius);
 }
 
 function createScreenTexture(title, subtitle, color = "#78b5ff") {
@@ -712,7 +850,7 @@ function createExperienceTexture() {
   const loadedImages = new Map();
 
   const render = () => {
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "#c7d4d2";
     ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
     logoSlots.forEach((slot) => {
@@ -802,30 +940,157 @@ function createProjectsTexture() {
   return texture;
 }
 
-function createLabPlaqueTexture() {
+function createBuilderSignalTexture() {
+  const textureCanvas = document.createElement("canvas");
+  textureCanvas.width = 1024;
+  textureCanvas.height = 576;
+  const ctx = textureCanvas.getContext("2d");
+
+  ctx.fillStyle = "#071112";
+  ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+  ctx.strokeStyle = "#315856";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(16, 16, textureCanvas.width - 32, textureCanvas.height - 32);
+  ctx.fillStyle = "#62d6c6";
+  ctx.font = "700 34px monospace";
+  ctx.fillText("PRODUCT SYSTEM // PM-01", 56, 72);
+  ctx.fillStyle = "#f3eee4";
+  ctx.font = "700 66px monospace";
+  ctx.fillText("DISCOVER", 56, 154);
+  ctx.fillText("DECIDE", 56, 225);
+  ctx.fillText("SHIP", 56, 296);
+
+  const stages = [
+    { x: 570, y: 150, label: "USER" },
+    { x: 740, y: 268, label: "SYSTEM" },
+    { x: 570, y: 390, label: "OUTCOME" },
+  ];
+  ctx.strokeStyle = "rgba(98, 214, 198, 0.55)";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(stages[0].x, stages[0].y);
+  ctx.lineTo(stages[1].x, stages[1].y);
+  ctx.lineTo(stages[2].x, stages[2].y);
+  ctx.stroke();
+  stages.forEach((stage, index) => {
+    ctx.fillStyle = index === 1 ? "#ffad57" : "#62d6c6";
+    ctx.beginPath();
+    ctx.arc(stage.x, stage.y, index === 1 ? 28 : 22, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#9ca8a5";
+    ctx.font = "600 20px monospace";
+    ctx.fillText(stage.label, stage.x + 42, stage.y + 7);
+  });
+
+  ctx.fillStyle = "#ffad57";
+  ctx.fillRect(56, 446, 12, 54);
+  ctx.fillStyle = "#9ca8a5";
+  ctx.font = "500 22px monospace";
+  ctx.fillText("PRODUCT MANAGER + BUILDER", 88, 469);
+  ctx.fillText("HOUSTON / ONLINE", 88, 501);
+
+  const texture = new THREE.CanvasTexture(textureCanvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function createVeilSignalTexture() {
+  const textureCanvas = document.createElement("canvas");
+  textureCanvas.width = 1024;
+  textureCanvas.height = 576;
+  const ctx = textureCanvas.getContext("2d");
+
+  ctx.fillStyle = "#100d0a";
+  ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+  ctx.strokeStyle = "#704324";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(16, 16, textureCanvas.width - 32, textureCanvas.height - 32);
+  ctx.fillStyle = "#ffad57";
+  ctx.font = "700 34px monospace";
+  ctx.fillText("NOW BUILDING // ACTIVE", 56, 72);
+  ctx.fillStyle = "#f3eee4";
+  ctx.font = "700 112px monospace";
+  ctx.fillText("VEIL", 56, 190);
+  ctx.fillStyle = "#c7cfcc";
+  ctx.font = "500 25px monospace";
+  ctx.fillText("ASK WHILE YOU WATCH", 62, 234);
+  ctx.fillText("WITHOUT SPOILING WHAT COMES NEXT", 62, 270);
+
+  ctx.strokeStyle = "#6e4c30";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(78, 390);
+  ctx.lineTo(930, 390);
+  ctx.stroke();
+  const timeline = [
+    { x: 120, label: "SEEN", color: "#62d6c6" },
+    { x: 510, label: "NOW", color: "#ffad57" },
+    { x: 880, label: "LOCKED", color: "#59615f" },
+  ];
+  timeline.forEach((point) => {
+    ctx.fillStyle = point.color;
+    ctx.beginPath();
+    ctx.arc(point.x, 390, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "600 21px monospace";
+    ctx.fillText(point.label, point.x - 34, 438);
+  });
+  ctx.strokeStyle = "#ffad57";
+  ctx.lineWidth = 5;
+  ctx.strokeRect(458, 338, 104, 104);
+  ctx.fillStyle = "#8c9894";
+  ctx.font = "500 20px monospace";
+  ctx.fillText("SPOILER BOUNDARY", 56, 516);
+  ctx.fillStyle = "#62d6c6";
+  ctx.fillRect(840, 497, 84, 10);
+
+  const texture = new THREE.CanvasTexture(textureCanvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function createPortraitLabelTexture() {
+  const textureCanvas = document.createElement("canvas");
+  textureCanvas.width = 768;
+  textureCanvas.height = 160;
+  const ctx = textureCanvas.getContext("2d");
+  ctx.fillStyle = "#080c0d";
+  ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+  ctx.fillStyle = "#ffad57";
+  ctx.font = "700 34px monospace";
+  ctx.fillText("ABDULSABOOR // 01", 34, 58);
+  ctx.fillStyle = "#9ca8a5";
+  ctx.font = "500 22px monospace";
+  ctx.fillText("PRODUCT MANAGER + BUILDER", 34, 103);
+  ctx.fillStyle = "#62d6c6";
+  ctx.fillRect(34, 126, 190, 8);
+  const texture = new THREE.CanvasTexture(textureCanvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function createDeskTexture() {
   const textureCanvas = document.createElement("canvas");
   textureCanvas.width = 1024;
   textureCanvas.height = 256;
   const ctx = textureCanvas.getContext("2d");
-
-  ctx.fillStyle = "#0b0f10";
+  ctx.fillStyle = "#392b21";
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
-  ctx.strokeStyle = "#5c3b24";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(10, 10, textureCanvas.width - 20, textureCanvas.height - 20);
-  ctx.fillStyle = "#ffad57";
-  ctx.fillRect(44, 48, 18, 158);
-  ctx.font = "700 54px monospace";
-  ctx.fillText("ABD // BUILDER LAB", 94, 104);
-  ctx.fillStyle = "#9ca8a5";
-  ctx.font = "500 26px monospace";
-  ctx.fillText("HOUSTON / PRODUCT / SYSTEMS", 96, 157);
-  ctx.fillStyle = "#62d6c6";
-  ctx.fillRect(96, 180, 12, 12);
-  ctx.fillText("SESSION ACTIVE", 126, 194);
-
+  for (let y = 16; y < textureCanvas.height; y += 18) {
+    ctx.beginPath();
+    for (let x = 0; x <= textureCanvas.width; x += 16) {
+      const offset = Math.sin(x * 0.024 + y * 0.08) * 3;
+      if (x === 0) ctx.moveTo(x, y + offset);
+      else ctx.lineTo(x, y + offset);
+    }
+    ctx.strokeStyle = y % 36 === 0 ? "rgba(126, 83, 51, 0.3)" : "rgba(22, 15, 12, 0.34)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.repeat.set(1.7, 1);
   return texture;
 }
 
@@ -842,10 +1107,10 @@ function applyShadows(object, options = {}) {
 function buildScene(scene) {
   scene.fog = new THREE.Fog(0x090b0c, 7, 26);
 
-  const ambient = new THREE.AmbientLight(0xc8d7d4, 0.5);
+  const ambient = new THREE.AmbientLight(0xc8d7d4, 0.66);
   scene.add(ambient);
 
-  const keyLight = new THREE.DirectionalLight(0xffd4a3, 1.5);
+  const keyLight = new THREE.DirectionalLight(0xffd4a3, 1.62);
   keyLight.position.set(3.8, 5.8, 4.2);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
@@ -858,8 +1123,8 @@ function buildScene(scene) {
   keyLight.shadow.bias = -0.00035;
   scene.add(keyLight);
 
-  const blueFill = new THREE.PointLight(0x4bb6c4, 1.15, 14, 2.1);
-  blueFill.position.set(0, 2.3, -1.7);
+  const blueFill = new THREE.PointLight(0x72cddd, 1.35, 5.5, 2.1);
+  blueFill.position.set(0, 1.05, -0.65);
   scene.add(blueFill);
 
   const cyanFill = new THREE.PointLight(0x55d8c5, 0.78, 12, 2.2);
@@ -887,26 +1152,79 @@ function buildScene(scene) {
   backWall.receiveShadow = true;
   scene.add(backWall);
 
-  const labPlaque = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.9, 0.72),
+  const builderDisplay = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.35, 1.32),
     new THREE.MeshStandardMaterial({
-      map: createLabPlaqueTexture(),
-      emissive: 0x382216,
-      emissiveIntensity: 0.32,
-      roughness: 0.48,
+      map: createBuilderSignalTexture(),
+      emissive: 0x123f3d,
+      emissiveIntensity: 0.48,
+      roughness: 0.38,
     })
   );
-  labPlaque.position.set(-2.6, 1.92, -3.88);
-  scene.add(labPlaque);
+  builderDisplay.position.set(-2.7, 1.87, -3.88);
+  builderDisplay.rotation.z = -0.025;
+  scene.add(builderDisplay);
+
+  const veilDisplay = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.35, 1.32),
+    new THREE.MeshStandardMaterial({
+      map: createVeilSignalTexture(),
+      emissive: 0x4d2815,
+      emissiveIntensity: 0.48,
+      roughness: 0.38,
+    })
+  );
+  veilDisplay.position.set(2.7, 1.87, -3.88);
+  veilDisplay.rotation.z = 0.025;
+  scene.add(veilDisplay);
+
+  const portraitGroup = new THREE.Group();
+  const portraitFrame = new THREE.Mesh(
+    roundedBox(1.42, 1.72, 0.08, 0.035, 5),
+    new THREE.MeshStandardMaterial({ color: 0x12191a, roughness: 0.3, metalness: 0.48 })
+  );
+  portraitGroup.add(portraitFrame);
+  const portraitTexture = new THREE.TextureLoader().load(
+    "assets/portrait.jpg",
+    (texture) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+    },
+    undefined,
+    () => debugEvent("portrait load failed | assets/portrait.jpg")
+  );
+  portraitTexture.colorSpace = THREE.SRGBColorSpace;
+  const portrait = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.28, 1.28),
+    new THREE.MeshStandardMaterial({ map: portraitTexture, roughness: 0.52, emissive: 0x19383a, emissiveIntensity: 0.18 })
+  );
+  portrait.position.set(0, 0.17, 0.045);
+  portraitGroup.add(portrait);
+  const portraitLabel = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.28, 0.27),
+    new THREE.MeshStandardMaterial({ map: createPortraitLabelTexture(), emissive: 0x3d2415, emissiveIntensity: 0.45, roughness: 0.4 })
+  );
+  portraitLabel.position.set(0, -0.62, 0.046);
+  portraitGroup.add(portraitLabel);
+  portraitGroup.position.set(0, 1.98, -3.82);
+  applyShadows(portraitGroup, { receive: false });
+  scene.add(portraitGroup);
 
   const desk = new THREE.Mesh(
-    new THREE.BoxGeometry(5.6, 0.18, 2.2),
-    new THREE.MeshStandardMaterial({ color: 0x332b24, roughness: 0.7, metalness: 0.1 })
+    roundedBox(5.6, 0.18, 2.2, 0.065, 5),
+    new THREE.MeshStandardMaterial({ map: createDeskTexture(), color: 0xffffff, roughness: 0.56, metalness: 0.08 })
   );
   desk.position.set(0, -0.12, -0.55);
   desk.castShadow = true;
   desk.receiveShadow = true;
   scene.add(desk);
+
+  const deskEdge = new THREE.Mesh(
+    roundedBox(5.48, 0.08, 0.06, 0.025, 4),
+    new THREE.MeshStandardMaterial({ color: 0x171817, roughness: 0.34, metalness: 0.58 })
+  );
+  deskEdge.position.set(0, -0.1, 0.57);
+  deskEdge.castShadow = true;
+  scene.add(deskEdge);
 
   const deskMat = new THREE.Mesh(
     new THREE.BoxGeometry(4.3, 0.02, 1.55),
@@ -935,7 +1253,7 @@ function buildScene(scene) {
 
   const monitorGroup = new THREE.Group();
   const monitorFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(2.5, 1.2, 0.07),
+    roundedBox(2.5, 1.2, 0.09, 0.035, 5),
     new THREE.MeshStandardMaterial({
       color: 0x171b1c,
       roughness: 0.4,
@@ -955,7 +1273,7 @@ function buildScene(scene) {
       roughness: 0.25,
     })
   );
-  monitorScreen.position.z = 0.043;
+  monitorScreen.position.z = 0.052;
   monitorGroup.add(monitorScreen);
 
   const monitorWebcam = new THREE.Mesh(
@@ -979,7 +1297,7 @@ function buildScene(scene) {
   monitorGroup.add(monitorStand);
 
   const monitorBase = new THREE.Mesh(
-    new THREE.BoxGeometry(0.62, 0.04, 0.34),
+    roundedBox(0.62, 0.04, 0.34, 0.015, 4),
     new THREE.MeshStandardMaterial({ color: 0x131d31, roughness: 0.66 })
   );
   monitorBase.position.set(0, -0.98, -0.02);
@@ -991,7 +1309,7 @@ function buildScene(scene) {
 
   const sideMonitor = new THREE.Group();
   const sideMonitorFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(0.72, 1.36, 0.07),
+    roundedBox(0.72, 1.36, 0.09, 0.035, 5),
     new THREE.MeshStandardMaterial({
       color: 0x171b1c,
       roughness: 0.42,
@@ -1010,7 +1328,7 @@ function buildScene(scene) {
       roughness: 0.25,
     })
   );
-  sideMonitorScreen.position.z = 0.04;
+  sideMonitorScreen.position.z = 0.052;
   sideMonitor.add(sideMonitorScreen);
 
   const sideMonitorStand = new THREE.Mesh(
@@ -1021,7 +1339,7 @@ function buildScene(scene) {
   sideMonitor.add(sideMonitorStand);
 
   const sideMonitorBase = new THREE.Mesh(
-    new THREE.BoxGeometry(0.34, 0.03, 0.22),
+    roundedBox(0.34, 0.03, 0.22, 0.012, 4),
     new THREE.MeshStandardMaterial({ color: 0x16233c, roughness: 0.6 })
   );
   sideMonitorBase.position.set(0, -1.07, 0);
@@ -1034,7 +1352,7 @@ function buildScene(scene) {
 
   const pcTower = new THREE.Group();
   const towerBody = new THREE.Mesh(
-    new THREE.BoxGeometry(0.94, 1.76, 1.12),
+    roundedBox(0.94, 1.76, 1.12, 0.075, 5),
     new THREE.MeshStandardMaterial({
       color: 0x1b1e1f,
       roughness: 0.34,
@@ -1106,52 +1424,57 @@ function buildScene(scene) {
     pcTower.add(foot);
   });
 
-  pcTower.position.set(2.2, 0.58, -0.95);
+  pcTower.position.set(2.24, 0.45, -0.95);
+  pcTower.scale.setScalar(0.86);
   applyShadows(pcTower);
   scene.add(pcTower);
 
-  const keyboard = new THREE.Mesh(
-    new THREE.BoxGeometry(1.9, 0.08, 0.58),
+  const keyboard = new THREE.Group();
+  const keyboardCase = new THREE.Mesh(
+    roundedBox(1.9, 0.08, 0.62, 0.035, 5),
     new THREE.MeshStandardMaterial({
-      color: 0x25302f,
-      roughness: 0.52,
-      metalness: 0.16,
+      color: 0x202826,
+      roughness: 0.38,
+      metalness: 0.28,
       emissive: 0x1f4f4a,
-      emissiveIntensity: 0.9,
+      emissiveIntensity: 0.7,
     })
   );
+  keyboard.add(keyboardCase);
   keyboard.position.set(0.1, 0.07, -0.18);
-  keyboard.castShadow = true;
-  keyboard.receiveShadow = true;
-  scene.add(keyboard);
 
   const wristRest = new THREE.Mesh(
-    new THREE.BoxGeometry(1.62, 0.05, 0.14),
+    roundedBox(1.62, 0.05, 0.14, 0.02, 4),
     new THREE.MeshStandardMaterial({ color: 0x101827, roughness: 0.7 })
   );
-  wristRest.position.set(0.1, 0.06, 0.19);
-  wristRest.castShadow = true;
-  wristRest.receiveShadow = true;
-  scene.add(wristRest);
+  wristRest.position.set(0, -0.01, 0.38);
+  keyboard.add(wristRest);
 
-  for (let row = 0; row < 3; row += 1) {
-    for (let col = 0; col < 11; col += 1) {
+  const rowCounts = [14, 14, 13, 12];
+  rowCounts.forEach((count, row) => {
+    for (let col = 0; col < count; col += 1) {
       const keycap = new THREE.Mesh(
-        new THREE.BoxGeometry(0.12, 0.02, 0.11),
+        roundedBox(0.105, 0.03, 0.095, 0.012, 3),
         new THREE.MeshStandardMaterial({
-          color: 0x52615d,
-          roughness: 0.5,
-          metalness: 0.12,
+          color: row === 0 ? 0x66716d : 0x424d49,
+          roughness: 0.38,
+          metalness: 0.18,
           emissive: 0x183632,
-          emissiveIntensity: 0.42,
+          emissiveIntensity: 0.32,
         })
       );
-      keycap.position.set(-0.47 + col * 0.102, 0.12, -0.38 + row * 0.13);
-      keycap.castShadow = true;
-      keycap.receiveShadow = true;
-      scene.add(keycap);
+      keycap.position.set((col - (count - 1) / 2) * 0.125, 0.06, -0.22 + row * 0.125);
+      keyboard.add(keycap);
     }
-  }
+  });
+  const spacebar = new THREE.Mesh(
+    roundedBox(0.58, 0.03, 0.095, 0.012, 3),
+    new THREE.MeshStandardMaterial({ color: 0x5a6561, roughness: 0.38, metalness: 0.18 })
+  );
+  spacebar.position.set(0, 0.06, 0.27);
+  keyboard.add(spacebar);
+  applyShadows(keyboard);
+  scene.add(keyboard);
 
   const mouse = new THREE.Mesh(
     new THREE.SphereGeometry(0.2, 22, 22),
@@ -1170,7 +1493,7 @@ function buildScene(scene) {
   scene.add(mouse);
 
   const mousePad = new THREE.Mesh(
-    new THREE.BoxGeometry(0.94, 0.02, 0.68),
+    roundedBox(0.94, 0.02, 0.68, 0.008, 4),
     new THREE.MeshStandardMaterial({ color: 0x0c121e, roughness: 0.92 })
   );
   mousePad.position.set(1.2, 0.01, 0.02);
@@ -1178,7 +1501,7 @@ function buildScene(scene) {
   scene.add(mousePad);
 
   const phone = new THREE.Mesh(
-    new THREE.BoxGeometry(0.24, 0.42, 0.02),
+    roundedBox(0.24, 0.42, 0.025, 0.01, 5),
     new THREE.MeshStandardMaterial({
       color: 0x151f32,
       roughness: 0.36,
@@ -1280,7 +1603,7 @@ function buildScene(scene) {
 
   const headphones = new THREE.Group();
   const band = new THREE.Mesh(
-    new THREE.TorusGeometry(0.2, 0.03, 14, 36, Math.PI),
+    new THREE.TorusGeometry(0.23, 0.035, 18, 48, Math.PI),
     new THREE.MeshStandardMaterial({
       color: 0x3a3f3c,
       roughness: 0.5,
@@ -1292,7 +1615,7 @@ function buildScene(scene) {
   band.rotation.z = Math.PI;
   headphones.add(band);
   const earLeft = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.08, 0.08, 0.05, 20),
+    roundedBox(0.12, 0.17, 0.07, 0.025, 5),
     new THREE.MeshStandardMaterial({
       color: 0x34413f,
       roughness: 0.48,
@@ -1301,11 +1624,10 @@ function buildScene(scene) {
       emissiveIntensity: 0.55,
     })
   );
-  earLeft.rotation.x = Math.PI / 2;
-  earLeft.position.set(-0.16, -0.02, 0);
+  earLeft.position.set(-0.2, -0.03, 0);
   headphones.add(earLeft);
   const earRight = earLeft.clone();
-  earRight.position.x = 0.16;
+  earRight.position.x = 0.2;
   headphones.add(earRight);
   headphones.position.set(2.5, 0.22, 0.38);
   headphones.rotation.y = -0.45;
@@ -1329,6 +1651,13 @@ function buildScene(scene) {
     focusTarget: new THREE.Vector3(0, 0.9, -1.2),
     focusCameraPosition: new THREE.Vector3(1.8, 1.65, 2.9),
     highlightMaterials: collectEmissiveMaterials([monitorGroup]),
+    sourceObject: monitorGroup,
+    sourceCorners: [
+      new THREE.Vector3(-1.15, -0.525, 0.05),
+      new THREE.Vector3(1.15, -0.525, 0.05),
+      new THREE.Vector3(1.15, 0.525, 0.05),
+      new THREE.Vector3(-1.15, 0.525, 0.05),
+    ],
   });
 
   addInteractiveRecord({
@@ -1340,6 +1669,13 @@ function buildScene(scene) {
     focusTarget: new THREE.Vector3(-1.45, 0.9, -0.95),
     focusCameraPosition: new THREE.Vector3(-2.15, 1.78, 2.62),
     highlightMaterials: collectEmissiveMaterials([sideMonitor]),
+    sourceObject: sideMonitor,
+    sourceCorners: [
+      new THREE.Vector3(-0.31, -0.62, 0.05),
+      new THREE.Vector3(0.31, -0.62, 0.05),
+      new THREE.Vector3(0.31, 0.62, 0.05),
+      new THREE.Vector3(-0.31, 0.62, 0.05),
+    ],
   });
 
   addInteractiveRecord({
