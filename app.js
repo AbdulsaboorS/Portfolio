@@ -14,6 +14,7 @@ const quickNavToggle = document.getElementById("quick-nav-toggle");
 const sceneStatus = document.getElementById("scene-status");
 const sceneOverlay = document.getElementById("scene-overlay");
 const hoverLabel = document.getElementById("hover-label");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function defaultStatus() {
   return "Interact // select a desk object";
@@ -91,6 +92,8 @@ const projectItems = [
   {
     title: "Veil",
     subtitle: "Browser extension · in progress",
+    signal: "AI / VIDEO",
+    marker: "VL",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/veil",
     techStack: [],
@@ -101,6 +104,8 @@ const projectItems = [
   {
     title: "Circles",
     subtitle: "iOS · in development",
+    signal: "SOCIAL / IOS",
+    marker: "CR",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/circles-ios",
     techStack: [],
@@ -111,6 +116,8 @@ const projectItems = [
   {
     title: "3D Desk Portfolio",
     subtitle: "Three.js & Vanilla JS",
+    signal: "WEBGL / SPACE",
+    marker: "3D",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/Portfolio",
     techStack: ["Three.js", "Vanilla JS", "HTML", "CSS"],
@@ -124,6 +131,8 @@ const projectItems = [
   {
     title: "Fantasy Basketball Bot",
     subtitle: "Python, FastAPI & React",
+    signal: "SPORT / AUTO",
+    marker: "FB",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/fantasybasketballbot",
     vercelLink: "https://fantasybasketballbot.vercel.app/",
@@ -141,6 +150,8 @@ const projectItems = [
   {
     title: "Discord Feedback Bot",
     subtitle: "Finished but not using anymore",
+    signal: "NLP / COMMUNITY",
+    marker: "DB",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/discord-bot-project",
     techStack: ["Python", "discord.py", "Azure Text Analytics", "spaCy"],
@@ -339,9 +350,19 @@ function focusSectionIn3D(id) {
   } else {
     state3d.desiredCameraPosition.copy(record.focusCameraPosition);
   }
+  if (prefersReducedMotion.matches && state3d.camera && state3d.controls) {
+    state3d.camera.position.copy(state3d.desiredCameraPosition);
+    state3d.controls.target.copy(state3d.desiredTarget);
+    state3d.controls.update();
+  }
 }
 
 function renderOverview(section) {
+  if (section.id === "projects") {
+    renderProjects(section, 0);
+    return;
+  }
+
   const items = section.items;
   const cardsHtml = items
     .map(
@@ -366,6 +387,56 @@ function renderOverview(section) {
   activeItemIndex = null;
 }
 
+function renderProjects(section, selectedIndex) {
+  const item = section.items[selectedIndex];
+  const projectNav = section.items
+    .map(
+      (project, index) => `
+        <button class="project-index-item signal-${index}" type="button" data-project-index="${index}" aria-pressed="${index === selectedIndex}">
+          <span class="project-index-number">${String(index + 1).padStart(2, "0")}</span>
+          <span class="project-index-marker" aria-hidden="true">${escapeHtml(project.marker)}</span>
+          <span class="project-index-copy">
+            <strong>${escapeHtml(project.title)}</strong>
+            <span>${escapeHtml(project.signal)}</span>
+          </span>
+        </button>`,
+    )
+    .join("");
+
+  const actions = [];
+  if (item.vercelLink) {
+    actions.push(`<a href="${escapeHtml(item.vercelLink)}" target="_blank" rel="noreferrer" class="project-action project-action-live">Open live demo <span aria-hidden="true">↗</span></a>`);
+  }
+  if (item.link) {
+    actions.push(`<a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="project-action">View source <span aria-hidden="true">↗</span></a>`);
+  }
+
+  const techStack = item.techStack?.length
+    ? `<div class="project-tech">${item.techStack.map((tech) => `<span>${escapeHtml(tech)}</span>`).join("")}</div>`
+    : "";
+
+  panelContent.innerHTML = `
+    <div class="projects-console signal-${selectedIndex}">
+      <nav class="project-index" aria-label="Project signals">${projectNav}</nav>
+      <article class="project-readout">
+        <div class="project-readout-signal">
+          <span>Selected // ${escapeHtml(item.title)}</span>
+          <strong>${escapeHtml(item.marker)}-${String(selectedIndex + 1).padStart(2, "0")}</strong>
+        </div>
+        <p class="project-readout-kicker">${escapeHtml(item.signal)}</p>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p class="project-readout-subtitle">${escapeHtml(item.subtitle)}</p>
+        <div class="project-actions">${actions.join("")}</div>
+        <div class="project-readout-body">${item.detailHtml}</div>
+        ${techStack}
+        <p class="project-position">${String(selectedIndex + 1).padStart(2, "0")} / ${String(section.items.length).padStart(2, "0")} <span>Use ← → to scan</span></p>
+      </article>
+    </div>`;
+  panelTitle.textContent = "Project signals";
+  panelSubtitle.textContent = `${String(section.items.length).padStart(2, "0")} active and archived builds`;
+  activeItemIndex = selectedIndex;
+}
+
 function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
@@ -373,6 +444,11 @@ function escapeHtml(text) {
 }
 
 function renderDetail(section, index) {
+  if (section.id === "projects") {
+    renderProjects(section, index);
+    return;
+  }
+
   const item = section.items[index];
   const techStackHtml =
     item.techStack && item.techStack.length
@@ -427,6 +503,7 @@ function openPanel(id, options = {}) {
   markActiveButton(id);
   updateStatus(selected.status);
   panel.dataset.node = selected.objectName;
+  panel.classList.toggle("is-projects-panel", id === "projects");
 
   if (selected.items) {
     renderOverview(selected);
@@ -765,7 +842,7 @@ function applyShadows(object, options = {}) {
 function buildScene(scene) {
   scene.fog = new THREE.Fog(0x090b0c, 7, 26);
 
-  const ambient = new THREE.AmbientLight(0xc8d7d4, 0.42);
+  const ambient = new THREE.AmbientLight(0xc8d7d4, 0.5);
   scene.add(ambient);
 
   const keyLight = new THREE.DirectionalLight(0xffd4a3, 1.5);
@@ -789,8 +866,8 @@ function buildScene(scene) {
   cyanFill.position.set(-3.2, 2, 0.8);
   scene.add(cyanFill);
 
-  const frontFill = new THREE.PointLight(0xff8a43, 0.82, 10, 2.1);
-  frontFill.position.set(0, 1.4, 2.6);
+  const frontFill = new THREE.PointLight(0xffa060, 1.08, 12, 2.1);
+  frontFill.position.set(0, 1.55, 3.1);
   scene.add(frontFill);
 
   const floor = new THREE.Mesh(
@@ -1036,11 +1113,11 @@ function buildScene(scene) {
   const keyboard = new THREE.Mesh(
     new THREE.BoxGeometry(1.9, 0.08, 0.58),
     new THREE.MeshStandardMaterial({
-      color: 0x181b1c,
+      color: 0x25302f,
       roughness: 0.52,
       metalness: 0.16,
-      emissive: 0x173233,
-      emissiveIntensity: 0.76,
+      emissive: 0x1f4f4a,
+      emissiveIntensity: 0.9,
     })
   );
   keyboard.position.set(0.1, 0.07, -0.18);
@@ -1061,7 +1138,13 @@ function buildScene(scene) {
     for (let col = 0; col < 11; col += 1) {
       const keycap = new THREE.Mesh(
         new THREE.BoxGeometry(0.12, 0.02, 0.11),
-        new THREE.MeshStandardMaterial({ color: 0x34403e, roughness: 0.5, metalness: 0.12 })
+        new THREE.MeshStandardMaterial({
+          color: 0x52615d,
+          roughness: 0.5,
+          metalness: 0.12,
+          emissive: 0x183632,
+          emissiveIntensity: 0.42,
+        })
       );
       keycap.position.set(-0.47 + col * 0.102, 0.12, -0.38 + row * 0.13);
       keycap.castShadow = true;
@@ -1198,13 +1281,25 @@ function buildScene(scene) {
   const headphones = new THREE.Group();
   const band = new THREE.Mesh(
     new THREE.TorusGeometry(0.2, 0.03, 14, 36, Math.PI),
-    new THREE.MeshStandardMaterial({ color: 0x1f3152, roughness: 0.5, metalness: 0.2 })
+    new THREE.MeshStandardMaterial({
+      color: 0x3a3f3c,
+      roughness: 0.5,
+      metalness: 0.2,
+      emissive: 0x572915,
+      emissiveIntensity: 0.58,
+    })
   );
   band.rotation.z = Math.PI;
   headphones.add(band);
   const earLeft = new THREE.Mesh(
     new THREE.CylinderGeometry(0.08, 0.08, 0.05, 20),
-    new THREE.MeshStandardMaterial({ color: 0x1a2a48, roughness: 0.48, metalness: 0.18 })
+    new THREE.MeshStandardMaterial({
+      color: 0x34413f,
+      roughness: 0.48,
+      metalness: 0.18,
+      emissive: 0x1c4b48,
+      emissiveIntensity: 0.55,
+    })
   );
   earLeft.rotation.x = Math.PI / 2;
   earLeft.position.set(-0.16, -0.02, 0);
@@ -1374,6 +1469,12 @@ function setupEvents() {
   });
 
   panelContent.addEventListener("click", (event) => {
+    const projectItem = event.target.closest(".project-index-item");
+    if (projectItem != null && activeSectionId === "projects") {
+      const index = parseInt(projectItem.dataset.projectIndex, 10);
+      if (!isNaN(index)) openPanelItem(activeSectionId, index);
+      return;
+    }
     if (event.target.closest(".panel-card-github") || event.target.closest(".panel-card-vercel")) return;
     const card = event.target.closest(".panel-overview-card");
     if (card != null && activeSectionId != null) {
@@ -1383,7 +1484,7 @@ function setupEvents() {
   });
 
   panelClose.addEventListener("click", () => {
-    if (activeItemIndex != null) {
+    if (activeItemIndex != null && activeSectionId !== "projects") {
       backToOverview();
     } else {
       setOverviewMode({ hidePanel: true });
@@ -1400,7 +1501,7 @@ function setupEvents() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      if (activeItemIndex != null) {
+      if (activeItemIndex != null && activeSectionId !== "projects") {
         backToOverview();
       } else {
         setOverviewMode({ hidePanel: true });
@@ -1485,16 +1586,24 @@ function boot3D() {
 
   buildScene(scene);
 
-  state3d.intro = {
-    active: true,
-    start: performance.now(),
-    duration: 2100,
-    fromPosition: new THREE.Vector3(1.0, 3.3, 8.1),
-    toPosition: state3d.homeCameraPosition.clone(),
-    fromTarget: new THREE.Vector3(0.7, 1.45, 0.45),
-    toTarget: state3d.homeTarget.clone(),
-  };
-  controls.enabled = false;
+  if (prefersReducedMotion.matches) {
+    state3d.intro = null;
+    camera.position.copy(state3d.homeCameraPosition);
+    controls.target.copy(state3d.homeTarget);
+    controls.enabled = true;
+    controls.update();
+  } else {
+    state3d.intro = {
+      active: true,
+      start: performance.now(),
+      duration: 2100,
+      fromPosition: new THREE.Vector3(1.0, 3.3, 8.1),
+      toPosition: state3d.homeCameraPosition.clone(),
+      fromTarget: new THREE.Vector3(0.7, 1.45, 0.45),
+      toTarget: state3d.homeTarget.clone(),
+    };
+    controls.enabled = false;
+  }
 
   function resize() {
     const width = canvas.clientWidth;
@@ -1590,7 +1699,9 @@ function boot3D() {
       document.body.style.cursor = "default";
       const section = activeSectionId != null ? sectionMap.get(activeSectionId) : null;
       const status =
-        section && activeItemIndex != null && section.items
+        section?.id === "projects"
+          ? "Select a signal · ← → to scan · Esc to close."
+          : section && activeItemIndex != null && section.items
           ? "Click a card for details · ← → to browse · ← or Esc for overview."
           : section?.status || defaultStatus();
       updateStatus(status);
