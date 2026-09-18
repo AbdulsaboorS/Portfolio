@@ -437,6 +437,8 @@ const state3d = {
   homeTarget: null,
   homeCameraPosition: null,
   intro: null,
+  portraitGroup: null,
+  compactViewport: null,
   interactiveRecords: [],
   interactiveBySection: new Map(),
   tempVector: new THREE.Vector3(),
@@ -1365,6 +1367,7 @@ function buildScene(scene) {
   const compactViewport = window.innerWidth <= 900 || window.innerHeight <= 500;
   portraitGroup.scale.setScalar(compactViewport ? 0.88 : 0.94);
   portraitGroup.position.set(-1.68, compactViewport ? 2.18 : 2.24, -3.82);
+  state3d.portraitGroup = portraitGroup;
   applyShadows(portraitGroup, { receive: false });
   scene.add(portraitGroup);
 
@@ -2133,6 +2136,7 @@ function boot3D() {
   state3d.pointer = new THREE.Vector2();
   state3d.desiredTarget = controls.target.clone();
   const shortViewport = window.innerHeight <= 500;
+  state3d.compactViewport = shortViewport;
   state3d.desiredCameraPosition = shortViewport
     ? new THREE.Vector3(0.32, 1.55, 3.72)
     : new THREE.Vector3(0.55, 2.05, 5.2);
@@ -2161,16 +2165,60 @@ function boot3D() {
     controls.enabled = false;
   }
 
-  function resize() {
+  function applyResponsiveViewport() {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     if (!width || !height) return;
+
+    const compactViewport = window.innerWidth <= 900 || height <= 500;
+    const pixelRatioCap = compactViewport ? 2.25 : 2;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelRatioCap));
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
+
+    if (state3d.compactViewport !== compactViewport) {
+      state3d.compactViewport = compactViewport;
+      const nextHomePosition = compactViewport
+        ? new THREE.Vector3(0.32, 1.55, 3.72)
+        : new THREE.Vector3(0.55, 2.05, 5.2);
+      state3d.desiredCameraPosition.copy(nextHomePosition);
+      state3d.homeCameraPosition.copy(nextHomePosition);
+      state3d.cameraTransitionActive = true;
+
+      if (state3d.portraitGroup) {
+        state3d.portraitGroup.scale.setScalar(compactViewport ? 0.88 : 0.94);
+        state3d.portraitGroup.position.y = compactViewport ? 2.18 : 2.24;
+      }
+    }
+
+    controls.update();
+  }
+
+  let resizeFrame = 0;
+  let resizeTimer = 0;
+  function resize() {
+    if (resizeFrame) cancelAnimationFrame(resizeFrame);
+    window.clearTimeout(resizeTimer);
+
+    // Orientation changes can dispatch resize before the browser has settled
+    // the visual viewport. Two frames plus a short trailing pass capture the
+    // final canvas bounds on mobile Safari and Chrome.
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = 0;
+        applyResponsiveViewport();
+      });
+    });
+    resizeTimer = window.setTimeout(applyResponsiveViewport, 220);
   }
 
   window.addEventListener("resize", resize);
+  window.addEventListener("orientationchange", resize, { passive: true });
+  window.visualViewport?.addEventListener("resize", resize, { passive: true });
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(resize).observe(sceneWrap);
+  }
   resize();
 
   function pickRecord() {
