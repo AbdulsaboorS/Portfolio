@@ -1,80 +1,52 @@
-# Project context (for agent handoffs)
+# Portfolio project context
 
-**Purpose**: This file gives any coding agent (or human) enough context to work on this repo after a handoff. Update it whenever there is a **confirmed, committed change** that affects how the project works, what’s in it, or how to run/deploy it.
+## Purpose
 
----
+This repo is Abdulsaboor Shaikh’s personal portfolio: an interactive 3D desk that presents his work, experience, activities, skills, and interests as an explorable environment.
 
-## What this repo is
+The portfolio is intentionally personal and expressive. Its visual language is a bright, warm, Infernape-inspired fire dojo: ivory walls, wood, ember red, orange, flame yellow, anime/game-inspired typography, and an original mascot figurine. It does not use official Pokémon artwork, logos, or copied game UI.
 
-- **Static personal portfolio** for Abdulsaboor Shaikh. No build step; plain HTML, CSS, and JavaScript.
-- **Main entry**: [index.html](index.html). The live experience is a single page: header, WIP message, full-viewport 3D “desk” scene (Three.js), quick-nav buttons, and a detail panel that opens when you click desk objects (monitor, side monitor, keyboard, mouse, dumbbell).
-- **Tech**: Three.js (v0.162.0, ESM from jsDelivr), OrbitControls, WebGL. One main script: [app.js](app.js). Styles: [styles.css](styles.css).
-- **Hosting**: GitHub Pages (prod). Repo: `AbdulsaboorS/Portfolio`. Typical URL: `https://abdulsaboors.github.io/Portfolio/`.
+## Core vocabulary
 
----
+- **Desk scene**: The full-viewport Three.js/WebGL workstation and its interactive objects.
+- **Section**: One content area opened from a desk object or the System Index: Experience, Projects, Activities, Skills, or Interests.
+- **Overview**: The summary cards shown when a multi-item section opens.
+- **Detail view**: The expanded content for one experience, project, or activity.
+- **Project readout**: The right side of the Projects detail view, paired with the scrollable project index on the left.
+- **Current Mission**: The wall card that displays the latest public GitHub push or pull request when available, with a manual fallback.
+- **Compact viewport**: A mobile or short landscape viewport. It receives tighter composition, touch-oriented spacing, and an adaptive renderer profile.
 
-## Key files
+## User-approved decisions
 
-| Path | Role |
-|------|------|
-| `index.html` | Main page: header, WIP message bar, scene container, detail panel. |
-| `styles.css` | All layout and visuals. One breakpoint at 900px (mobile), one at 480px. |
-| `app.js` | 3D scene setup, OrbitControls, raycasting for clicks, panel content, section data. |
-| `assets/` | Images; `assets/logos/README.md` lists logo filenames for the monitor. |
-| `alt/` | Alternate portfolio version (separate entry). |
-| `AGENTS.md` | Agent rules and conventions; keep it in sync with this file. |
-| `debug-webgl.html`, `debug-webgl.js` | WebGL diagnostics. |
-| `compare.html` | Compare view (if used). |
+- The portfolio represents Abdulsaboor’s taste rather than optimizing for generic recruiter conventions.
+- The portrait is photo-only; the old label beneath it is intentionally removed.
+- The monitor presents Experience and its career timeline. The side monitor presents Projects.
+- Projects in progress are marked WIP and the project index scrolls independently from the project readout.
+- Locations live inside expanded experience details, not overview cards. Overview cards show role and dates.
+- The scene supports orbiting, zooming, click targets, keyboard navigation, reduced motion, and a non-WebGL content path.
 
----
+## Content ownership
 
-## Current UI state (as of last update)
+Primary portfolio content lives in `app.js`, including experience, project, activity, skill, interest, and mission data. `index.html` owns the shell and `styles.css` owns the visual system and responsive layout.
 
-- **Header**: Name + “Product Manager and Builder” on the left; LinkedIn, GitHub, Email on the right. No Resume link.
-- **WIP message**: Single always-visible bar (`.top-message-bar`) below the header, center-right (`left: calc(50% + 2in)`), rectangle, dark background. Not a CTA or expand/collapse on desktop.
-- **Detail panel**: Opens on the right when a desk object is clicked. Positioned at `top: 9rem` so it sits below the WIP message and does not overlap.
-- **Panel flow**: Experience, Projects, and Activities use a two-level flow: **overview** (all items as clickable cards) → **detail** (one item’s full content). “Back to [Section]” returns to overview. Arrow keys cycle items when in detail; Escape goes back to overview or closes the panel.
-- **Skills**: Four groups (Programming languages, Software & tools, Databases, AI stack) with logos from Simple Icons CDN and labels. Single view, no drill-down.
-- **Quick-nav**: Experience, Projects, Activities, Skills, Interests. Section data (including `items[]` for multi-item sections and `skillGroups` for Skills) lives in [app.js](app.js).
+## Runtime and deployment
 
----
+- Local static server: `python3 -m http.server 8082`
+- Local URL: `http://127.0.0.1:8082/`
+- Cloudflare Pages project: `abdulsaboorshaikh-portfolio`
+- Production URL: `https://abdulsaboorshaikh.com`
+- Preview URL pattern: `https://<deployment-id>.abdulsaboorshaikh-portfolio.pages.dev`
+- Deployment command: `wrangler pages deploy . --project-name abdulsaboorshaikh-portfolio --commit-dirty=true`
 
-## How to run locally
+Wrangler uses OAuth. If a non-interactive command reports that an API token is required, rerun the command in a TTY and complete `wrangler login` in the browser.
 
-From repo root:
+## Verification checklist
+
+Before handing off a change:
 
 ```bash
-python3 -m http.server 8000
+git diff --check
+node --check app.js
 ```
 
-Then open `http://localhost:8000`. Or use `npx serve .` (often port 3000).
-
----
-
-## How to push to prod
-
-1. Commit and push your branch (e.g. `cursor/portfolio-github-repository-632e`).
-2. Update `main` to match and push (Pages deploys from `main`):
-   ```bash
-   git checkout main
-   git reset --hard cursor/portfolio-github-repository-632e
-   git push origin main --force
-   git checkout cursor/portfolio-github-repository-632e
-   ```
-3. Wait 1–2 minutes; hard refresh or incognito if the live site doesn’t update.
-
----
-
-## When to update this file
-
-- After **confirmed** changes (merged, pushed, or accepted by the user) that affect:
-  - Project structure (new/removed key files or features)
-  - UI (header, WIP message, detail panel, nav, breakpoints)
-  - How to run or deploy
-  - Tech stack or main dependencies
-- Keep the “Current UI state” and “Key files” sections accurate so the next agent (or you in a new session) can continue without re-discovering everything.
-- Also update [AGENTS.md](AGENTS.md) when you change conventions or layout rules.
-
----
-
-*Last meaningful update: Section UX overhaul—Experience/Projects/Activities use overview → detail flow with arrow-key navigation; Skills redesigned as four logo groups (Simple Icons CDN); Interests copy updated; AGENTS.md and PROJECT_CONTEXT.md updated.*
+For visual changes, verify the desktop scene, Projects index/readout, expanded Experience, mobile landscape layout, touch scrolling, and the live custom domain after deployment.

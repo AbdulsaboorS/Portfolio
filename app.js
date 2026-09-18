@@ -16,6 +16,17 @@ const sceneStatus = document.getElementById("scene-status");
 const sceneOverlay = document.getElementById("scene-overlay");
 const hoverLabel = document.getElementById("hover-label");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let currentMissionMaterial = null;
+let currentMissionObject = null;
+let currentMissionUrl = "https://github.com/AbdulsaboorS";
+let activePanelAnimation = null;
+
+const defaultMission = {
+  title: "VEIL",
+  subtitle: "Browser extension // in progress",
+  detail: "Ask while you watch without crossing the spoiler boundary.",
+  label: "CURRENT MISSION // MANUAL FALLBACK",
+};
 
 function defaultStatus() {
   return "Interact // select a desk object";
@@ -28,12 +39,38 @@ hoverLabel.style.display = "none";
 
 const experienceItems = [
   {
-    title: "HCSS",
-    subtitle: "Product Intern",
-    dateRange: "January 2026",
+    title: "Cloudflare",
+    subtitle: "Product Manager Intern, Voice Agents",
+    dateRange: "June 2026 – September 2026",
     detailHtml: `
-      <p>Working for the spring term.</p>
-      <p>Will report back in 2 months with my full impact here. Stay tuned :D</p>
+      <p><strong>Austin, TX · <a href="https://developers.cloudflare.com/realtime/" target="_blank" rel="noreferrer">Realtime</a> / <a href="https://developers.cloudflare.com/realtime/realtimekit/" target="_blank" rel="noreferrer">RealtimeKit</a> team</strong></p>
+      <ul>
+        <li>Led development of a 0-to-1 interactive voice agent demo showcase, partnering with engineering on the voice pipeline, UI/UX, latency benchmarks, model inference evaluation, and system architecture.</li>
+        <li>Reduced developer deployment time from hours to seconds by <a href="https://github.com/cloudflare/templates/tree/main/voice-agent-template" target="_blank" rel="noreferrer">shipping</a> an open-source voice agent starter template that abstracted complex state and audio routing into a one-click deployment.</li>
+        <li>Resolved platform bottlenecks by <a href="https://developers.cloudflare.com/changelog/post/2026-09-11-voice-diagnostics-turn-metrics/" target="_blank" rel="noreferrer">shipping</a> a voice agent observability improvement, while patching a separate production AI gateway bug to restore upstream model rate-limiting.</li>
+      </ul>
+      <p><strong>More Wins</strong></p>
+      <ul>
+        <li><strong>UI Improvements:</strong> Worked toward UI/UX improvements for our RealtimeKit dashboard inside Cloudflare Dash.</li>
+        <li><strong>Customer Calls:</strong> Conducted customer calls myself to better understand where developers needed more support, and sat in on a bunch of other customer discussions.</li>
+      </ul>
+    `,
+  },
+  {
+    title: "HCSS",
+    subtitle: "Product Manager Intern, AI Analytics",
+    dateRange: "January 2026 – May 2026",
+    detailHtml: `
+      <p><strong>Houston, TX · Construction SaaS</strong></p>
+      <ul>
+        <li>Lifted query resolution rates by 18% and increased multi-turn retention by 21% for 8,000+ daily active users by diagnosing prompt failure modes and optimizing context retrieval within the model evaluation harness.</li>
+        <li>Drove a 38% increase in field log and reporting submissions across 4 in-app user flows by auditing behavioral telemetry, removing multistep friction, and validating simplified layouts through iterative A/B tests.</li>
+        <li>Demonstrated a 42% reduction in user entry and lookup time by pitching and prototyping an agentic feature alongside chat to query historical data and execute multi-step workflows; authored system prompts and function-calling schemas.</li>
+      </ul>
+      <p><strong>More Wins</strong></p>
+      <ul>
+        <li><strong>Customer &amp; Field Empathy:</strong> Talked directly with users and sat in on support sessions with job-site operations leads to understand where their workflows were getting stuck in the real world.</li>
+      </ul>
     `,
   },
   {
@@ -41,6 +78,7 @@ const experienceItems = [
     subtitle: "Product Intern, Session Management (IAM)",
     dateRange: "June 2025 – August 2025",
     detailHtml: `
+      <p><strong>Seattle, WA</strong></p>
       <ul>
         <li>Launched an MVP AI anomaly detection system to prevent $XXX+ in annual fraud losses; led 5 engineers to cut user churn by 12% via incident report reviews.</li>
         <li>Drove product strategy for fraud detection impacting 50K+ users; aligned 4 teams 1 week ahead of schedule by stack ranking and prototyping the leading solution.</li>
@@ -58,6 +96,7 @@ const experienceItems = [
     subtitle: "Product Intern, Employee Technology – Internal AI",
     dateRange: "January 2025 – May 2025",
     detailHtml: `
+      <p><strong>Cambridge, MA</strong></p>
       <ul>
         <li>Led a POC for an AI RFP automation tool projected to save $XXX+ annually; secured executive buy-in through 10+ user interviews and cross-functional leadership.</li>
         <li>Improved internal Helpdesk AI Agent to reduce IT support tickets by 20%; identified logic gaps and drove 3 design/eng iterations to prevent user drop-offs.</li>
@@ -75,6 +114,7 @@ const experienceItems = [
     subtitle: "Business Analyst Intern, Space Systems (NASA contractor)",
     dateRange: "May 2024 – December 2024",
     detailHtml: `
+      <p><strong>Houston, TX</strong></p>
       <ul>
         <li>Automated monthly reporting workflows via Excel to eliminate data delays; saved 20+ hours per month, enabling faster forecasting and budget planning.</li>
         <li>Reduced project costs by $XXX by auditing budget allocations to identify delivery risks; partnered with engineering leads to reprioritize scope for essential deliverables.</li>
@@ -91,6 +131,58 @@ const experienceItems = [
 
 const projectItems = [
   {
+    title: "Taste Loop",
+    subtitle: "Agent skill · design workflow",
+    signal: "AGENT / DESIGN",
+    marker: "TL",
+    artifact: "taste-loop",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/taste-loop",
+    techStack: ["Agent Skills", "Markdown", "Git", "Vision"],
+    detailHtml: `
+      <p>An agent skill that turns incomplete visual ideas into distinctive, verified product designs.</p>
+      <ul>
+        <li>Guides taste discovery, inspiration research, implementation, rendered critique, and focused iteration.</li>
+        <li>Supports Quick Polish, Guided, Full Studio, and Hands-off modes with explicit decision checkpoints.</li>
+      </ul>
+    `,
+  },
+  {
+    title: "Docs Trials",
+    subtitle: "Local CLI · agent verification",
+    signal: "DOCS / VERIFY",
+    marker: "DT",
+    artifact: "docs-trials",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/docs-trials",
+    status: "WIP",
+    techStack: ["Node.js", "Chromium", "Git", "CLI"],
+    detailHtml: `
+      <p>A local tool for checking whether an AI coding agent can build a working integration from documentation.</p>
+      <ul>
+        <li>Records the task and documentation given to an agent, then verifies the running application with deterministic checks.</li>
+        <li>Produces evidence-backed reports covering boot, page load, visible content, application errors, resource loads, and more.</li>
+      </ul>
+    `,
+  },
+  {
+    title: "Programmable Video",
+    subtitle: "React · Cloudflare Stream workflow",
+    signal: "VIDEO / INFRA",
+    marker: "PV",
+    artifact: "programmable-video",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/programmable-video",
+    techStack: ["React", "Cloudflare Workers", "Playwright", "FFmpeg", "Stream"],
+    detailHtml: `
+      <p>A local workflow for creating, reviewing, rendering, and publishing deterministic product videos.</p>
+      <ul>
+        <li>Turns a product repository, visual references, and a short brief into a reviewable React video composition.</li>
+        <li>Renders the approved commit with Chrome and FFmpeg, then publishes the finished video through Cloudflare Stream.</li>
+      </ul>
+    `,
+  },
+  {
     title: "Veil",
     subtitle: "Browser extension · in progress",
     signal: "AI / VIDEO",
@@ -98,19 +190,21 @@ const projectItems = [
     artifact: "veil",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/veil",
+    status: "WIP",
     techStack: [],
     detailHtml: `
       <p>Asks and answers your questions while you watch—without spoiling what happens next. Use the extension instead of risky searches mid-episode.</p>
     `,
   },
   {
-    title: "Circles",
+    title: "Miraj",
     subtitle: "iOS · in development",
     signal: "SOCIAL / IOS",
-    marker: "CR",
-    artifact: "circles",
+    marker: "MR",
+    artifact: "miraj",
     dateRange: "",
     link: "https://github.com/AbdulsaboorS/circles-ios",
+    status: "WIP",
     techStack: [],
     detailHtml: `
       <p>Think of Islamic Bereal, sort of. 🤫</p>
@@ -172,11 +266,34 @@ const projectItems = [
   },
 ];
 
+const projectPriority = ["Docs Trials", "Veil", "Miraj"];
+projectItems.sort((a, b) => {
+  const aPriority = projectPriority.indexOf(a.title);
+  const bPriority = projectPriority.indexOf(b.title);
+  if (aPriority === -1 && bPriority === -1) return 0;
+  if (aPriority === -1) return 1;
+  if (bPriority === -1) return -1;
+  return aPriority - bPriority;
+});
+
 const activityItems = [
+  {
+    title: "Muslim Tech Collaborative — Houston",
+    subtitle: "President",
+    dateRange: "July 2026 – Present",
+    siteLink: "http://mtchouston.org/",
+    detailHtml: `
+      <p><strong>Houston, TX</strong></p>
+      <ul>
+        <li>Founded and scaled the Houston chapter of the Muslim Tech Collaborative, establishing executive leadership, regional partnerships, and programming for local technologists.</li>
+        <li>Organize technical workshops, community study halls, and networking events, engaging XX+ engineers and builders across the regional tech ecosystem.</li>
+      </ul>
+    `,
+  },
   {
     title: "United Mission Relief",
     subtitle: "Co-President",
-    dateRange: "August 2025 – Present",
+    dateRange: "August 2025 – May 2026",
     detailHtml: `
       <p>Houston, TX.</p>
       <ul>
@@ -202,11 +319,13 @@ const activityItems = [
     subtitle: "School & Bauer",
     dateRange: "",
     detailHtml: `
-      <p>I mentor underclassmen in:</p>
-      <ul>
-        <li><strong>Management Information Systems Student Organization (MISSO)</strong><br/><span class="panel-detail-note">My school's MIS club!</span></li>
-        <li><strong>BUMP Bauer Mentorship Program</strong><br/><span class="panel-detail-note">My business school's mentorship program!</span></li>
-      </ul>
+        <p>I mentor students wherever I can, including at the University of Houston, where I graduated, and within its C.T. Bauer College of Business.</p>
+        <p>I also support students through campus organizations and clubs, including:</p>
+        <ul>
+          <li><strong>Management Information Systems Student Organization (MISSO)</strong><br/><span class="panel-detail-note">My school's MIS club!</span></li>
+          <li><strong>BUMP Bauer Mentorship Program</strong><br/><span class="panel-detail-note">My business school's mentorship program!</span></li>
+          <li><strong>Association of Product Managers (APM)</strong><br/><span class="panel-detail-note">A product community at Bauer.</span></li>
+        </ul>
     `,
   },
 ];
@@ -314,6 +433,7 @@ const state3d = {
   pointer: null,
   desiredTarget: null,
   desiredCameraPosition: null,
+  cameraTransitionActive: false,
   homeTarget: null,
   homeCameraPosition: null,
   intro: null,
@@ -332,6 +452,50 @@ function updateStatus(message) {
   if (message === currentStatus) return;
   currentStatus = message;
   sceneStatus.textContent = message;
+}
+
+function applyCurrentMission(mission) {
+  currentMissionUrl = mission.url || "https://github.com/AbdulsaboorS";
+  if (!currentMissionMaterial) return;
+  const nextTexture = createCurrentMissionTexture(mission);
+  currentMissionMaterial.map = nextTexture;
+  currentMissionMaterial.needsUpdate = true;
+}
+
+async function loadCurrentMission() {
+  try {
+    const response = await fetch("https://api.github.com/users/AbdulsaboorS/events/public?per_page=30", {
+      headers: { Accept: "application/vnd.github+json" },
+    });
+    if (!response.ok) throw new Error(`GitHub activity request failed: ${response.status}`);
+    const events = await response.json();
+    const push = events.find((event) => event.type === "PushEvent" && event.payload?.head);
+    const pullRequest = events.find((event) => event.type === "PullRequestEvent" && event.payload?.pull_request);
+    const event = push || pullRequest;
+    if (!event) return;
+
+    const repo = event.repo?.name || "GitHub build";
+    if (event.type === "PushEvent") {
+      const commit = event.payload.commits?.at(-1);
+      applyCurrentMission({
+        title: repo.split("/").at(-1) || "BUILD",
+        subtitle: "Latest commit // public GitHub activity",
+        detail: commit?.message?.split("\n")[0] || "Recent work in progress.",
+        label: "CURRENT MISSION // COMMIT",
+        url: `https://github.com/${repo}/commit/${event.payload.head}`,
+      });
+    } else {
+      applyCurrentMission({
+        title: repo.split("/").at(-1) || "BUILD",
+        subtitle: "Latest pull request // public GitHub activity",
+        detail: event.payload.pull_request.title || "Recent work in progress.",
+        label: "CURRENT MISSION // PULL REQUEST",
+        url: event.payload.pull_request.html_url || `https://github.com/${repo}`,
+      });
+    }
+  } catch (error) {
+    debugEvent(`current mission fallback | ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 function projectedRect(record) {
@@ -404,6 +568,11 @@ function setPanelFlightOrigin() {
 }
 
 function setPanelVisible(visible) {
+  if (activePanelAnimation) {
+    activePanelAnimation.cancel();
+    activePanelAnimation = null;
+  }
+
   const shouldFly = visible && panel.classList.contains("is-hidden") && panel.classList.contains("is-projects-panel") && state3d.camera;
   if (shouldFly) {
     setPanelFlightOrigin();
@@ -427,7 +596,7 @@ function setPanelVisible(visible) {
     document.body.classList.remove("is-dossier-open");
     document.body.classList.add("is-panel-flight");
     if (!prefersReducedMotion.matches) {
-      const flight = panel.animate([
+      activePanelAnimation = panel.animate([
         { ...from, offset: 0 },
         { ...from, opacity: "1", offset: 0.18 },
         { ...to, offset: 1 },
@@ -435,9 +604,10 @@ function setPanelVisible(visible) {
         duration: 920,
         easing: "cubic-bezier(0.5, 0, 0.18, 1)",
       });
-      flight.finished.finally(() => {
+      activePanelAnimation.finished.catch(() => {}).finally(() => {
         panel.classList.remove("is-animating");
         document.body.classList.remove("is-panel-flight");
+        activePanelAnimation = null;
         if (!panel.classList.contains("is-hidden")) document.body.classList.add("is-dossier-open");
       });
     } else {
@@ -448,6 +618,8 @@ function setPanelVisible(visible) {
     return;
   }
   panel.classList.toggle("is-hidden", !visible);
+  panel.classList.remove("is-preflight");
+  panel.classList.remove("is-animating");
   panel.setAttribute("aria-hidden", String(!visible));
   document.body.classList.toggle("is-dossier-open", visible);
   if (!visible) document.body.classList.remove("is-panel-flight");
@@ -464,6 +636,7 @@ function focusSectionIn3D(id) {
   const record = state3d.interactiveBySection.get(id);
   if (!record) return;
   state3d.desiredTarget.copy(record.focusTarget);
+  state3d.cameraTransitionActive = true;
   if (window.innerHeight <= 500) {
     state3d.desiredCameraPosition.lerpVectors(record.focusTarget, record.focusCameraPosition, 0.78);
   } else {
@@ -491,6 +664,7 @@ function renderOverview(section) {
           ${item.dateRange ? `<span class="panel-overview-daterange">${escapeHtml(item.dateRange)}</span>` : ""}`;
         const cardLinks = [];
         if (item.vercelLink) cardLinks.push(`<a href="${escapeHtml(item.vercelLink)}" target="_blank" rel="noreferrer" class="panel-card-vercel" aria-label="View on Vercel"><img src="https://cdn.simpleicons.org/vercel" alt="" width="20" height="20" /></a>`);
+        if (item.siteLink) cardLinks.push(`<a href="${escapeHtml(item.siteLink)}" target="_blank" rel="noreferrer" class="panel-card-site" aria-label="Visit website">↗</a>`);
         if (item.link) cardLinks.push(`<a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-card-github" aria-label="View on GitHub"><img src="https://cdn.simpleicons.org/github" alt="" width="20" height="20" /></a>`);
         const linkHtml = cardLinks.length ? cardLinks.join("") : "";
         return `<div class="panel-overview-card" data-index="${i}">
@@ -512,10 +686,9 @@ function renderProjects(section, selectedIndex) {
     .map(
       (project, index) => `
         <button class="project-index-item signal-${index}" type="button" data-project-index="${index}" aria-pressed="${index === selectedIndex}">
-          <span class="project-index-number">${String(index + 1).padStart(2, "0")}</span>
           <span class="project-index-marker" aria-hidden="true">${escapeHtml(project.marker)}</span>
           <span class="project-index-copy">
-            <strong>${escapeHtml(project.title)}</strong>
+            <strong>${escapeHtml(project.title)}${project.status ? ` <em class="project-wip">${escapeHtml(project.status)}</em>` : ""}</strong>
             <span>${escapeHtml(project.signal)}</span>
           </span>
         </button>`,
@@ -534,38 +707,24 @@ function renderProjects(section, selectedIndex) {
     ? `<div class="project-tech">${item.techStack.map((tech) => `<span>${escapeHtml(tech)}</span>`).join("")}</div>`
     : "";
 
-  const artifactPatterns = {
-    veil: `<span class="artifact-playhead"></span><span class="artifact-caption">ASK WITHOUT SPOILERS</span>`,
-    circles: `<span class="artifact-orbit artifact-orbit-a"></span><span class="artifact-orbit artifact-orbit-b"></span><span class="artifact-core">24H</span>`,
-    spatial: `<span class="artifact-cube"><i></i><i></i><i></i></span><span class="artifact-caption">SCENE / INTERACTIVE</span>`,
-    lineup: `<span class="artifact-court"><i></i><i></i><i></i><i></i><i></i></span><span class="artifact-caption">LINEUP OPTIMIZER</span>`,
-    sentiment: `<span class="artifact-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="artifact-caption">LIVE SENTIMENT</span>`,
-  };
-  const artifact = `<div class="project-artifact artifact-${escapeHtml(item.artifact)}" aria-hidden="true">
-    <span class="artifact-label">SIGNAL VISUAL // ${escapeHtml(item.marker)}-${String(selectedIndex + 1).padStart(2, "0")}</span>
-    <span class="artifact-field">${artifactPatterns[item.artifact] || ""}</span>
-  </div>`;
-
   panelContent.innerHTML = `
     <div class="projects-console signal-${selectedIndex}">
-      <nav class="project-index" aria-label="Project signals">${projectNav}</nav>
+      <nav class="project-index" aria-label="Projects">${projectNav}</nav>
       <article class="project-readout">
         <div class="project-readout-signal">
-          <span>Selected // ${escapeHtml(item.title)}</span>
-          <strong>${escapeHtml(item.marker)}-${String(selectedIndex + 1).padStart(2, "0")}</strong>
+          <span>Selected build</span>
         </div>
         <p class="project-readout-kicker">${escapeHtml(item.signal)}</p>
         <h3>${escapeHtml(item.title)}</h3>
         <p class="project-readout-subtitle">${escapeHtml(item.subtitle)}</p>
-        ${artifact}
         <div class="project-actions">${actions.join("")}</div>
         <div class="project-readout-body">${item.detailHtml}</div>
         ${techStack}
-        <p class="project-position">${String(selectedIndex + 1).padStart(2, "0")} / ${String(section.items.length).padStart(2, "0")} <span>Use ← → to scan</span></p>
+        <p class="project-position">Use ← → to scan projects</p>
       </article>
     </div>`;
-  panelTitle.textContent = "Project signals";
-  panelSubtitle.textContent = `${String(section.items.length).padStart(2, "0")} active and archived builds`;
+  panelTitle.textContent = "Projects";
+  panelSubtitle.textContent = "Active and archived builds";
   activeItemIndex = selectedIndex;
 }
 
@@ -590,6 +749,7 @@ function renderDetail(section, index) {
       : "";
   const detailLinks = [];
   if (item.vercelLink) detailLinks.push(`<a href="${escapeHtml(item.vercelLink)}" target="_blank" rel="noreferrer" class="panel-detail-vercel-link"><img src="https://cdn.simpleicons.org/vercel" alt="" width="18" height="18" /> Check it out here!</a>`);
+  if (item.siteLink) detailLinks.push(`<a href="${escapeHtml(item.siteLink)}" target="_blank" rel="noreferrer" class="panel-detail-github-link">↗ Visit website</a>`);
   if (item.link) detailLinks.push(`<a href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer" class="panel-detail-github-link"><img src="https://cdn.simpleicons.org/github" alt="" width="18" height="18" /> View on GitHub</a>`);
   const detailLinksHtml = detailLinks.length ? `<p class="panel-detail-github">${detailLinks.join(" ")}</p>` : "";
   panelContent.innerHTML = `<div class="panel-detail-content">${techStackHtml}${detailLinksHtml}${item.detailHtml}</div>`;
@@ -707,6 +867,7 @@ function setOverviewMode(options = {}) {
   ) {
     state3d.desiredTarget.copy(state3d.homeTarget);
     state3d.desiredCameraPosition.copy(state3d.homeCameraPosition);
+    state3d.cameraTransitionActive = !instant;
 
     if (instant && state3d.camera && state3d.controls) {
       state3d.camera.position.copy(state3d.homeCameraPosition);
@@ -839,42 +1000,52 @@ function createExperienceTexture() {
 
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  ctx.fillStyle = "#fff8ed";
+  ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+  ctx.fillStyle = "#f8dfc5";
+  ctx.fillRect(24, 24, textureCanvas.width - 48, textureCanvas.height - 48);
+  ctx.strokeStyle = "#c8322d";
+  ctx.lineWidth = 5;
+  ctx.strokeRect(24, 24, textureCanvas.width - 48, textureCanvas.height - 48);
 
-  const logoSlots = [
-    { src: "assets/logos/expedia-group.png", x: 70, y: 70, width: 540, height: 250 },
-    { src: "assets/logos/hcss.png", x: 670, y: 70, width: 540, height: 250 },
-    { src: "assets/logos/hubspot.png", x: 70, y: 400, width: 540, height: 250 },
-    { src: "assets/logos/oceaneering.png", x: 670, y: 400, width: 540, height: 250 },
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#c8322d";
+  ctx.font = "700 34px 'IBM Plex Mono', monospace";
+  ctx.fillText("CAREER LOG // FIELD NOTES", 72, 92);
+  ctx.fillStyle = "#35181a";
+  ctx.font = "700 126px 'Bebas Neue', sans-serif";
+  ctx.fillText("EXPERIENCES", 68, 242);
+
+  const timelineY = 430;
+  const milestones = [
+    { x: 140, year: "2024", label: "OCEAN" },
+    { x: 390, year: "2025", label: "HUBSPOT" },
+    { x: 640, year: "2025", label: "EXPEDIA" },
+    { x: 890, year: "2026", label: "HCSS" },
+    { x: 1140, year: "2026", label: "CLOUDFLARE" },
   ];
-
-  const loadedImages = new Map();
-
-  const render = () => {
-    ctx.fillStyle = "#c7d4d2";
-    ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
-
-    logoSlots.forEach((slot) => {
-      const image = loadedImages.get(slot.src);
-      if (!image) return;
-      drawImageContain(ctx, image, slot.x, slot.y, slot.width, slot.height, 6);
-    });
-
-    texture.needsUpdate = true;
-  };
-
-  logoSlots.forEach((slot) => {
-    const image = new Image();
-    image.onload = () => {
-      loadedImages.set(slot.src, image);
-      render();
-    };
-    image.onerror = () => {
-      debugEvent(`logo load failed | ${slot.src}`);
-    };
-    image.src = slot.src;
+  ctx.strokeStyle = "#d08b62";
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(120, timelineY);
+  ctx.lineTo(1160, timelineY);
+  ctx.stroke();
+  milestones.forEach((milestone, index) => {
+    ctx.fillStyle = index === milestones.length - 1 ? "#c8322d" : "#f09a35";
+    ctx.beginPath();
+    ctx.arc(milestone.x, timelineY, index === milestones.length - 1 ? 25 : 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#784c43";
+    ctx.font = "700 24px 'IBM Plex Mono', monospace";
+    ctx.fillText(milestone.year, milestone.x - 34, timelineY + 68);
+    ctx.fillStyle = "#35181a";
+    ctx.font = "700 21px 'IBM Plex Mono', monospace";
+    ctx.fillText(milestone.label, milestone.x - 48, timelineY + 104);
   });
-
-  render();
+  ctx.fillStyle = "#e5572f";
+  ctx.font = "600 22px 'IBM Plex Mono', monospace";
+  ctx.fillText("CLICK // OPEN EXPERIENCE DOSSIER", 72, 646);
+  texture.needsUpdate = true;
   return texture;
 }
 
@@ -885,87 +1056,90 @@ function createProjectsTexture() {
   const ctx = textureCanvas.getContext("2d");
 
   const bg = ctx.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height);
-  bg.addColorStop(0, "#14201f");
-  bg.addColorStop(1, "#080b0c");
+  bg.addColorStop(0, "#fff8ed");
+  bg.addColorStop(1, "#f4d7bc");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
-  ctx.fillStyle = "rgba(98, 214, 198, 0.05)";
+  ctx.fillStyle = "rgba(200, 50, 45, 0.06)";
   ctx.fillRect(20, 20, textureCanvas.width - 40, textureCanvas.height - 40);
 
-  ctx.fillStyle = "#ffad57";
+  ctx.fillStyle = "#c8322d";
   ctx.textAlign = "center";
   ctx.font = "700 80px monospace";
   ctx.fillText("PROJECTS", textureCanvas.width / 2, 150);
 
-  ctx.fillStyle = "#62d6c6";
+  ctx.fillStyle = "#e5572f";
   ctx.font = "600 30px monospace";
   ctx.fillText("BUILD LOG // ACTIVE", textureCanvas.width / 2, 205);
 
   const cards = [
-    { title: "Veil", detail: "in progress" },
-    { title: "Circles", detail: "in development" },
+    { title: "Docs Trials", detail: "WIP // verification CLI" },
+    { title: "Veil", detail: "WIP // in progress" },
+    { title: "Miraj", detail: "WIP // in development" },
+    { title: "Taste Loop", detail: "agent skill" },
+    { title: "Programmable Video", detail: "Cloudflare Stream" },
     { title: "3D Desk Portfolio", detail: "Three.js" },
-    { title: "Fantasy Basketball Bot", detail: "Finished" },
+    { title: "Fantasy Basketball Bot", detail: "finished" },
     { title: "Discord Feedback Bot", detail: "200+ MAU" },
   ];
 
   cards.forEach((card, index) => {
     const x = 58;
-    const y = 230 + index * 168;
-    const cardH = 158;
-    ctx.fillStyle = "#111718";
+    const y = 218 + index * 126;
+    const cardH = 116;
+    ctx.fillStyle = "rgba(255, 250, 242, 0.9)";
     ctx.fillRect(x, y, 652, cardH);
-    ctx.strokeStyle = "#3d5551";
+    ctx.strokeStyle = "#d08b62";
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
     ctx.textAlign = "center";
-    ctx.fillStyle = "#f3eee4";
-    ctx.font = "700 42px monospace";
+    ctx.fillStyle = "#4a2422";
+    ctx.font = "700 31px monospace";
     ctx.fillText(card.title, x + 326, y + 68);
 
-    ctx.fillStyle = "#9ca8a5";
-    ctx.font = "600 28px monospace";
-    ctx.fillText(card.detail, x + 326, y + 118);
+    ctx.fillStyle = "#8b5a4c";
+    ctx.font = "600 22px monospace";
+    ctx.fillText(card.detail, x + 326, y + 91);
   });
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#ffad57";
+  ctx.fillStyle = "#c8322d";
   ctx.font = "600 27px monospace";
-  ctx.fillText("INTERACT // OPEN DOSSIER", textureCanvas.width / 2, 1186);
+  ctx.fillText("INTERACT // OPEN DOSSIER", textureCanvas.width / 2, 1250);
 
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
 }
 
-function createBuilderSignalTexture() {
+function createFireDojoTexture() {
   const textureCanvas = document.createElement("canvas");
   textureCanvas.width = 1024;
   textureCanvas.height = 576;
   const ctx = textureCanvas.getContext("2d");
 
-  ctx.fillStyle = "#071112";
+  ctx.fillStyle = "#160708";
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
-  ctx.strokeStyle = "#315856";
+  ctx.strokeStyle = "#8e2e1e";
   ctx.lineWidth = 4;
   ctx.strokeRect(16, 16, textureCanvas.width - 32, textureCanvas.height - 32);
-  ctx.fillStyle = "#62d6c6";
-  ctx.font = "700 34px monospace";
-  ctx.fillText("PRODUCT SYSTEM // PM-01", 56, 72);
-  ctx.fillStyle = "#f3eee4";
-  ctx.font = "700 66px monospace";
-  ctx.fillText("DISCOVER", 56, 154);
-  ctx.fillText("DECIDE", 56, 225);
-  ctx.fillText("SHIP", 56, 296);
+  ctx.fillStyle = "#ffbf4d";
+  ctx.font = "700 34px 'IBM Plex Mono', monospace";
+  ctx.fillText("FIRE DOJO // BUILDER PATH", 56, 72);
+  ctx.fillStyle = "#fff2d8";
+  ctx.font = "700 86px 'Bebas Neue', sans-serif";
+  ctx.fillText("CREATE", 56, 154);
+  ctx.fillText("EVOLVE", 56, 245);
+  ctx.fillText("SHIP", 56, 336);
 
   const stages = [
     { x: 570, y: 150, label: "USER" },
     { x: 740, y: 268, label: "SYSTEM" },
     { x: 570, y: 390, label: "OUTCOME" },
   ];
-  ctx.strokeStyle = "rgba(98, 214, 198, 0.55)";
+  ctx.strokeStyle = "rgba(255, 108, 59, 0.72)";
   ctx.lineWidth = 5;
   ctx.beginPath();
   ctx.moveTo(stages[0].x, stages[0].y);
@@ -973,59 +1147,59 @@ function createBuilderSignalTexture() {
   ctx.lineTo(stages[2].x, stages[2].y);
   ctx.stroke();
   stages.forEach((stage, index) => {
-    ctx.fillStyle = index === 1 ? "#ffad57" : "#62d6c6";
+    ctx.fillStyle = index === 1 ? "#ff6c3b" : "#f0a24a";
     ctx.beginPath();
     ctx.arc(stage.x, stage.y, index === 1 ? 28 : 22, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#9ca8a5";
-    ctx.font = "600 20px monospace";
+    ctx.fillStyle = "#f4c8a0";
+    ctx.font = "600 20px 'IBM Plex Mono', monospace";
     ctx.fillText(stage.label, stage.x + 42, stage.y + 7);
   });
 
-  ctx.fillStyle = "#ffad57";
-  ctx.fillRect(56, 446, 12, 54);
-  ctx.fillStyle = "#9ca8a5";
-  ctx.font = "500 22px monospace";
-  ctx.fillText("PRODUCT MANAGER + BUILDER", 88, 469);
-  ctx.fillText("HOUSTON / ONLINE", 88, 501);
+  ctx.fillStyle = "#5b2020";
+  ctx.fillRect(56, 452, 230, 8);
+  ctx.fillStyle = "#f4c8a0";
+  ctx.font = "500 22px 'IBM Plex Mono', monospace";
+  ctx.fillText("PRODUCT MANAGER + BUILDER", 56, 505);
 
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
 }
 
-function createVeilSignalTexture() {
+function createCurrentMissionTexture(mission = defaultMission) {
   const textureCanvas = document.createElement("canvas");
   textureCanvas.width = 1024;
   textureCanvas.height = 576;
   const ctx = textureCanvas.getContext("2d");
 
-  ctx.fillStyle = "#100d0a";
+  ctx.fillStyle = "#fff8ed";
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
-  ctx.strokeStyle = "#704324";
+  ctx.strokeStyle = "#c8322d";
   ctx.lineWidth = 4;
   ctx.strokeRect(16, 16, textureCanvas.width - 32, textureCanvas.height - 32);
-  ctx.fillStyle = "#ffad57";
-  ctx.font = "700 34px monospace";
-  ctx.fillText("NOW BUILDING // ACTIVE", 56, 72);
-  ctx.fillStyle = "#f3eee4";
-  ctx.font = "700 112px monospace";
-  ctx.fillText("VEIL", 56, 190);
-  ctx.fillStyle = "#c7cfcc";
-  ctx.font = "500 25px monospace";
-  ctx.fillText("ASK WHILE YOU WATCH", 62, 234);
-  ctx.fillText("WITHOUT SPOILING WHAT COMES NEXT", 62, 270);
+  ctx.fillStyle = "#c8322d";
+  ctx.font = "700 30px 'IBM Plex Mono', monospace";
+  ctx.fillText(String(mission.label).slice(0, 35), 56, 72);
+  ctx.fillStyle = "#35181a";
+  ctx.font = "700 76px 'Bebas Neue', sans-serif";
+  ctx.fillText(String(mission.title).slice(0, 19), 56, 184);
+  ctx.fillStyle = "#784c43";
+  ctx.font = "600 25px 'IBM Plex Mono', monospace";
+  ctx.fillText(String(mission.subtitle).slice(0, 39), 62, 244);
+  ctx.font = "500 21px 'IBM Plex Mono', monospace";
+  ctx.fillText(String(mission.detail).slice(0, 52), 62, 282);
 
-  ctx.strokeStyle = "#6e4c30";
+  ctx.strokeStyle = "#d8a27a";
   ctx.lineWidth = 5;
   ctx.beginPath();
   ctx.moveTo(78, 390);
   ctx.lineTo(930, 390);
   ctx.stroke();
   const timeline = [
-    { x: 120, label: "SEEN", color: "#62d6c6" },
-    { x: 510, label: "NOW", color: "#ffad57" },
-    { x: 880, label: "LOCKED", color: "#59615f" },
+    { x: 120, label: "SEEN", color: "#d8a27a" },
+    { x: 510, label: "NOW", color: "#e5572f" },
+    { x: 880, label: "NEXT", color: "#c8322d" },
   ];
   timeline.forEach((point) => {
     ctx.fillStyle = point.color;
@@ -1035,13 +1209,13 @@ function createVeilSignalTexture() {
     ctx.font = "600 21px monospace";
     ctx.fillText(point.label, point.x - 34, 438);
   });
-  ctx.strokeStyle = "#ffad57";
+  ctx.strokeStyle = "#f09a35";
   ctx.lineWidth = 5;
   ctx.strokeRect(458, 338, 104, 104);
-  ctx.fillStyle = "#8c9894";
-  ctx.font = "500 20px monospace";
-  ctx.fillText("SPOILER BOUNDARY", 56, 516);
-  ctx.fillStyle = "#62d6c6";
+  ctx.fillStyle = "#784c43";
+  ctx.font = "500 20px 'IBM Plex Mono', monospace";
+  ctx.fillText("CLICK TO OPEN BUILD", 56, 516);
+  ctx.fillStyle = "#e5572f";
   ctx.fillRect(840, 497, 84, 10);
 
   const texture = new THREE.CanvasTexture(textureCanvas);
@@ -1054,15 +1228,15 @@ function createPortraitLabelTexture() {
   textureCanvas.width = 768;
   textureCanvas.height = 160;
   const ctx = textureCanvas.getContext("2d");
-  ctx.fillStyle = "#080c0d";
+  ctx.fillStyle = "#fff8ed";
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
-  ctx.fillStyle = "#ffad57";
+  ctx.fillStyle = "#c8322d";
   ctx.font = "700 34px monospace";
   ctx.fillText("ABDULSABOOR // 01", 34, 58);
-  ctx.fillStyle = "#9ca8a5";
+  ctx.fillStyle = "#784c43";
   ctx.font = "500 22px monospace";
   ctx.fillText("PRODUCT MANAGER + BUILDER", 34, 103);
-  ctx.fillStyle = "#62d6c6";
+  ctx.fillStyle = "#f09a35";
   ctx.fillRect(34, 126, 190, 8);
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -1074,7 +1248,7 @@ function createDeskTexture() {
   textureCanvas.width = 1024;
   textureCanvas.height = 256;
   const ctx = textureCanvas.getContext("2d");
-  ctx.fillStyle = "#392b21";
+  ctx.fillStyle = "#d8b58b";
   ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
   for (let y = 16; y < textureCanvas.height; y += 18) {
     ctx.beginPath();
@@ -1083,7 +1257,7 @@ function createDeskTexture() {
       if (x === 0) ctx.moveTo(x, y + offset);
       else ctx.lineTo(x, y + offset);
     }
-    ctx.strokeStyle = y % 36 === 0 ? "rgba(126, 83, 51, 0.3)" : "rgba(22, 15, 12, 0.34)";
+    ctx.strokeStyle = y % 36 === 0 ? "rgba(255, 239, 207, 0.55)" : "rgba(121, 68, 39, 0.18)";
     ctx.lineWidth = 1.5;
     ctx.stroke();
   }
@@ -1105,12 +1279,12 @@ function applyShadows(object, options = {}) {
 }
 
 function buildScene(scene) {
-  scene.fog = new THREE.Fog(0x090b0c, 7, 26);
+  scene.fog = new THREE.Fog(0xf2e5d7, 8, 28);
 
-  const ambient = new THREE.AmbientLight(0xc8d7d4, 0.66);
+  const ambient = new THREE.AmbientLight(0xfff0d0, 1.35);
   scene.add(ambient);
 
-  const keyLight = new THREE.DirectionalLight(0xffd4a3, 1.62);
+  const keyLight = new THREE.DirectionalLight(0xffd39a, 2.4);
   keyLight.position.set(3.8, 5.8, 4.2);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
@@ -1123,21 +1297,21 @@ function buildScene(scene) {
   keyLight.shadow.bias = -0.00035;
   scene.add(keyLight);
 
-  const blueFill = new THREE.PointLight(0x72cddd, 1.35, 5.5, 2.1);
-  blueFill.position.set(0, 1.05, -0.65);
-  scene.add(blueFill);
+  const warmFill = new THREE.PointLight(0xffe7bd, 1.05, 6.5, 2.1);
+  warmFill.position.set(0, 1.05, -0.65);
+  scene.add(warmFill);
 
-  const cyanFill = new THREE.PointLight(0x55d8c5, 0.78, 12, 2.2);
+  const cyanFill = new THREE.PointLight(0xff7650, 1.15, 12, 2.2);
   cyanFill.position.set(-3.2, 2, 0.8);
   scene.add(cyanFill);
 
-  const frontFill = new THREE.PointLight(0xffa060, 1.08, 12, 2.1);
+  const frontFill = new THREE.PointLight(0xff7a3d, 1.35, 12, 2.1);
   frontFill.position.set(0, 1.55, 3.1);
   scene.add(frontFill);
 
   const floor = new THREE.Mesh(
     new THREE.CircleGeometry(7.5, 72),
-    new THREE.MeshStandardMaterial({ color: 0x111415, roughness: 0.94, metalness: 0.04 })
+    new THREE.MeshStandardMaterial({ color: 0xb87956, roughness: 0.94, metalness: 0.04 })
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.92;
@@ -1145,43 +1319,32 @@ function buildScene(scene) {
   scene.add(floor);
 
   const backWall = new THREE.Mesh(
-    new THREE.BoxGeometry(11, 3.4, 0.2),
-    new THREE.MeshStandardMaterial({ color: 0x202426, roughness: 0.86 })
+    new THREE.BoxGeometry(13, 4.4, 0.2),
+    new THREE.MeshStandardMaterial({ color: 0xf9ede0, roughness: 0.86 })
   );
-  backWall.position.set(0, 1.1, -4);
+  backWall.position.set(0, 1.25, -4);
   backWall.receiveShadow = true;
   scene.add(backWall);
 
-  const builderDisplay = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.35, 1.32),
-    new THREE.MeshStandardMaterial({
-      map: createBuilderSignalTexture(),
-      emissive: 0x123f3d,
-      emissiveIntensity: 0.48,
-      roughness: 0.38,
-    })
-  );
-  builderDisplay.position.set(-2.7, 1.87, -3.88);
-  builderDisplay.rotation.z = -0.025;
-  scene.add(builderDisplay);
-
   const veilDisplay = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.35, 1.32),
+    new THREE.PlaneGeometry(2.9, 1.72),
     new THREE.MeshStandardMaterial({
-      map: createVeilSignalTexture(),
-      emissive: 0x4d2815,
-      emissiveIntensity: 0.48,
+      map: createCurrentMissionTexture(),
+      emissive: 0x8f3022,
+      emissiveIntensity: 0.5,
       roughness: 0.38,
     })
   );
-  veilDisplay.position.set(2.7, 1.87, -3.88);
+  veilDisplay.position.set(1.68, 2.3, -3.88);
+  currentMissionMaterial = veilDisplay.material;
+  currentMissionObject = veilDisplay;
   veilDisplay.rotation.z = 0.025;
   scene.add(veilDisplay);
 
   const portraitGroup = new THREE.Group();
   const portraitFrame = new THREE.Mesh(
-    roundedBox(1.42, 1.72, 0.08, 0.035, 5),
-    new THREE.MeshStandardMaterial({ color: 0x12191a, roughness: 0.3, metalness: 0.48 })
+    roundedBox(2.62, 2.62, 0.08, 0.055, 5),
+    new THREE.MeshStandardMaterial({ color: 0xc8322d, roughness: 0.3, metalness: 0.24, emissive: 0x5f1714, emissiveIntensity: 0.22 })
   );
   portraitGroup.add(portraitFrame);
   const portraitTexture = new THREE.TextureLoader().load(
@@ -1194,18 +1357,14 @@ function buildScene(scene) {
   );
   portraitTexture.colorSpace = THREE.SRGBColorSpace;
   const portrait = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.28, 1.28),
-    new THREE.MeshStandardMaterial({ map: portraitTexture, roughness: 0.52, emissive: 0x19383a, emissiveIntensity: 0.18 })
+    new THREE.PlaneGeometry(2.36, 2.08),
+    new THREE.MeshStandardMaterial({ map: portraitTexture, roughness: 0.52, emissive: 0x8c3a2a, emissiveIntensity: 0.12 })
   );
-  portrait.position.set(0, 0.17, 0.045);
+  portrait.position.set(0, 0.18, 0.045);
   portraitGroup.add(portrait);
-  const portraitLabel = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.28, 0.27),
-    new THREE.MeshStandardMaterial({ map: createPortraitLabelTexture(), emissive: 0x3d2415, emissiveIntensity: 0.45, roughness: 0.4 })
-  );
-  portraitLabel.position.set(0, -0.62, 0.046);
-  portraitGroup.add(portraitLabel);
-  portraitGroup.position.set(0, 1.98, -3.82);
+  const compactViewport = window.innerWidth <= 900 || window.innerHeight <= 500;
+  portraitGroup.scale.setScalar(compactViewport ? 0.88 : 0.94);
+  portraitGroup.position.set(-1.68, compactViewport ? 2.18 : 2.24, -3.82);
   applyShadows(portraitGroup, { receive: false });
   scene.add(portraitGroup);
 
@@ -1220,7 +1379,7 @@ function buildScene(scene) {
 
   const deskEdge = new THREE.Mesh(
     roundedBox(5.48, 0.08, 0.06, 0.025, 4),
-    new THREE.MeshStandardMaterial({ color: 0x171817, roughness: 0.34, metalness: 0.58 })
+    new THREE.MeshStandardMaterial({ color: 0xc8322d, roughness: 0.34, metalness: 0.38, emissive: 0x5a1715, emissiveIntensity: 0.18 })
   );
   deskEdge.position.set(0, -0.1, 0.57);
   deskEdge.castShadow = true;
@@ -1228,13 +1387,13 @@ function buildScene(scene) {
 
   const deskMat = new THREE.Mesh(
     new THREE.BoxGeometry(4.3, 0.02, 1.55),
-    new THREE.MeshStandardMaterial({ color: 0x151819, roughness: 0.88 })
+    new THREE.MeshStandardMaterial({ color: 0x6d3b2c, roughness: 0.88 })
   );
   deskMat.position.set(0, -0.02, -0.45);
   deskMat.receiveShadow = true;
   scene.add(deskMat);
 
-  const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0x171a1b, roughness: 0.75, metalness: 0.3 });
+  const deskLegMaterial = new THREE.MeshStandardMaterial({ color: 0xf8eee2, roughness: 0.75, metalness: 0.3 });
   [-2.55, 2.55].forEach((x) => {
     [-1.45, 0.35].forEach((z) => {
       const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.88, 0.12), deskLegMaterial);
@@ -1255,11 +1414,11 @@ function buildScene(scene) {
   const monitorFrame = new THREE.Mesh(
     roundedBox(2.5, 1.2, 0.09, 0.035, 5),
     new THREE.MeshStandardMaterial({
-      color: 0x171b1c,
+      color: 0xf7eee4,
       roughness: 0.4,
       metalness: 0.2,
-      emissive: 0x102829,
-      emissiveIntensity: 0.72,
+      emissive: 0xa52b25,
+      emissiveIntensity: 0.32,
     })
   );
   monitorGroup.add(monitorFrame);
@@ -1268,8 +1427,8 @@ function buildScene(scene) {
     new THREE.PlaneGeometry(2.3, 1.05),
     new THREE.MeshStandardMaterial({
       map: createExperienceTexture(),
-      emissive: 0x3d7ec5,
-      emissiveIntensity: 0.82,
+      emissive: 0xf0713a,
+      emissiveIntensity: 0.55,
       roughness: 0.25,
     })
   );
@@ -1279,11 +1438,11 @@ function buildScene(scene) {
   const monitorWebcam = new THREE.Mesh(
     new THREE.BoxGeometry(0.24, 0.06, 0.06),
     new THREE.MeshStandardMaterial({
-      color: 0x202f4e,
+      color: 0xc8322d,
       roughness: 0.4,
       metalness: 0.2,
-      emissive: 0x1f4f86,
-      emissiveIntensity: 0.65,
+      emissive: 0xf3a33d,
+      emissiveIntensity: 0.72,
     })
   );
   monitorWebcam.position.set(0, 0.64, -0.01);
@@ -1291,14 +1450,14 @@ function buildScene(scene) {
 
   const monitorStand = new THREE.Mesh(
     new THREE.CylinderGeometry(0.05, 0.06, 0.46, 22),
-    new THREE.MeshStandardMaterial({ color: 0x18243d, roughness: 0.58 })
+    new THREE.MeshStandardMaterial({ color: 0xb96d4d, roughness: 0.58 })
   );
   monitorStand.position.set(0, -0.75, -0.02);
   monitorGroup.add(monitorStand);
 
   const monitorBase = new THREE.Mesh(
     roundedBox(0.62, 0.04, 0.34, 0.015, 4),
-    new THREE.MeshStandardMaterial({ color: 0x131d31, roughness: 0.66 })
+    new THREE.MeshStandardMaterial({ color: 0xf4dfc8, roughness: 0.66 })
   );
   monitorBase.position.set(0, -0.98, -0.02);
   monitorGroup.add(monitorBase);
@@ -1311,11 +1470,11 @@ function buildScene(scene) {
   const sideMonitorFrame = new THREE.Mesh(
     roundedBox(0.72, 1.36, 0.09, 0.035, 5),
     new THREE.MeshStandardMaterial({
-      color: 0x171b1c,
+      color: 0xf7eee4,
       roughness: 0.42,
       metalness: 0.2,
-      emissive: 0x102829,
-      emissiveIntensity: 0.7,
+      emissive: 0xa52b25,
+      emissiveIntensity: 0.3,
     })
   );
   sideMonitor.add(sideMonitorFrame);
@@ -1323,8 +1482,8 @@ function buildScene(scene) {
     new THREE.PlaneGeometry(0.62, 1.24),
     new THREE.MeshStandardMaterial({
       map: createProjectsTexture(),
-      emissive: 0x2f78b8,
-      emissiveIntensity: 0.9,
+      emissive: 0xf0713a,
+      emissiveIntensity: 0.6,
       roughness: 0.25,
     })
   );
@@ -1333,14 +1492,14 @@ function buildScene(scene) {
 
   const sideMonitorStand = new THREE.Mesh(
     new THREE.CylinderGeometry(0.03, 0.04, 0.34, 18),
-    new THREE.MeshStandardMaterial({ color: 0x1c2c48, roughness: 0.55, metalness: 0.22 })
+    new THREE.MeshStandardMaterial({ color: 0xb96d4d, roughness: 0.55, metalness: 0.22 })
   );
   sideMonitorStand.position.set(0, -0.88, 0);
   sideMonitor.add(sideMonitorStand);
 
   const sideMonitorBase = new THREE.Mesh(
     roundedBox(0.34, 0.03, 0.22, 0.012, 4),
-    new THREE.MeshStandardMaterial({ color: 0x16233c, roughness: 0.6 })
+    new THREE.MeshStandardMaterial({ color: 0xf4dfc8, roughness: 0.6 })
   );
   sideMonitorBase.position.set(0, -1.07, 0);
   sideMonitor.add(sideMonitorBase);
@@ -1354,11 +1513,11 @@ function buildScene(scene) {
   const towerBody = new THREE.Mesh(
     roundedBox(0.94, 1.76, 1.12, 0.075, 5),
     new THREE.MeshStandardMaterial({
-      color: 0x1b1e1f,
+      color: 0xf5eee5,
       roughness: 0.34,
       metalness: 0.34,
-      emissive: 0x402418,
-      emissiveIntensity: 1.02,
+      emissive: 0x9e2c24,
+      emissiveIntensity: 0.42,
     })
   );
   pcTower.add(towerBody);
@@ -1366,8 +1525,8 @@ function buildScene(scene) {
   const frontPanel = new THREE.Mesh(
     new THREE.PlaneGeometry(0.82, 1.6),
     new THREE.MeshStandardMaterial({
-      color: 0x0f1a30,
-      emissive: 0x183963,
+      color: 0xffc766,
+      emissive: 0xf0713a,
       emissiveIntensity: 0.72,
       roughness: 0.24,
       metalness: 0.2,
@@ -1379,11 +1538,11 @@ function buildScene(scene) {
   const sideGlass = new THREE.Mesh(
     new THREE.PlaneGeometry(1.05, 1.48),
     new THREE.MeshStandardMaterial({
-      color: 0x9cd4ff,
+      color: 0xffd4b0,
       transparent: true,
       opacity: 0.16,
-      emissive: 0x2f73bf,
-      emissiveIntensity: 0.64,
+      emissive: 0xff5c36,
+      emissiveIntensity: 0.5,
       roughness: 0.1,
       metalness: 0.05,
     })
@@ -1433,11 +1592,11 @@ function buildScene(scene) {
   const keyboardCase = new THREE.Mesh(
     roundedBox(1.9, 0.08, 0.62, 0.035, 5),
     new THREE.MeshStandardMaterial({
-      color: 0x202826,
+      color: 0xf8eee2,
       roughness: 0.38,
       metalness: 0.28,
-      emissive: 0x1f4f4a,
-      emissiveIntensity: 0.7,
+      emissive: 0xc8322d,
+      emissiveIntensity: 0.3,
     })
   );
   keyboard.add(keyboardCase);
@@ -1445,7 +1604,7 @@ function buildScene(scene) {
 
   const wristRest = new THREE.Mesh(
     roundedBox(1.62, 0.05, 0.14, 0.02, 4),
-    new THREE.MeshStandardMaterial({ color: 0x101827, roughness: 0.7 })
+    new THREE.MeshStandardMaterial({ color: 0xc98262, roughness: 0.7 })
   );
   wristRest.position.set(0, -0.01, 0.38);
   keyboard.add(wristRest);
@@ -1456,11 +1615,11 @@ function buildScene(scene) {
       const keycap = new THREE.Mesh(
         roundedBox(0.105, 0.03, 0.095, 0.012, 3),
         new THREE.MeshStandardMaterial({
-          color: row === 0 ? 0x66716d : 0x424d49,
+          color: row === 0 ? 0xc8322d : 0xfff8ed,
           roughness: 0.38,
           metalness: 0.18,
-          emissive: 0x183632,
-          emissiveIntensity: 0.32,
+          emissive: row === 0 ? 0xf0713a : 0xf3a33d,
+          emissiveIntensity: 0.24,
         })
       );
       keycap.position.set((col - (count - 1) / 2) * 0.125, 0.06, -0.22 + row * 0.125);
@@ -1469,7 +1628,7 @@ function buildScene(scene) {
   });
   const spacebar = new THREE.Mesh(
     roundedBox(0.58, 0.03, 0.095, 0.012, 3),
-    new THREE.MeshStandardMaterial({ color: 0x5a6561, roughness: 0.38, metalness: 0.18 })
+    new THREE.MeshStandardMaterial({ color: 0xffc766, roughness: 0.38, metalness: 0.18 })
   );
   spacebar.position.set(0, 0.06, 0.27);
   keyboard.add(spacebar);
@@ -1479,11 +1638,11 @@ function buildScene(scene) {
   const mouse = new THREE.Mesh(
     new THREE.SphereGeometry(0.2, 22, 22),
     new THREE.MeshStandardMaterial({
-      color: 0x252a29,
+      color: 0xc8322d,
       roughness: 0.36,
       metalness: 0.18,
-      emissive: 0x173737,
-      emissiveIntensity: 0.86,
+      emissive: 0xf0713a,
+      emissiveIntensity: 0.55,
     })
   );
   mouse.scale.set(1, 0.58, 1.32);
@@ -1494,7 +1653,7 @@ function buildScene(scene) {
 
   const mousePad = new THREE.Mesh(
     roundedBox(0.94, 0.02, 0.68, 0.008, 4),
-    new THREE.MeshStandardMaterial({ color: 0x0c121e, roughness: 0.92 })
+    new THREE.MeshStandardMaterial({ color: 0x9f5d43, roughness: 0.92 })
   );
   mousePad.position.set(1.2, 0.01, 0.02);
   mousePad.receiveShadow = true;
@@ -1503,10 +1662,10 @@ function buildScene(scene) {
   const phone = new THREE.Mesh(
     roundedBox(0.24, 0.42, 0.025, 0.01, 5),
     new THREE.MeshStandardMaterial({
-      color: 0x151f32,
+      color: 0xf7eee4,
       roughness: 0.36,
-      emissive: 0x1f4f7f,
-      emissiveIntensity: 1,
+      emissive: 0xc8322d,
+      emissiveIntensity: 0.5,
     })
   );
   phone.rotation.x = -0.4;
@@ -1520,11 +1679,11 @@ function buildScene(scene) {
   const dumbbellBar = new THREE.Mesh(
     new THREE.CylinderGeometry(0.055, 0.055, 0.95, 16),
     new THREE.MeshStandardMaterial({
-      color: 0x1a2e4f,
+      color: 0x7b3028,
       roughness: 0.44,
       metalness: 0.6,
-      emissive: 0x102542,
-      emissiveIntensity: 0.8,
+      emissive: 0xe5572f,
+      emissiveIntensity: 0.5,
     })
   );
   dumbbellBar.rotation.z = Math.PI / 2;
@@ -1532,7 +1691,7 @@ function buildScene(scene) {
   [-0.36, 0.36].forEach((offset) => {
     const plate = new THREE.Mesh(
       new THREE.CylinderGeometry(0.16, 0.16, 0.18, 22),
-      new THREE.MeshStandardMaterial({ color: 0x172741, roughness: 0.45, metalness: 0.5 })
+      new THREE.MeshStandardMaterial({ color: 0xc8322d, roughness: 0.45, metalness: 0.5 })
     );
     plate.rotation.z = Math.PI / 2;
     plate.position.x = offset;
@@ -1600,6 +1759,57 @@ function buildScene(scene) {
     leaf.receiveShadow = true;
     scene.add(leaf);
   }
+
+  // Small fire-training mascot: a warm, original collectible that gives the desk
+  // the personality of a lived-in anime workstation without using external art.
+  const infernapeMascot = new THREE.Group();
+  const mascotBody = new THREE.Mesh(
+    new THREE.SphereGeometry(0.16, 20, 14),
+    new THREE.MeshStandardMaterial({ color: 0xf2d6b5, roughness: 0.62 })
+  );
+  mascotBody.scale.set(0.86, 1.16, 0.8);
+  mascotBody.position.y = 0.21;
+  infernapeMascot.add(mascotBody);
+  const mascotHead = new THREE.Mesh(
+    new THREE.SphereGeometry(0.14, 20, 14),
+    new THREE.MeshStandardMaterial({ color: 0xb83a2f, roughness: 0.48, emissive: 0x5b1816, emissiveIntensity: 0.18 })
+  );
+  mascotHead.position.y = 0.48;
+  infernapeMascot.add(mascotHead);
+  const mascotCrown = new THREE.Mesh(
+    new THREE.ConeGeometry(0.11, 0.26, 6),
+    new THREE.MeshStandardMaterial({ color: 0xffbd47, roughness: 0.36, emissive: 0xf0713a, emissiveIntensity: 0.8 })
+  );
+  mascotCrown.position.set(0, 0.68, 0);
+  mascotCrown.rotation.z = -0.18;
+  infernapeMascot.add(mascotCrown);
+  [-0.11, 0.11].forEach((x) => {
+    const ear = new THREE.Mesh(
+      new THREE.ConeGeometry(0.045, 0.13, 5),
+      new THREE.MeshStandardMaterial({ color: 0x7e3026, roughness: 0.5 })
+    );
+    ear.position.set(x, 0.57, 0);
+    ear.rotation.z = x < 0 ? -0.55 : 0.55;
+    infernapeMascot.add(ear);
+  });
+  const mascotTail = new THREE.Mesh(
+    new THREE.TorusGeometry(0.15, 0.035, 10, 24, Math.PI * 1.35),
+    new THREE.MeshStandardMaterial({ color: 0x7e3026, roughness: 0.48 })
+  );
+  mascotTail.position.set(0.13, 0.2, -0.08);
+  mascotTail.rotation.y = Math.PI / 2;
+  infernapeMascot.add(mascotTail);
+  const mascotFlame = new THREE.Mesh(
+    new THREE.ConeGeometry(0.07, 0.18, 6),
+    new THREE.MeshStandardMaterial({ color: 0xffc766, emissive: 0xf0713a, emissiveIntensity: 1.2, roughness: 0.28 })
+  );
+  mascotFlame.position.set(0.2, 0.31, -0.08);
+  mascotFlame.rotation.z = -0.5;
+  infernapeMascot.add(mascotFlame);
+  infernapeMascot.position.set(-2.58, 0.04, -0.3);
+  infernapeMascot.scale.setScalar(0.92);
+  applyShadows(infernapeMascot);
+  scene.add(infernapeMascot);
 
   const headphones = new THREE.Group();
   const band = new THREE.Mesh(
@@ -1883,7 +2093,9 @@ function boot3D() {
   sceneOverlay.hidden = true;
   sceneOverlay.style.display = "none";
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const compactViewport = window.innerWidth <= 900 || window.innerHeight <= 500;
+  const pixelRatioCap = compactViewport ? 2.25 : 2;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap));
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1893,11 +2105,11 @@ function boot3D() {
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
-  controls.dampingFactor = 0.04;
+  controls.dampingFactor = 0.08;
   controls.enablePan = false;
-  controls.minDistance = 2.5;
-  controls.maxDistance = 18;
-  controls.zoomSpeed = 1.5;
+  controls.minDistance = 1.85;
+  controls.maxDistance = 24;
+  controls.zoomSpeed = 1.15;
   controls.rotateSpeed = 1.25;
   controls.zoomToCursor = true;
   controls.minAzimuthAngle = -1.5;
@@ -1906,6 +2118,13 @@ function boot3D() {
   controls.maxPolarAngle = 1.42;
   controls.target.set(0.1, 0.74, -0.6);
   controls.update();
+
+  // Manual orbit/zoom owns the camera until the user selects another scene
+  // object or returns home. This keeps a chosen zoom level from being pulled
+  // back by the scene's focus animation loop.
+  controls.addEventListener("start", () => {
+    state3d.cameraTransitionActive = false;
+  });
 
   state3d.camera = camera;
   state3d.controls = controls;
@@ -1921,6 +2140,7 @@ function boot3D() {
   state3d.homeCameraPosition = state3d.desiredCameraPosition.clone();
 
   buildScene(scene);
+  loadCurrentMission();
 
   if (prefersReducedMotion.matches) {
     state3d.intro = null;
@@ -1961,6 +2181,12 @@ function boot3D() {
     return state3d.interactiveRecords.find((record) => record.hitMesh === hits[0].object) || null;
   }
 
+  function pickCurrentMission() {
+    if (!currentMissionObject) return false;
+    state3d.raycaster.setFromCamera(state3d.pointer, camera);
+    return state3d.raycaster.intersectObject(currentMissionObject, false).length > 0;
+  }
+
   function onPointerMove(event) {
     const rect = canvas.getBoundingClientRect();
     state3d.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -1969,6 +2195,10 @@ function boot3D() {
 
   function onClick(event) {
     onPointerMove(event);
+    if (pickCurrentMission()) {
+      window.open(currentMissionUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
     const clickedRecord = pickRecord();
     if (!clickedRecord) {
       setOverviewMode({ hidePanel: true });
@@ -2006,8 +2236,10 @@ function boot3D() {
         setOverviewMode({ hidePanel: true, instant: true });
       }
     } else {
-      camera.position.lerp(state3d.desiredCameraPosition, 0.08);
-      controls.target.lerp(state3d.desiredTarget, 0.1);
+      if (state3d.cameraTransitionActive) {
+        camera.position.lerp(state3d.desiredCameraPosition, 0.08);
+        controls.target.lerp(state3d.desiredTarget, 0.1);
+      }
     }
 
     hoveredRecord = pickRecord();

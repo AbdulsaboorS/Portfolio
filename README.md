@@ -1,6 +1,6 @@
 # Abdulsaboor Shaikh – Interactive 3D Portfolio
 
-**[→ Live portfolio](https://abdulsaboors.github.io/Portfolio/)**
+**[→ Live portfolio](https://abdulsaboorshaikh.com)**
 
 An interactive 3D desk that replaces a static resume with an after-hours builder's lab. Click objects on the desk (monitor, side monitor, keyboard, mouse, PC, dumbbell) to open experience, projects, activities, skills, and interests. Built for recruiters and hiring managers who want to explore content in one place without scrolling a long page.
 
@@ -21,7 +21,7 @@ I wanted a portfolio that feels like a product: something you interact with inst
 
 - **Frontend:** Vanilla JS, HTML, CSS
 - **3D:** Three.js
-- **Hosting:** GitHub Pages
+- **Hosting:** Cloudflare Pages with a custom domain
 - **Accessibility:** Keyboard navigation, reduced-motion aware, non-WebGL fallback
 
 ---
