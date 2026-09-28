@@ -19,14 +19,17 @@ const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)
 let currentMissionMaterial = null;
 let currentMissionObject = null;
 let currentMissionUrl = "https://github.com/AbdulsaboorS";
+let contributionDays = null;
 let activePanelAnimation = null;
 
 const defaultMission = {
   title: "VEIL",
-  subtitle: "Browser extension // in progress",
+  subtitle: "Chrome extension // live",
   detail: "Ask while you watch without crossing the spoiler boundary.",
   label: "CURRENT MISSION // MANUAL FALLBACK",
 };
+
+let currentMission = defaultMission;
 
 function defaultStatus() {
   return "Interact // desk objects or portrait";
@@ -131,6 +134,44 @@ const experienceItems = [
 
 const projectItems = [
   {
+    title: "Wist",
+    subtitle: "CLI & relay · agent handoffs",
+    signal: "AGENT / HANDOFF",
+    marker: "WS",
+    artifact: "wist",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/wist",
+    siteLink: "https://wist.fyi",
+    status: "WIP",
+    techStack: ["TypeScript", "Node.js", "React", "Hono", "Cloudflare Workers", "D1"],
+    detailHtml: `
+      <p>A tool to hand off your coding agent workflow so you can continue the project in a personal AI assistant like Muse.</p>
+      <ul>
+        <li>Claude Code or Codex writes a Handoff from your latest session: what you're building, what's done, what was decided, and what comes next.</li>
+        <li>You approve exactly what gets shared, then give your assistant a private, short-lived Connection link you can revoke at any time.</li>
+      </ul>
+    `,
+  },
+  {
+    title: "Veil",
+    subtitle: "Chrome extension · spoiler-safe Q&A",
+    signal: "AI / VIDEO",
+    marker: "VL",
+    artifact: "veil",
+    dateRange: "",
+    link: "https://github.com/AbdulsaboorS/Veil",
+    siteLink: "https://veil.lat",
+    storeLink: "https://chromewebstore.google.com/detail/mblbdjlnbchcigeegokcgafnlobggnop",
+    techStack: ["Chrome MV3", "React", "TypeScript", "Supabase Edge Functions", "Gemini API"],
+    detailHtml: `
+      <p>Asks and answers your questions while you watch, without spoiling what happens next. Use the extension instead of risky searches mid-episode.</p>
+      <ul>
+        <li>Lives in Chrome's side panel and detects your show and episode on Crunchyroll and Netflix automatically.</li>
+        <li>Classifies each question for spoiler risk and audits risky answers with a second pass before you see them.</li>
+      </ul>
+    `,
+  },
+  {
     title: "Taste Loop",
     subtitle: "Agent skill · design workflow",
     signal: "AGENT / DESIGN",
@@ -180,20 +221,6 @@ const projectItems = [
         <li>Turns a product repository, visual references, and a short brief into a reviewable React video composition.</li>
         <li>Renders the approved commit with Chrome and FFmpeg, then publishes the finished video through Cloudflare Stream.</li>
       </ul>
-    `,
-  },
-  {
-    title: "Veil",
-    subtitle: "Browser extension · in progress",
-    signal: "AI / VIDEO",
-    marker: "VL",
-    artifact: "veil",
-    dateRange: "",
-    link: "https://github.com/AbdulsaboorS/veil",
-    status: "WIP",
-    techStack: [],
-    detailHtml: `
-      <p>Asks and answers your questions while you watch—without spoiling what happens next. Use the extension instead of risky searches mid-episode.</p>
     `,
   },
   {
@@ -266,7 +293,7 @@ const projectItems = [
   },
 ];
 
-const projectPriority = ["Docs Trials", "Veil", "Miraj"];
+const projectPriority = ["Wist", "Docs Trials", "Miraj"];
 projectItems.sort((a, b) => {
   const aPriority = projectPriority.indexOf(a.title);
   const bPriority = projectPriority.indexOf(b.title);
@@ -367,26 +394,30 @@ const sectionData = [
   {
     id: "about",
     objectName: "portrait",
-    label: "About Me",
+    label: "Who Am I?",
     subtitle: "A quick hello",
     status: "Esc to close · or pick a desk object to keep exploring.",
     html: `
       <div class="about-me">
-        <p class="about-me-lead">Hey — I'm Abdulsaboor.</p>
-        <p class="about-me-placeholder">
-          Short bio goes here. Swap this placeholder when you're ready — a few lines on who you are,
-          what you're building toward, and how you like to work.
+        <p class="about-me-lead">I'm Abdulsaboor, aka zkidflash (my very first gamertag from MW2)</p>
+        <p>
+          Currently I'm a PM at Expedia living in Seattle. In the past year I've really gotten into building
+          things thanks to AI ngl, so I'm currently on a journey of building, learning, and failing.
         </p>
-        <div class="about-me-guide">
-          <p class="about-me-guide-title">How to explore this desk</p>
-          <ul>
-            <li><strong>Portrait</strong> — that's this panel.</li>
-            <li><strong>Monitor</strong> — experience timeline.</li>
-            <li><strong>Side monitor</strong> — projects.</li>
-            <li><strong>Keyboard / PC / dumbbell</strong> — skills, activities, interests.</li>
-            <li><strong>System index</strong> — jump to any section without hunting objects.</li>
-            <li>Drag to orbit · scroll to zoom · Esc closes a panel.</li>
-          </ul>
+        <p>
+          I played a lot of games growing up and was high rank in CS:GO (ESEA A), pretty good in OG Fortnite
+          (seasons 1–4 istg I'm an OG), Valorant (peak Radiant), Rocket League, which was my chill game so I only
+          peaked GC1, and most recently Marvel Rivals (peak Celestial 2 💔).
+        </p>
+        <p>
+          After being a die-hard gamer day in and day out, I know that I will contribute to building something
+          really successful one day inshAllah (God willing), so I'm bringing my grind and passion to the world of tech :D
+        </p>
+        <p>Reach out to me on LinkedIn, Twitter, or email, let's be friends!</p>
+        <div class="about-me-links">
+          <a href="https://www.linkedin.com/in/shaikhabdulsaboor/" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+          <a href="https://x.com/abdulsaboooor" target="_blank" rel="noreferrer">Twitter <span aria-hidden="true">↗</span></a>
+          <a href="mailto:shaikhabdulsaboor1@gmail.com">Email <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     `,
@@ -485,11 +516,36 @@ function updateStatus(message) {
 }
 
 function applyCurrentMission(mission) {
+  currentMission = mission;
   currentMissionUrl = mission.url || "https://github.com/AbdulsaboorS";
   if (!currentMissionMaterial) return;
   const nextTexture = createCurrentMissionTexture(mission);
   currentMissionMaterial.map = nextTexture;
   currentMissionMaterial.needsUpdate = true;
+}
+
+async function loadContributions() {
+  try {
+    const response = await fetch("https://github-contributions-api.jogruber.de/v4/AbdulsaboorS?y=last");
+    if (!response.ok) throw new Error(`Contributions request failed: ${response.status}`);
+    const data = await response.json();
+    if (!Array.isArray(data.contributions) || !data.contributions.length) return;
+    contributionDays = data.contributions;
+    applyCurrentMission(currentMission);
+  } catch (error) {
+    debugEvent(`contributions fallback | ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+function timeAgo(isoDate) {
+  const seconds = Math.max(0, (Date.now() - new Date(isoDate).getTime()) / 1000);
+  if (!Number.isFinite(seconds)) return "";
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }
 
 async function loadCurrentMission() {
@@ -505,19 +561,21 @@ async function loadCurrentMission() {
     if (!event) return;
 
     const repo = event.repo?.name || "GitHub build";
+    const ago = event.created_at ? timeAgo(event.created_at) : "";
+    const when = ago ? ` (${ago})` : "";
     if (event.type === "PushEvent") {
       const commit = event.payload.commits?.at(-1);
       applyCurrentMission({
         title: repo.split("/").at(-1) || "BUILD",
-        subtitle: "Latest commit // public GitHub activity",
+        subtitle: `Latest commit${when}`,
         detail: commit?.message?.split("\n")[0] || "Recent work in progress.",
-        label: "CURRENT MISSION // COMMIT",
+        label: "CURRENT MISSION // MOST RECENT REPO WHERE I COMMITTED",
         url: `https://github.com/${repo}/commit/${event.payload.head}`,
       });
     } else {
       applyCurrentMission({
         title: repo.split("/").at(-1) || "BUILD",
-        subtitle: "Latest pull request // public GitHub activity",
+        subtitle: `Latest pull request${when}`,
         detail: event.payload.pull_request.title || "Recent work in progress.",
         label: "CURRENT MISSION // PULL REQUEST",
         url: event.payload.pull_request.html_url || `https://github.com/${repo}`,
@@ -726,6 +784,12 @@ function renderProjects(section, selectedIndex) {
     .join("");
 
   const actions = [];
+  if (item.siteLink) {
+    actions.push(`<a href="${escapeHtml(item.siteLink)}" target="_blank" rel="noreferrer" class="project-action project-action-live">Visit site <span aria-hidden="true">↗</span></a>`);
+  }
+  if (item.storeLink) {
+    actions.push(`<a href="${escapeHtml(item.storeLink)}" target="_blank" rel="noreferrer" class="project-action project-action-live">Add to Chrome <span aria-hidden="true">↗</span></a>`);
+  }
   if (item.vercelLink) {
     actions.push(`<a href="${escapeHtml(item.vercelLink)}" target="_blank" rel="noreferrer" class="project-action project-action-live">Open live demo <span aria-hidden="true">↗</span></a>`);
   }
@@ -1105,9 +1169,10 @@ function createProjectsTexture() {
   ctx.fillText("BUILD LOG // ACTIVE", textureCanvas.width / 2, 205);
 
   const cards = [
+    { title: "Wist", detail: "WIP // agent handoffs" },
     { title: "Docs Trials", detail: "WIP // verification CLI" },
-    { title: "Veil", detail: "WIP // in progress" },
     { title: "Miraj", detail: "WIP // in development" },
+    { title: "Veil", detail: "live // Chrome Web Store" },
     { title: "Taste Loop", detail: "agent skill" },
     { title: "Programmable Video", detail: "Cloudflare Stream" },
     { title: "3D Desk Portfolio", detail: "Three.js" },
@@ -1117,8 +1182,8 @@ function createProjectsTexture() {
 
   cards.forEach((card, index) => {
     const x = 58;
-    const y = 218 + index * 126;
-    const cardH = 116;
+    const y = 218 + index * 111;
+    const cardH = 102;
     ctx.fillStyle = "rgba(255, 250, 242, 0.9)";
     ctx.fillRect(x, y, 652, cardH);
     ctx.strokeStyle = "#d08b62";
@@ -1128,11 +1193,11 @@ function createProjectsTexture() {
     ctx.textAlign = "center";
     ctx.fillStyle = "#4a2422";
     ctx.font = "700 31px monospace";
-    ctx.fillText(card.title, x + 326, y + 68);
+    ctx.fillText(card.title, x + 326, y + 56);
 
     ctx.fillStyle = "#8b5a4c";
     ctx.font = "600 22px monospace";
-    ctx.fillText(card.detail, x + 326, y + 91);
+    ctx.fillText(card.detail, x + 326, y + 82);
   });
 
   ctx.textAlign = "center";
@@ -1210,8 +1275,9 @@ function createCurrentMissionTexture(mission = defaultMission) {
   ctx.lineWidth = 4;
   ctx.strokeRect(16, 16, textureCanvas.width - 32, textureCanvas.height - 32);
   ctx.fillStyle = "#c8322d";
-  ctx.font = "700 30px 'IBM Plex Mono', monospace";
-  ctx.fillText(String(mission.label).slice(0, 35), 56, 72);
+  const label = String(mission.label);
+  ctx.font = `700 ${label.length > 35 ? 22 : 30}px 'IBM Plex Mono', monospace`;
+  ctx.fillText(label.slice(0, 60), 56, 72);
   ctx.fillStyle = "#35181a";
   ctx.font = "700 76px 'Bebas Neue', sans-serif";
   ctx.fillText(String(mission.title).slice(0, 19), 56, 184);
@@ -1221,28 +1287,8 @@ function createCurrentMissionTexture(mission = defaultMission) {
   ctx.font = "500 21px 'IBM Plex Mono', monospace";
   ctx.fillText(String(mission.detail).slice(0, 52), 62, 282);
 
-  ctx.strokeStyle = "#d8a27a";
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  ctx.moveTo(78, 390);
-  ctx.lineTo(930, 390);
-  ctx.stroke();
-  const timeline = [
-    { x: 120, label: "SEEN", color: "#d8a27a" },
-    { x: 510, label: "NOW", color: "#e5572f" },
-    { x: 880, label: "NEXT", color: "#c8322d" },
-  ];
-  timeline.forEach((point) => {
-    ctx.fillStyle = point.color;
-    ctx.beginPath();
-    ctx.arc(point.x, 390, 18, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.font = "600 21px monospace";
-    ctx.fillText(point.label, point.x - 34, 438);
-  });
-  ctx.strokeStyle = "#f09a35";
-  ctx.lineWidth = 5;
-  ctx.strokeRect(458, 338, 104, 104);
+  drawContributionGraph(ctx, 56, 322);
+
   ctx.fillStyle = "#784c43";
   ctx.font = "500 20px 'IBM Plex Mono', monospace";
   ctx.fillText("CLICK TO OPEN BUILD", 56, 516);
@@ -1252,6 +1298,23 @@ function createCurrentMissionTexture(mission = defaultMission) {
   const texture = new THREE.CanvasTexture(textureCanvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
+}
+
+const contributionColors = ["#ecdfcf", "#f7b44a", "#f07a2a", "#d63d2a", "#9c1c1a"];
+
+function drawContributionGraph(ctx, x, y) {
+  const step = 17;
+  const cell = 15;
+  const days = contributionDays || [];
+  const gridTop = y;
+  const offset = days.length ? new Date(`${days[0].date}T00:00:00Z`).getUTCDay() : 0;
+  const cellCount = days.length ? days.length + offset : 53 * 7;
+  for (let i = 0; i < cellCount; i += 1) {
+    const day = days.length ? days[i - offset] : null;
+    if (days.length && !day) continue;
+    ctx.fillStyle = contributionColors[day?.level ?? 0];
+    ctx.fillRect(x + Math.floor(i / 7) * step, gridTop + (i % 7) * step, cell, cell);
+  }
 }
 
 function createPortraitLabelTexture() {
@@ -1310,7 +1373,7 @@ function createAboutCueTexture() {
   ctx.fillStyle = "#c8322d";
   ctx.font = "700 118px Bebas Neue, Impact, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("ABOUT ME", 78, 250);
+  ctx.fillText("WHO AM I?", 78, 250);
 
   ctx.fillStyle = "#784c43";
   ctx.font = "700 34px IBM Plex Mono, monospace";
@@ -2311,6 +2374,7 @@ function boot3D() {
 
   buildScene(scene);
   loadCurrentMission();
+  loadContributions();
 
   if (prefersReducedMotion.matches) {
     state3d.intro = null;
