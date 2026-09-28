@@ -39,7 +39,7 @@ Primary portfolio content lives in `app.js`, including experience, project, acti
 - Cloudflare Pages project: `abdulsaboorshaikh-portfolio`
 - Production URL: `https://abdulsaboorshaikh.com`
 - Preview URL pattern: `https://<deployment-id>.abdulsaboorshaikh-portfolio.pages.dev`
-- Deployment command: `wrangler pages deploy . --project-name abdulsaboorshaikh-portfolio --commit-dirty=true`
+- Deployment command: `wrangler pages deploy . --project-name abdulsaboorshaikh-portfolio --branch anime-redesign --commit-dirty=true` (the Pages production branch is `anime-redesign`; deploying without `--branch` from `main` only creates a preview)
 
 Wrangler uses OAuth. If a non-interactive command reports that an API token is required, rerun the command in a TTY and complete `wrangler login` in the browser.
 

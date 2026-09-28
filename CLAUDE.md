@@ -47,6 +47,6 @@ Production is Cloudflare Pages, not GitHub Pages:
 
 - Project: `abdulsaboorshaikh-portfolio`
 - Domain: `https://abdulsaboorshaikh.com`
-- Deploy: `wrangler pages deploy . --project-name abdulsaboorshaikh-portfolio --commit-dirty=true`
+- Deploy: `wrangler pages deploy . --project-name abdulsaboorshaikh-portfolio --branch anime-redesign --commit-dirty=true` (the Pages production branch is `anime-redesign`; deploying without `--branch` from `main` only creates a preview)
 
 Use Wrangler OAuth; never ask the user to paste an API token into chat or source files.
