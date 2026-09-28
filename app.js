@@ -29,7 +29,7 @@ const defaultMission = {
 };
 
 function defaultStatus() {
-  return "Interact // select a desk object";
+  return "Interact // desk objects or portrait";
 }
 
 sceneOverlay.hidden = true;
@@ -365,6 +365,33 @@ const skillSlugMap = {
 
 const sectionData = [
   {
+    id: "about",
+    objectName: "portrait",
+    label: "About Me",
+    subtitle: "A quick hello",
+    status: "Esc to close · or pick a desk object to keep exploring.",
+    html: `
+      <div class="about-me">
+        <p class="about-me-lead">Hey — I'm Abdulsaboor.</p>
+        <p class="about-me-placeholder">
+          Short bio goes here. Swap this placeholder when you're ready — a few lines on who you are,
+          what you're building toward, and how you like to work.
+        </p>
+        <div class="about-me-guide">
+          <p class="about-me-guide-title">How to explore this desk</p>
+          <ul>
+            <li><strong>Portrait</strong> — that's this panel.</li>
+            <li><strong>Monitor</strong> — experience timeline.</li>
+            <li><strong>Side monitor</strong> — projects.</li>
+            <li><strong>Keyboard / PC / dumbbell</strong> — skills, activities, interests.</li>
+            <li><strong>System index</strong> — jump to any section without hunting objects.</li>
+            <li>Drag to orbit · scroll to zoom · Esc closes a panel.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+  },
+  {
     id: "experience",
     objectName: "monitor",
     label: "Experience",
@@ -438,6 +465,7 @@ const state3d = {
   homeCameraPosition: null,
   intro: null,
   portraitGroup: null,
+  aboutCue: null,
   compactViewport: null,
   interactiveRecords: [],
   interactiveBySection: new Map(),
@@ -907,6 +935,7 @@ function addInteractiveRecord(data) {
     highlightMaterials: data.highlightMaterials,
     sourceObject: data.sourceObject,
     sourceCorners: data.sourceCorners,
+    noFloat: Boolean(data.noFloat),
     baseY: data.floatObject.position.y,
     baseScale: data.floatObject.scale.clone(),
   };
@@ -1245,6 +1274,111 @@ function createPortraitLabelTexture() {
   return texture;
 }
 
+function createAboutCueTexture() {
+  const textureCanvas = document.createElement("canvas");
+  textureCanvas.width = 1024;
+  textureCanvas.height = 512;
+  const ctx = textureCanvas.getContext("2d");
+  ctx.clearRect(0, 0, textureCanvas.width, textureCanvas.height);
+
+  // Soft ember glow behind the cue
+  const glow = ctx.createRadialGradient(620, 260, 20, 560, 260, 280);
+  glow.addColorStop(0, "rgba(255, 144, 51, 0.55)");
+  glow.addColorStop(0.45, "rgba(200, 50, 45, 0.28)");
+  glow.addColorStop(1, "rgba(200, 50, 45, 0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(280, 40, 720, 440);
+
+  // Label plate
+  ctx.beginPath();
+  ctx.moveTo(48, 110);
+  ctx.lineTo(430, 110);
+  ctx.lineTo(468, 148);
+  ctx.lineTo(468, 360);
+  ctx.lineTo(430, 398);
+  ctx.lineTo(48, 398);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(255, 248, 237, 0.97)";
+  ctx.fill();
+  ctx.lineWidth = 8;
+  ctx.strokeStyle = "#c8322d";
+  ctx.stroke();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#f09a35";
+  ctx.stroke();
+
+  ctx.fillStyle = "#c8322d";
+  ctx.font = "700 118px Bebas Neue, Impact, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("ABOUT ME", 78, 250);
+
+  ctx.fillStyle = "#784c43";
+  ctx.font = "700 34px IBM Plex Mono, monospace";
+  ctx.fillText("CLICK PORTRAIT", 82, 318);
+
+  ctx.fillStyle = "#f09a35";
+  ctx.fillRect(82, 342, 168, 10);
+
+  // Big chevron arrow pointing at the portrait
+  const drawArrow = (offsetX, offsetY, fill, stroke, lineWidth) => {
+    ctx.beginPath();
+    ctx.moveTo(500 + offsetX, 150 + offsetY);
+    ctx.lineTo(780 + offsetX, 256 + offsetY);
+    ctx.lineTo(500 + offsetX, 362 + offsetY);
+    ctx.lineTo(560 + offsetX, 256 + offsetY);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    if (stroke) {
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = stroke;
+      ctx.lineJoin = "round";
+      ctx.stroke();
+    }
+  };
+
+  // Depth / shadow layer
+  drawArrow(10, 12, "rgba(122, 49, 30, 0.35)", null, 0);
+  // Outer ember rim
+  drawArrow(0, 0, "#f09a35", "#fff8ed", 10);
+  // Inner red chevron
+  ctx.beginPath();
+  ctx.moveTo(528, 178);
+  ctx.lineTo(732, 256);
+  ctx.lineTo(528, 334);
+  ctx.lineTo(574, 256);
+  ctx.closePath();
+  ctx.fillStyle = "#c8322d";
+  ctx.fill();
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "#fff8ed";
+  ctx.stroke();
+
+  // Highlight slash on arrow
+  ctx.beginPath();
+  ctx.moveTo(548, 220);
+  ctx.lineTo(660, 248);
+  ctx.lineTo(548, 236);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(255, 248, 237, 0.55)";
+  ctx.fill();
+
+  const texture = new THREE.CanvasTexture(textureCanvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function placeAboutCue(compactViewport) {
+  if (!state3d.aboutCue) return;
+  const cue = state3d.aboutCue;
+  const scale = compactViewport ? 1.05 : 1.28;
+  cue.baseScale = scale;
+  cue.baseX = compactViewport ? -3.55 : -3.72;
+  cue.group.position.set(cue.baseX, compactViewport ? 2.34 : 2.42, -3.76);
+  cue.group.scale.setScalar(scale);
+}
+
 function createDeskTexture() {
   const textureCanvas = document.createElement("canvas");
   textureCanvas.width = 1024;
@@ -1370,6 +1504,25 @@ function buildScene(scene) {
   state3d.portraitGroup = portraitGroup;
   applyShadows(portraitGroup, { receive: false });
   scene.add(portraitGroup);
+
+  const aboutCueGroup = new THREE.Group();
+  const aboutCueMaterial = new THREE.MeshBasicMaterial({
+    map: createAboutCueTexture(),
+    transparent: true,
+    opacity: 0.96,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+  const aboutCueMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.55, 1.28), aboutCueMaterial);
+  aboutCueGroup.add(aboutCueMesh);
+  state3d.aboutCue = {
+    group: aboutCueGroup,
+    material: aboutCueMaterial,
+    baseScale: 1,
+    baseX: -3.72,
+  };
+  placeAboutCue(compactViewport);
+  scene.add(aboutCueGroup);
 
   const desk = new THREE.Mesh(
     roundedBox(5.6, 0.18, 2.2, 0.065, 5),
@@ -1852,8 +2005,21 @@ function buildScene(scene) {
   const skillsHit = createHitMesh(1.95, 0.32, 0.62, new THREE.Vector3(0.1, 0.11, -0.18));
   const activitiesHit = createHitMesh(0.94, 1.76, 1.12, new THREE.Vector3(2.2, 0.58, -0.95));
   const interestsHit = createHitMesh(1.15, 0.42, 0.45, new THREE.Vector3(-1.72, 0.2, 0.22));
+  const aboutHit = createHitMesh(2.55, 2.55, 0.35, new THREE.Vector3(-1.68, compactViewport ? 2.18 : 2.24, -3.82));
 
-  scene.add(expHit, projHit, skillsHit, activitiesHit, interestsHit);
+  scene.add(expHit, projHit, skillsHit, activitiesHit, interestsHit, aboutHit);
+
+  addInteractiveRecord({
+    id: "about",
+    objectName: "portrait",
+    hitMesh: aboutHit,
+    floatObject: portraitGroup,
+    noFloat: true,
+    labelAnchor: new THREE.Vector3(-1.68, compactViewport ? 3.35 : 3.45, -3.7),
+    focusTarget: new THREE.Vector3(-1.68, compactViewport ? 2.18 : 2.24, -3.82),
+    focusCameraPosition: new THREE.Vector3(-1.35, 2.2, 0.85),
+    highlightMaterials: collectEmissiveMaterials([portraitGroup]),
+  });
 
   addInteractiveRecord({
     id: "experience",
@@ -1926,7 +2092,7 @@ function buildScene(scene) {
 }
 
 function updateHoverLabel(record) {
-  if (!record || activeSectionId != null) {
+  if (!record || activeSectionId != null || record.id === "about") {
     hoverLabel.hidden = true;
     hoverLabel.style.display = "none";
     return;
@@ -2187,8 +2353,20 @@ function boot3D() {
       state3d.cameraTransitionActive = true;
 
       if (state3d.portraitGroup) {
-        state3d.portraitGroup.scale.setScalar(compactViewport ? 0.88 : 0.94);
+        const portraitScale = compactViewport ? 0.88 : 0.94;
+        state3d.portraitGroup.scale.setScalar(portraitScale);
         state3d.portraitGroup.position.y = compactViewport ? 2.18 : 2.24;
+      }
+      placeAboutCue(compactViewport);
+      const aboutRecord = state3d.interactiveBySection.get("about");
+      if (aboutRecord) {
+        const y = compactViewport ? 2.18 : 2.24;
+        const portraitScale = compactViewport ? 0.88 : 0.94;
+        aboutRecord.hitMesh.position.y = y;
+        aboutRecord.focusTarget.y = y;
+        aboutRecord.labelAnchor.y = compactViewport ? 3.35 : 3.45;
+        aboutRecord.baseY = y;
+        aboutRecord.baseScale.setScalar(portraitScale);
       }
     }
 
@@ -2296,8 +2474,10 @@ function boot3D() {
     state3d.interactiveRecords.forEach((record, index) => {
       const isHovered = hoveredRecord === record;
       const isActive = activeSectionId === record.id;
-      const yFloat = Math.sin(elapsed * 1.15 + index * 0.6) * 0.006;
-      record.floatObject.position.y = record.baseY + yFloat;
+      if (!record.noFloat) {
+        const yFloat = Math.sin(elapsed * 1.15 + index * 0.6) * 0.006;
+        record.floatObject.position.y = record.baseY + yFloat;
+      }
 
       const scaleTarget = isHovered ? 1.05 : isActive ? 1.02 : 1;
       record.floatObject.scale.copy(record.baseScale).multiplyScalar(scaleTarget);
@@ -2307,6 +2487,25 @@ function boot3D() {
         material.emissiveIntensity += (emissiveTarget - material.emissiveIntensity) * 0.16;
       });
     });
+
+    if (state3d.aboutCue) {
+      const cue = state3d.aboutCue;
+      const showCue = activeSectionId !== "about" && !state3d.intro?.active;
+      cue.group.visible = showCue;
+      if (showCue) {
+        if (prefersReducedMotion.matches) {
+          cue.group.scale.setScalar(cue.baseScale);
+          cue.group.position.x = cue.baseX;
+          cue.material.opacity = 0.96;
+        } else {
+          const breath = 0.5 + 0.5 * Math.sin(elapsed * 2.15);
+          const hoverBoost = hoveredRecord?.id === "about" ? 1.08 : 1;
+          cue.group.scale.setScalar(cue.baseScale * (0.96 + 0.08 * breath) * hoverBoost);
+          cue.group.position.x = cue.baseX + Math.sin(elapsed * 2.15) * 0.035;
+          cue.material.opacity = 0.86 + 0.14 * breath;
+        }
+      }
+    }
 
     if (hoveredRecord) {
       document.body.style.cursor = "pointer";

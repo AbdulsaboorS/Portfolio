@@ -9,7 +9,8 @@ The portfolio is intentionally personal and expressive. Its visual language is a
 ## Core vocabulary
 
 - **Desk scene**: The full-viewport Three.js/WebGL workstation and its interactive objects.
-- **Section**: One content area opened from a desk object or the System Index: Experience, Projects, Activities, Skills, or Interests.
+- **Section**: One content area opened from a desk object, the wall portrait, or the System Index: About Me, Experience, Projects, Activities, Skills, or Interests.
+- **About cue**: The breathing "ABOUT ME / CLICK PORTRAIT" plate with an ember chevron, placed on the wall left of the portrait. It hides while About Me is open and holds still under reduced motion.
 - **Overview**: The summary cards shown when a multi-item section opens.
 - **Detail view**: The expanded content for one experience, project, or activity.
 - **Project readout**: The right side of the Projects detail view, paired with the scrollable project index on the left.
@@ -20,6 +21,8 @@ The portfolio is intentionally personal and expressive. Its visual language is a
 
 - The portfolio represents Abdulsaboor’s taste rather than optimizing for generic recruiter conventions.
 - The portrait is photo-only; the old label beneath it is intentionally removed.
+- Clicking the portrait opens About Me (a short bio plus a "How to explore this desk" guide). Hovering the portrait does not show the `Interact // …` label because it would overlap the header title. Desk objects still show that label.
+- The About Me bio in `app.js` (`.about-me-placeholder`) is placeholder copy until Abdulsaboor writes his own.
 - The monitor presents Experience and its career timeline. The side monitor presents Projects.
 - Projects in progress are marked WIP and the project index scrolls independently from the project readout.
 - Locations live inside expanded experience details, not overview cards. Overview cards show role and dates.

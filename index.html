@@ -15,7 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=2026-09-18-orientation-fix-1" />
+    <link rel="stylesheet" href="styles.css?v=2026-09-25-about-portrait-2" />
   </head>
   <body>
     <a href="#detail-panel" class="sr-only-focusable">Skip scene</a>
@@ -39,7 +39,7 @@
         <section class="scene-wrap" aria-describedby="scene-description">
           <canvas id="scene" aria-label="Interactive 3D desktop portfolio"></canvas>
           <p id="scene-description" class="sr-only">
-            Interactive desktop scene with clickable monitor, side monitor, keyboard, mouse, PC, and dumbbell.
+            Interactive desktop scene with clickable portrait, monitor, side monitor, keyboard, mouse, PC, and dumbbell.
           </p>
 
           <div id="scene-overlay" class="scene-overlay" hidden>
@@ -60,6 +60,7 @@
               <span aria-hidden="true">+</span> System index
             </button>
             <div class="quick-nav" id="quick-nav" role="toolbar" aria-label="Quick sections">
+              <button type="button" data-index="00" data-section="about">About Me</button>
               <button type="button" data-index="01" data-section="experience">Experience</button>
               <button type="button" data-index="02" data-section="projects">Projects</button>
               <button type="button" data-index="03" data-section="activities">Activities</button>
@@ -74,7 +75,7 @@
           <h2 id="panel-title">Welcome</h2>
           <p id="panel-subtitle">Click a desk object to explore.</p>
           <div id="panel-content">
-            <p>Monitor, side monitor, keyboard, mouse, PC, and dumbbell are clickable.</p>
+            <p>Portrait, monitor, side monitor, keyboard, mouse, PC, and dumbbell are clickable.</p>
           </div>
         </aside>
       </main>
@@ -101,7 +102,7 @@
       });
     </script>
     <script type="module">
-      import("./app.js?v=2026-09-18-orientation-fix-1")
+      import("./app.js?v=2026-09-25-about-portrait-2")
         .then(function () {
           window.__portfolioBoot.moduleLoaded = true;
           window.__portfolioBoot.events.push("app module loaded");
