@@ -395,7 +395,7 @@ const sectionData = [
     id: "about",
     objectName: "portrait",
     label: "Who Am I?",
-    subtitle: "A quick hello",
+    subtitle: "",
     status: "Esc to close · or pick a desk object to keep exploring.",
     html: `
       <div class="about-me">
